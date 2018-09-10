@@ -159,6 +159,7 @@ def callback:$func
 example1.dll
 
 ```cpp
+#include "Menthol.h"
 StackState test()
 {
     StackState value =GetParam(1);
