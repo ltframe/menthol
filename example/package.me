@@ -1,0 +1,19 @@
+import "packagetest";
+var @p = packagetest;
+
+def func:$i
+{	
+	MIo.Out("index-"+$i);
+}
+
+_wmain:$a,$c
+{	
+	@p.@g = "package caller";
+	@p.func();
+	packagetest.func1("ok");
+	packagetest.callback(packagetest.func1);
+	packagetest.callback(func);
+	var $d = packagetest.func;
+	func(22);
+	$d();
+}

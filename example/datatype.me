@@ -1,0 +1,18 @@
+_wmain:$a,$c
+{	
+	var $str = "this is a string";
+	var $str1 = "";
+	var $intvalue = 111;
+	var $octvalue = 070;
+	var $hexvalue = 0xFF;
+	var $arr = {$str,"","22"};
+	var $dict = (key1::-111,key2::$str);
+	MIo.Out($str);
+	MIo.Out($str1);
+	MIo.Out($intvalue);
+	MIo.Out($octvalue);
+	MIo.Out($hexvalue);
+	MIo.Out($arr[2]);
+	MIo.Out($dict::key2);
+	MIo.Out($dict::key1);
+}

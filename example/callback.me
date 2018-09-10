@@ -1,0 +1,13 @@
+def callback:$i
+{	
+	MIo.Out($i);
+}
+
+def func:$fun,$i
+{
+	$fun($i);
+}
+_wmain:$a,$c
+{	
+	func(callback,1000);
+}

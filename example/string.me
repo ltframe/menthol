@@ -1,0 +1,19 @@
+_wmain:$a,$c
+{	
+
+	var $arr = "abcdefghijklmn";
+	while(true){
+		MIo.Out($arr[7]);
+		MIo.Out($arr[5..]);
+		MIo.Out($arr[..6]);
+		MIo.Out($arr[3..6]);
+		var $s = "123456";
+		MIo.Out($s);	
+		MIo.Out($s[3]);		
+		$s[2] = 1;
+		MIo.Out($s);
+		var $g = 100;	
+		MIo.Out($s[2]);		
+		MIo.Out($g);
+	}
+}

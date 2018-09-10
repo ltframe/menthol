@@ -1,0 +1,17 @@
+def test:
+{
+	
+	throw "msg1","msg2";
+}
+
+_wmain:$a,$c
+{	
+	try{
+		test();
+	}
+	except:$a,$b
+	{
+		MIo.Out($a);
+		MIo.Out($b);
+	}
+}

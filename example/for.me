@@ -1,0 +1,20 @@
+import "MDict";
+_wmain:$a,$c
+{	
+	var $arr = {1,2,3,4,6,7};
+	for(var $i in $arr)
+	{
+		MIo.Out($i);
+	}
+	$arr ="abcdefghi";
+	for(var $i in $arr)
+	{
+		MIo.Out($i);
+	}
+	$arr =(key1::"key1",key2::"key2");
+	for(var $i in $arr)
+	{
+		MIo.Out(MDict.GetKey($arr,$i));
+		MIo.Out(MDict.GetValue($arr,$i));
+	}
+}

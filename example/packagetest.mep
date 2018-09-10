@@ -1,0 +1,20 @@
+import "MIo";
+var @g;
+
+def func:
+{	
+	MIo.Out("package function called");
+}
+
+def func1:$i
+{
+	func();
+	MIo.Out($i)
+}
+
+def callback:$func
+{
+	MIo.Out(@g);
+	func();
+	$func()
+}

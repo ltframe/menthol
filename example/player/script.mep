@@ -1,0 +1,33 @@
+def banner:
+{
+	MIo.Out(" __  __                  _     _               _ \r\n");
+	MSystem.Sleep(200); 
+	MIo.Out("|  \/  |   ___   _ __   | |_  | |__     ___   | |\r\n");
+	MSystem.Sleep(200); 
+	MIo.Out("| |\/| |  / _ \ | '_ \  | __| | '_ \   / _ \  | |\r\n"); 
+	MSystem.Sleep(200);
+	MIo.Out("| |  | | |  __/ | | | | | |_  | | | | | (_) | | |\r\n"); 
+	MSystem.Sleep(200);
+	MIo.Out("|_|  |_|  \___| |_| |_|  \__| |_| |_|  \___/  |_|\r\n"); 
+}
+
+def processbar:
+{
+	MIo.Out("\r\n");
+	var $i = 0;
+	while($i<100){
+		MIo.Out("*");
+		$i = $i+1;
+	}
+	$i = 0;
+	while($i<100){
+		MIo.Out("\b");
+		$i = $i+1;
+	}
+}
+
+
+def openfilecallback:$msg
+{
+	MIo.Out($msg);
+}
