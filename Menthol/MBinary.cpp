@@ -60,15 +60,13 @@ void MBinary::ReadBinary(string filename,vector <FunctionAtter>* functionlist,ve
 			PackageState* ps =new PackageState();
 			//ps->pname = packagestr;
 			ps->hash = MCommon::CreateInstance()->ELFHash(packagestr);
-			/*for (std::vector<RunTimeState*>::iterator it = vrts->begin() ; it != vrts->end(); ++it)
-			{*/
+
 			VECTORFORSTART(RunTimeState*,vrts,it)
 				if((*it)->hash==ps->hash){
 					ps->rts =(*it);
 					break;
 				}
 			VECTORFOREND
-			/*}*/
 			
 			if(!IsInInclude(packagelist,ps->hash)){
 				packagelist->push_back(ps);
@@ -172,14 +170,12 @@ void MBinary::ReadBinary(string filename,vector <FunctionAtter>* functionlist,ve
 			}
 
 			bool a = false;
-			/*for (std::vector<StringValue>::iterator it = dictkeyconstants->begin() ; it != dictkeyconstants->end(); ++it)
-			{*/
+
 			VECTORFORSTART(StringValue,dictkeyconstants,it)
 				if((*it).hash==MCommon::CreateInstance()->ELFHash(str)){
 					a = true;
 					break;
 				}
-			/*}*/
 			VECTORFOREND
 			int hash = ReadCode(bufferf,loopid);;
 			if(!a){
@@ -279,17 +275,7 @@ void MBinary::MReadImportFiles(const char* fp,vector<PackageAttr> *filetree,char
 			strcpy(pa.pname,packagestr);
 			pa.ptype = (PackAgeType)ptype;
 
-			/*bool add = true;
-			for (std::vector<PackageAttr>::iterator it = filetree->begin() ; it != filetree->end(); ++it)
-			{		
-				if(!strcmp((*it).pname,pa.pname)){
-					add = false;
-					break;
-				}
-			}	
-			if(add){*/
 				filetree->push_back(pa);
-			/*}*/
 
 		}
 		if(ptype==MPA_PACKAGE||ptype==MPA_SPACKAGE){	
@@ -298,17 +284,8 @@ void MBinary::MReadImportFiles(const char* fp,vector<PackageAttr> *filetree,char
 			strcpy(pa.pname,packagestr);
 			pa.ptype = (PackAgeType)ptype;
 
-			/*bool add = true;
-			for (std::vector<PackageAttr>::iterator it = filetree->begin() ; it != filetree->end(); ++it)
-			{		
-				if(!strcmp((*it).pname,pa.pname)){
-					add = false;
-					break;
-				}
-			}	
-			if(add){*/
+			
 				filetree->push_back(pa);
-			/*}*/
 
 			MReadImportFiles(_filenamestr,filetree,modidr,workdir);
 		}
