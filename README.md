@@ -155,5 +155,27 @@ def callback:$func
 
 ```
 
+###### 开发外部扩展库
+
+example1.dll
+
+```cpp
+
+StackState test()
+{
+    StackState value =GetParam(1);
+	StackState st;
+	st.v = M_STRING;
+	st = String_CreateString("this is a test string");
+	return st;
+}
+
+MentholPackMethod void example1_Init()
+{
+    RegisterPackAgeFunciton("test",test,0);	
+
+}
+
+```
 
 
