@@ -155,12 +155,10 @@ def callback:$func
 
 ```
 
-###### 开发外部扩展库
-
+###### 开发外部扩展库(c/c++)
 example1.dll
 
 ```cpp
-
 StackState test()
 {
     StackState value =GetParam(1);
