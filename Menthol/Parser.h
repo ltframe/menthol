@@ -13,6 +13,22 @@
 #define RESTORESTACKID  sl->StackID = _tempstackid;
 
 
+#define FINDPARENT(p) while(true){\
+						if(p==0)\
+						{\
+							break;\
+						}\
+						if(p->NType!=MNT_WhileStatement  && p->NType!=MNT_ForStatement)\
+						{\
+							p = p->ParentNode;\
+							continue;\
+						}else\
+						{\
+							break;\
+						}\
+					 }
+
+
 struct BuiltinTypeValue
 {
 	double d;
@@ -264,7 +280,6 @@ class BreakExpression:public Statement{
 public:
 	BreakExpression();
 	void CreateCode();
-	Statement* FindParent(Statement* p);
 	int GetBreakJmpPostion();
 	void Release();
 private:
@@ -404,8 +419,6 @@ public:
 	ContinueExpression();
 	void CreateCode();
 	void Release();
-private:
-	Statement* FindParent(Statement* p);
 };
 
 

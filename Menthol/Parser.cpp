@@ -1292,7 +1292,8 @@ void ContinueExpression::CreateCode()
 {
 	StatementList* sl = StatementList::GetInstance();
 	bytenumber = sl->GetIpi();
-	Statement* p = FindParent(this);
+	Statement* p = this;
+	FINDPARENT(p)
 	if(!p)
 	{
 		MError::CreateInstance()->PrintError("continue keyword can only be used in the for,while statement");
@@ -1320,22 +1321,7 @@ void ContinueExpression::CreateCode()
 		sl->AddCode(sl->GetIpi()-w->GetJmpPostion());
 	}
 }
-Statement* ContinueExpression::FindParent(Statement* p)
-{
-	if(p->ParentNode==0)
-	{
-		return 0;
-	}else
-	{
-		if(p->ParentNode->NType!=MNT_WhileStatement  && p->ParentNode->NType!=MNT_ForStatement)
-		{
-			FindParent(p->ParentNode);
-		}else
-		{
-			return p->ParentNode;
-		}
-	}
-}
+
 
 
 void ContinueExpression::Release()
@@ -1355,7 +1341,8 @@ void BreakExpression::CreateCode()
 {
 	StatementList* sl = StatementList::GetInstance();
 	bytenumber = sl->GetIpi();
-	Statement* p = FindParent(this);
+	Statement* p = this;
+	FINDPARENT(p)
 	if(!p)
 	{
 		MError::CreateInstance()->PrintError("Break keyword can only be used in the for,while statement");
@@ -1389,24 +1376,7 @@ int BreakExpression::GetBreakJmpPostion()
 	return jmppostion;
 }
 
-Statement* BreakExpression::FindParent(Statement* p)
-{
-	if(p->ParentNode==0)
-	{
-		return 0;
-	}else
-	{
-		if(p->ParentNode->NType!=MNT_WhileStatement  && p->ParentNode->NType!=MNT_ForStatement)
-		{
-			FindParent(p->ParentNode);
-		}else
-		{
-			return p->ParentNode;
-		}
-	}
-	//return 0;
-	
-}
+
 void BreakExpression::Release()
 {
 	
