@@ -1,4 +1,4 @@
-<div align=center>![menthol](http://www.ltplayer.com/static/images/gitlogo.png)
+<center>![menthol](http://www.ltplayer.com/static/images/gitlogo.png)</center>
 # Menthol
 Menthol是一个简单、易用、易学的脚本语言,语法简单,开发简便,使用C/C++可以快速为它开发扩展
 
