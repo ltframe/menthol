@@ -21,6 +21,13 @@ try except throw continue return while
 null import _mmain def var in
 ```
 
+###### 操作符
+```html
+- * / () ; , | &  ? [] ! % ^ : :: .. = < > != <> || &&  >= <= == += -= /= *= %= &= |= ^= << >> **
+```
+
+
+
 ###### 基本操作
 所有的menthol都由系统自动执行_mmain开始,声明变量使用关键字var,全部变量要在变量名前加@,局部变量要在变量名前加$
 ```html
