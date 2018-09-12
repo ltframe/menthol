@@ -16,11 +16,9 @@ Menthol是一个简单、易用、易学的脚本语言,语法简单,开发简�
 
 ###### 关键字
 ```html
-**if**    **else**     **for**     **break**     **true**     **false**  
-
-**try**   **except** **throw** **continue** **return** **while**  
-
-**null** **import**  **def** **var** **in**  
+if else for break true false
+try except throw continue return while
+null import _mmain def var in
 ```
 
 ###### 基本操作
