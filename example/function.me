@@ -1,0 +1,11 @@
+def func:$i1,$i2=333
+{	
+	MIo.Out($i1);
+	MIo.Out($i2);
+}
+
+_mmain:$a,$c
+{	
+	func(222,1000,333);
+	func(555);
+}

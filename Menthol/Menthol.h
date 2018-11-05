@@ -42,8 +42,9 @@ enum ValueType{
 
 struct StackState;
 struct StackMark;
+struct PackageState;
 struct RunTimeState;
-typedef unsigned int hashValue,Instruction;
+typedef unsigned int hashValue,Instruction,M_UInt;
 struct Garbage{
 	Garbage(vector<StackState> * _c){
 		array = _c;
@@ -70,14 +71,13 @@ struct Garbage{
 };
 
 typedef Garbage* pArray,*pDict,*pString;
-
 typedef void* pInst;
 
 typedef struct StackMark
 {
 	StackState* bp;
 	Instruction* address;
-	unsigned int paramercount;//参数的个数
+	M_UInt paramercount;//参数的个数
 	RunTimeState* rts;
 
 }TryMark;
@@ -94,6 +94,7 @@ struct StackState
 		pString str;
 		StackMark m;
 		bool b;
+		PackageState* ps;
 	};
 	pInst p;
 	char* name;
@@ -102,14 +103,17 @@ struct StackState
 };
 
 typedef StackState (*funcallback)();
-
+typedef int (*PrintErrorFunc)(char* str,char* cf,int line);
 //global:
 MentholPackMethod int Compile(char** files,int c);
-MentholPackMethod int Compile2(char* cfile);
+MentholPackMethod void SetPrintCompileErrorFunc(PrintErrorFunc _pef);
+MentholPackMethod void SetPrintRunTimeErrorFunc(PrintErrorFunc _pef);
+MentholPackMethod int Compile2(char* cfile,bool isdebug);
 MentholPackMethod int Run(char* files,char* arg1,char* arg2);
 MentholPackMethod void RegisterPackAgeFunciton(char* name,funcallback fun,int pcount);
 MentholPackMethod StackState GetParam(int index);
- 
+
+
  //array
 MentholPackMethod StackState Array_CreateArray();
 MentholPackMethod StackState Array_Get(pArray sk1,int index);

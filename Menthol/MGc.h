@@ -10,7 +10,7 @@
 namespace MGc
 {
 	void InitWGc();
-	void MarkArray(vector<StackState>* arr);
+	void MarkArray(VECOTRSTACKSTATEPOINTER arr);
 	void CopyToGlobalGarBage(Garbage* g);
 	void MarkGlobalGarBage();
 	void ClearGarbage();
@@ -21,9 +21,10 @@ namespace MGc
 	void SetAllGarbages(int mark);
 	void MarkAllGarbages();
 	Garbage* CreateDict();
-	void MarkArray(vector<StackState>* arr);
+	void MarkArray(VECOTRSTACKSTATEPOINTER arr);
 	void MarkDict(map<hashValue,StackState>* arr);
 	long GetGarBageMemorySize();
+	vector<Garbage*> *GetGarbageCollect();
 };
 #endif
 

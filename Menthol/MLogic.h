@@ -9,7 +9,7 @@ namespace MLogic
 {
 
 
-inline bool Xor(StackState* value1,StackState* value2)
+inline bool Xor(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 {	
 	
 	value1->v = M_BOOL;
@@ -21,7 +21,7 @@ inline bool Xor(StackState* value1,StackState* value2)
 	return false;
 }
 
-inline bool EqEq(StackState* value1,StackState* value2)
+inline bool EqEq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 {
 
 	if((IsNumber(value1) || IsBool(value1)) && (IsNumber(value1) || IsBool(value1))){
@@ -45,7 +45,7 @@ inline bool EqEq(StackState* value1,StackState* value2)
 }
 
 //ะกำฺ
-inline bool Lt(StackState* value1,StackState* value2)
+inline bool Lt(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 {
 
 	if((IsNumber(value1) || IsBool(value1)) && (IsNumber(value1) || IsBool(value1))){
@@ -63,7 +63,7 @@ inline bool Lt(StackState* value1,StackState* value2)
 	return false;
 }
 
-inline bool Le(StackState* value1,StackState* value2)
+inline bool Le(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 {
 
 	if((IsNumber(value1) || IsBool(value1)) && (IsNumber(value1) || IsBool(value1))){
@@ -81,7 +81,7 @@ inline bool Le(StackState* value1,StackState* value2)
 	return false;
 }
 
-inline bool Geeq(StackState* value1,StackState* value2)
+inline bool Geeq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 {
 
 	if((IsNumber(value1) || IsBool(value1)) && (IsNumber(value1) || IsBool(value1))){
@@ -99,7 +99,7 @@ inline bool Geeq(StackState* value1,StackState* value2)
 	return false;
 }
 
-inline bool Leeq(StackState* value1,StackState* value2)
+inline bool Leeq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 {
 
 	if((IsNumber(value1) || IsBool(value1)) && (IsNumber(value1) || IsBool(value1))){
@@ -116,15 +116,17 @@ inline bool Leeq(StackState* value1,StackState* value2)
 	}
 	return false;
 }
-inline bool Neq(StackState* value1,StackState* value2)
+inline bool Neq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 {	
 	if((IsNumber(value1) || IsBool(value1)) && (IsNumber(value1) || IsBool(value1))){
+			value1->v = M_BOOL;
 			value1->b=(value1->d!=value2->d);
 			return true;
 	}
 	if(IsString(value1) && IsString(value2))
 	{
 		int k=strcmp(value1->str->string,value2->str->string);
+		value1->v = M_BOOL;
 		value1->b=(k!=0)?true:false;
 		return true;
 	}
@@ -137,7 +139,7 @@ inline bool Neq(StackState* value1,StackState* value2)
 	return false;
 }
 
-inline bool Or(StackState* value1,StackState* value2)
+inline bool Or(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 {
 	CONVERTVALUETYPE(value1,value2)
 	value1->v = M_BOOL;
@@ -145,7 +147,7 @@ inline bool Or(StackState* value1,StackState* value2)
 	return true;
 }
 
-inline bool And(StackState* value1,StackState* value2)
+inline bool And(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 {
 	CONVERTVALUETYPE(value1,value2)
 	value1->v = M_BOOL;

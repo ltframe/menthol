@@ -29,8 +29,19 @@ StackState ToString()
 	return st;
 }
 
+StackState ToNumber()
+{
+	StackState value =GetParam(1);
+	StackState st;
+	st.v = M_NUMBER;
+	st.d = atoi(value.str->string);
+	return st;
+}
+
+
 MentholPackMethod void MNumber_Init()
 {
 	RegisterPackAgeFunciton("ToString",ToString,1);	
+	RegisterPackAgeFunciton("ToNumber",ToNumber,1);	
 
 }

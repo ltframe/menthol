@@ -1,62 +1,38 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Menthol", "Menthol\Menthol.vcproj", "{3F14CCA9-94AE-4632-BE93-30D500186088}"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Menthol", "Menthol\Menthol.vcxproj", "{3F14CCA9-94AE-4632-BE93-30D500186088}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Compile", "Compile\Compile.vcproj", "{8EA68599-D1C8-4F32-9B58-9B66C21F3C3F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Compile", "Compile\Compile.vcxproj", "{8EA68599-D1C8-4F32-9B58-9B66C21F3C3F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MIo", "MIo\MIo.vcxproj", "{05005929-D72D-442F-9067-95017DAD62C0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MSystem", "MSystem\MSystem.vcxproj", "{83D057BA-B1A9-4234-BB98-E13D4F42C427}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MArray", "MArray\MArray.vcxproj", "{47E08353-05C2-4559-8687-A0446637709B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MDateTime", "MDateTime\MDateTime.vcxproj", "{8ECCF33D-B364-4CC4-975E-D60AA42DC320}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MDict", "MDict\MDict.vcxproj", "{83A0EE48-514D-4A13-9E94-9135D33EA233}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MMath", "MMath\MMath.vcxproj", "{9A47A6F0-00E3-4F48-A502-283B39D6F81F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MNumber", "MNumber\MNumber.vcxproj", "{1049FA50-5A79-46D5-A4CB-F776801E6553}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MString", "MString\MString.vcxproj", "{707B3266-BF07-4C93-8B7D-C6D0B0CC4B95}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example1", "example1\example1.vcxproj", "{608F9210-D7A2-46F6-8DD1-E20BAD1625D3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Run", "Run\Run.vcxproj", "{436294B4-2077-4684-9988-5DF400D8CACF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CJson", "CJson\CJson.vcxproj", "{6B1390A9-E05F-464D-8641-E7D89BBEA32C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MIo", "MIo\MIo.vcproj", "{05005929-D72D-442F-9067-95017DAD62C0}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MSystem", "MSystem\MSystem.vcproj", "{83D057BA-B1A9-4234-BB98-E13D4F42C427}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MArray", "MArray\MArray.vcproj", "{47E08353-05C2-4559-8687-A0446637709B}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MDateTime", "MDateTime\MDateTime.vcproj", "{8ECCF33D-B364-4CC4-975E-D60AA42DC320}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MDict", "MDict\MDict.vcproj", "{83A0EE48-514D-4A13-9E94-9135D33EA233}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MMath", "MMath\MMath.vcproj", "{9A47A6F0-00E3-4F48-A502-283B39D6F81F}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MNumber", "MNumber\MNumber.vcproj", "{1049FA50-5A79-46D5-A4CB-F776801E6553}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MString", "MString\MString.vcproj", "{707B3266-BF07-4C93-8B7D-C6D0B0CC4B95}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example1", "example1\example1.vcproj", "{608F9210-D7A2-46F6-8DD1-E20BAD1625D3}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Run", "Run\Run.vcproj", "{436294B4-2077-4684-9988-5DF400D8CACF}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Deelx", "Deelx\Deelx.vcxproj", "{6DE55A53-0069-453F-9A5A-D0800A74A735}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -112,6 +88,14 @@ Global
 		{436294B4-2077-4684-9988-5DF400D8CACF}.Debug|Win32.Build.0 = Debug|Win32
 		{436294B4-2077-4684-9988-5DF400D8CACF}.Release|Win32.ActiveCfg = Release|Win32
 		{436294B4-2077-4684-9988-5DF400D8CACF}.Release|Win32.Build.0 = Release|Win32
+		{6B1390A9-E05F-464D-8641-E7D89BBEA32C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6B1390A9-E05F-464D-8641-E7D89BBEA32C}.Debug|Win32.Build.0 = Debug|Win32
+		{6B1390A9-E05F-464D-8641-E7D89BBEA32C}.Release|Win32.ActiveCfg = Release|Win32
+		{6B1390A9-E05F-464D-8641-E7D89BBEA32C}.Release|Win32.Build.0 = Release|Win32
+		{6DE55A53-0069-453F-9A5A-D0800A74A735}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6DE55A53-0069-453F-9A5A-D0800A74A735}.Debug|Win32.Build.0 = Debug|Win32
+		{6DE55A53-0069-453F-9A5A-D0800A74A735}.Release|Win32.ActiveCfg = Release|Win32
+		{6DE55A53-0069-453F-9A5A-D0800A74A735}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

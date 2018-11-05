@@ -10,10 +10,12 @@ int lineaddress=0;
 int linenum=0;
 int yyerror(char* str)
 {
+	/*
 	yyerrorcount++;
 	printf("\r\n");
 	printf("compile error: %s, in %s,at line %d",str,currentyyfile,lineno);
-	printf("\r\n");
+	printf("\r\n");*/
+	MError::CreateInstance()->PrintError(str);
 	return(1);
 }
 enum Scope;
@@ -36,7 +38,7 @@ struct StackState;
 %token POWER_OP NEQ_OP OR_OP AND_OP GE_OP LE_OP EQ_OP
 %token ADD_ASSIGN SUB_ASSIGN DIV_ASSIGN MUL_ASSIGN ASSIGN_ASSIGN
 %token MOD_ASSIGN AND_ASSIGN OR_ASSIGN XOR_ASSIGN 
-%token SHIFT_LEFT_OP SHIFT_RIGHT_OP WMAIN  DEF  VAR  IN ARRAYSECTION DICT_OP
+%token SHIFT_LEFT_OP SHIFT_RIGHT_OP WMAIN  DEF  VAR  IN ARRAYSECTION DICT_OP TYPEOF
  
 
 
@@ -89,7 +91,7 @@ struct StackState;
 %type <vStatement> power_expression
 %type <vStatement> prefix_expression
 
-
+%type <vStatement> function_parameter_list
 %left '='
 %left '-' '+'
 %left '*' '/'
@@ -155,17 +157,23 @@ global_initialization:initialization_expression ';'
 							ls->SetCompileStructTable($1);	
 				     }
 				     ;
- 
+
+function_parameter_list:VARIDENTIFIER{ $$ = new FunctionParameter($1);}
+					   |VARIDENTIFIER ASSIGN_ASSIGN assignment_expression_definition
+					   {
+							$$ = new FunctionParameter($1,$3);
+					   }
+					   ; 
 
 
-function_parameter:VARIDENTIFIER
+function_parameter:function_parameter_list
 				   {
 				   		$$ = new FunctionParameterStatement();
-				   		$$->AddChilder(new FunctionParameter($1));
+				   		$$->AddChilder($1);
 				   }
-				   |function_parameter ','  VARIDENTIFIER 
+				   |function_parameter ','  function_parameter_list 
 				   {
-						$1->AddChilder(new FunctionParameter($3));
+						$1->AddChilder($3);
 				   }
 				   ;	
 
@@ -208,6 +216,9 @@ primary_expression:dict_declare{
 					$$=$1;
 				   }
 				   |'(' assignment_expression_definition ')'{$$ = $2;}
+				   | TYPEOF '(' assignment_expression_definition ')'{
+						$$ = new TypeOfExpression($3);
+				   }
 				   ;
 
 
@@ -303,7 +314,8 @@ statement_list:statement
 					}
 			   }					
 			   ;
-
+			   
+			   
 prefix_expression:list_element {$$ =$1;}
 				  |'-' prefix_expression
 				  {
@@ -446,7 +458,9 @@ conditional_expression:logical_or_expression{
 
 
 
-indentifier_expression:VARIDENTIFIER{$$ = new VarIdentIfier($1);}
+indentifier_expression:VARIDENTIFIER{
+							$$ =new VarIdentIfier($1);
+					  }
  					  |GLOBALVARIDENTIFIER{
  						StatementList *ls = (StatementList*)parm;
 						ls->AddStringConstant(string($1));
@@ -541,12 +555,12 @@ dict_declare:'(' dict_statement ')'{ $$ = $2;};
 		    
 
 Initialization_Definition:indentifier_expression {
-					     InitializationDefinition* ad = new InitializationDefinition($1->name,0);
+					     InitializationDefinition* ad = new InitializationDefinition($1,0);
 						 ad->ModfiyScope(LOCAL);
 						 $$ = ad;
 				}
 				|indentifier_expression ASSIGN_ASSIGN assignment_expression_definition{
-						InitializationDefinition* ad = new InitializationDefinition($1->name,$3);
+						InitializationDefinition* ad = new InitializationDefinition($1,$3);
 						ad->ModfiyScope(LOCAL);
 						$$ = ad;
 				}

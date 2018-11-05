@@ -12,7 +12,26 @@
 #define SAVESTACKID     int _tempstackid =sl->StackID;
 #define RESTORESTACKID  sl->StackID = _tempstackid;
 
-
+//上次用for循环递归出错,所以改成宏
+/*
+Statement* BreakExpression::FindParent(Statement* p)
+{
+	if(p->ParentNode==0)
+	{
+		return 0;
+	}else
+	{
+		if(p->ParentNode->NType!=MNT_WhileStatement  && p->ParentNode->NType!=MNT_ForStatement)
+		{
+			FindParent(p->ParentNode);
+		}else
+		{
+			return p->ParentNode;
+		}
+	}
+	//return 0;
+	
+}*/
 #define FINDPARENT(p) while(true){\
 						if(p==0)\
 						{\
@@ -28,17 +47,20 @@
 						}\
 					 }
 
-
-struct BuiltinTypeValue
-{
-	double d;
-	int i;
-	hashValue hash;
-	string str;
-	pInst p;
-	bool b;
-	ValueType v;
-};
+#define ISTOPLEVLE(p) while(true){\
+						if(p==0)\
+						{\
+							break;\
+						}\
+						if(p->NType!=MNT_FunctionDefinition)\
+						{\
+							p = p->ParentNode;\
+							continue;\
+						}else\
+						{\
+							break;\
+						}\
+					 }
 
 class ReturnExpression;
 
@@ -72,6 +94,7 @@ public:
 	void SetNull();
 	void SetFunctionPointerOrPack(string str,int type);
 	void Release();
+	BuiltinTypeValue GetBuiltinTypeValue();
 private:
 	BuiltinTypeValue v;
 };
@@ -89,6 +112,7 @@ public:
 		return codelength;
 	};	
 	int GetParamerCount();
+	void GetDefaultValueList();
 
 private:	
 	int codelength;
@@ -98,12 +122,16 @@ private:
 
 class FunctionParameter:public Statement{
 public:
-	string name;
 	FunctionParameter(string s);
+	FunctionParameter(string s,Statement* _defaultvalue);
 	void CreateCode();
 	void Release();
+	Statement* GetDefalutValue();
+	string GetParameterName();
 private:
-	
+	Statement* defaultvalue;
+	string name;
+
 };
 
 class TryParameter:public Statement{
@@ -134,6 +162,9 @@ public:
 	void InsertChilder(Statement* s);
 	int Count();
 	void Release();
+	vector<int>* GetDefaultValueList();
+private:
+	vector<int>* defalutvaluelengthlist;
 };
 
 class TryParameterStatement:public Statement{
@@ -222,7 +253,7 @@ private:
 
 class InitializationDefinition:public Statement{
 public:
-	InitializationDefinition(string _name,Statement * _e);
+	InitializationDefinition(Statement * _name,Statement * _e);
 	~InitializationDefinition();
 	void CreateCode();
 	void ModfiyScope(Scope _scope);
@@ -231,6 +262,7 @@ public:
 private:
 	Scope scope;
 	Statement* e;
+	Statement* n;
 	BuiltinTypeDeclare* btd;
 };
 
@@ -472,6 +504,7 @@ public:
 private:
 	Statement* s;
 	BuiltinTypeDeclare* btd;
+	int type;
 };
 
 
@@ -554,11 +587,21 @@ private:
 
 class NopExpression:public Statement{
 public:
-	NopExpression(){}
+	NopExpression(){wfileaddressline = lineno;}
 	~NopExpression(){}
 	void Release();
 	void CreateCode();
 
+};
+
+class TypeOfExpression:public Statement{
+public:
+	TypeOfExpression(Statement* _exprssion);
+	~TypeOfExpression();
+	void Release();
+	void CreateCode();
+private:
+	Statement* exprssion;
 };
 
 #endif

@@ -2,6 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by Compile.rc
 //
+#define IDI_ICON1                       101
 
 // Next default values for new objects
 // 

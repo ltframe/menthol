@@ -26,6 +26,16 @@
 typedef void (*initfuncallback)();
 
 
+#define FINDGARBAGE(T,S)\
+	    vector<Garbage*>* list = MGc::GetGarbageCollect();\
+		VECTORFORSTART(Garbage*,list,it)\
+			if((*it)->v==T && !strcmp((*it)->string,S)){\
+				(*it)->mark = 0;\
+				return (*it);\
+			}\
+		VECTORFOREND\
+
+
 namespace Vm
 {
 	void Init();
@@ -38,8 +48,8 @@ namespace Vm
 	Garbage* GetStringConstants(int i);
 	void InitStack(StackState v1,StackState  v2);
 	int GetRunTimeRecored(string name);
-	FunctionAtter GetRunTimeFunctionAtter(hashValue hash);
-	StackState FindGlobalMemory(hashValue hash);
+	FunctionAtter GetRunTimeFunctionAtter(hashValue hash,RunTimeState* _currentruntimestate);
+	StackState FindGlobalMemory(hashValue hash,RunTimeState* _curentruntimestate,RunTimeState* _callruntimestate);
 	void EntryPoint(PackageAttr pa,char*);
 	void InitCode(Instruction x,int &codep,vector<Instruction>& codealllist);
 	void RestoreGlobalMemory(StackState s);
@@ -49,7 +59,7 @@ namespace Vm
 	Garbage* CreateDict();
 	Garbage* CreateString(char* str);
 	Garbage* CreateDictKeyString(hashValue str);
-	const char* GetStringConstantsByHash(hashValue hash);
+	const char* GetStringConstantsByHash(hashValue hash,RunTimeState* _runtimestate);
 	const char* GetDictKeyByHash(hashValue hash);
 	void CreateDictKeyString(char* s);
 	void CreateFunctionCall(int pc);
@@ -58,5 +68,8 @@ namespace Vm
 	void Push_Array(pArray arr);
 	void Push_Dict(pDict arr);
 	StackState CallFunction(StackState fu);
+	Instruction* GetCurrentCodeList();
+	Instruction* GetCodeListStart();
+	vector<MentholDebug> *GetDebugList();
 };
 #endif

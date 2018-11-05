@@ -1,7 +1,6 @@
-import "MDict";
 _mmain:$a,$c
 {	
-	var $arr = {1,2,3,4,6,7};
+		var $arr = {1,2,3,4,6,7};
 	for(var $i in $arr)
 	{
 		MIo.Out($i);
@@ -11,10 +10,9 @@ _mmain:$a,$c
 	{
 		MIo.Out($i);
 	}
-	$arr =(key1::"key1",key2::"key2");
-	for(var $i in $arr)
+	$arr =(key1::"value1",key2::"value2");
+	for(var $key,$value in $arr)
 	{
-		MIo.Out(MDict.GetKey($arr,$i));
-		MIo.Out(MDict.GetValue($arr,$i));
+		MIo.Out($key+":"+$value);
 	}
 }

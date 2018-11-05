@@ -1,0 +1,14 @@
+import "lib/CJson";
+
+_mmain:$a,$c
+{	
+		
+		var $s ="{\"name\":\"fengxin\",\"passwd\":\"123\",\"num\":[{\"rrr\":\"ffffffffff\"}]}";
+		var $j = CJson.JsonParse($s);
+		MIo.Out(CJson.GetObjectItem($j,"name"));MIo.Out(CJson.GetObjectItem($j,"passwd"));
+		var $m = CJson.GetObjectItem($j,"num");
+		var $count = CJson.GetArraySize($m);
+		var $ar = CJson.GetArrayItem($m,0);	
+		MIo.Out(CJson.Type($m));
+		MIo.Out(CJson.GetObjectItem($ar,"rrr"));
+}

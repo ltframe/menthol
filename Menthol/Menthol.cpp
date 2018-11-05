@@ -5,15 +5,27 @@
 #include "Vm.h"
 #include <Windows.h>
 #include <intrin.h>
-#include "MGc.h"
 char* currentyyfile;
 // 这是导出函数的一个示例。
+
+static PrintErrorFunc _PrintCompileErrorFunc = 0;
+static PrintErrorFunc _PrintRunTimerrorFunc = 0;
+
+
+void SetPrintCompileErrorFunc(PrintErrorFunc _pef)
+{
+	_PrintCompileErrorFunc = _pef;
+}
+void SetPrintRunTimeErrorFunc(PrintErrorFunc _pef)
+{
+	_PrintRunTimerrorFunc = _pef;
+}
+/*
 int Compile(char** files,int c)
 {
 	StatementList *als =new StatementList();
 	MCommon* _WCommon  = new MCommon();
 	MError* _MError = new MError();
-
 	for(int f=0;f<c;f++){
 		FILE* file;
 		file = fopen(files[f], "r");
@@ -26,14 +38,23 @@ int Compile(char** files,int c)
 		als->currentpackagename = _WCommon->StringPathSplit(string(files[f])).name;
 		als->ResetInitPackageList();
 		yyparse(als);
-		als->CreateCode(als->CompileStructTable);
-		MFile::CreateInstance()->GenerateFileData(als->CodeList,0,0,0,files[f]);
-		/*for (std::vector<Statement*>::iterator it =als->CompileStructTable->begin() ; it != als->CompileStructTable->end(); ++it)
-		{*/
+		PathInfo pinfo = MCommon::CreateInstance()->StringPathSplit(string(files[f]));
+
+
+		if(pinfo.extension!=MENTHOLEXTENSION && pinfo.extension!=MENTHOLPACKAGEEXTENSION)
+		{
+			fprintf(stderr,"%s is not menthol execute or package\n",files[f]);
+			yyerrorcount++;
+			continue;
+		}
+		als->CreateCode(als->CompileStructTable,pinfo.extension,false);
+		if(!yyerrorcount){
+			MFile::CreateInstance()->GenerateFileData(als->CodeList,0,0,0,pinfo.extension,pinfo.name);
+		}
+
 		VECTORFORSTART(Statement*,als->CompileStructTable,it)
 			(*it)->Release();
 		VECTORFOREND
-		/*}*/
 		fclose(file);
 		als->CompileStructTable->clear();
 		als->ResetIpi();
@@ -45,7 +66,8 @@ int Compile(char** files,int c)
 		als->GetFunctionList()->clear();
 		als->GetStringConstants()->clear();
 		als->GetDictKeyConstants()->clear();
-		lineno  = 0;
+		als->RestDebugIpi();
+		lineno  = 1;
 	}
 	
 	
@@ -57,27 +79,46 @@ int Compile(char** files,int c)
 	}
 	return 0;
 }
+*/
 
-
-int Compile2(char* cfile)
+int Compile2(char* cfile,bool isdebug)
 {
 	StatementList *als =new StatementList();
 	MCommon* _WCommon  = new MCommon();
 	MError* _MError = new MError();
-
+	MError::CreateInstance()->SetCompilePrintErrorFunc(_PrintCompileErrorFunc);
 	FILE* file;
 	file = fopen(cfile, "r");
+	currentyyfile = cfile;
 	if (!file) {
-		fprintf(stderr,"could not open %s\n",cfile);
+		char str[256]={0};
+		sprintf(str,"could not open %s",cfile);
+		MError::CreateInstance()->PrintError(str,-1);
 		return 0;
 	}
-	currentyyfile = cfile;
+	
 	yyin = file;
+	yyrestart(yyin);
 	als->currentpackagename = _WCommon->StringPathSplit(string(cfile)).name;
 	als->ResetInitPackageList();
 	yyparse(als);
-	als->CreateCode(als->CompileStructTable);
-	MFile::CreateInstance()->GenerateFileData(als->CodeList,0,0,0,cfile);
+	PathInfo pinfo = MCommon::CreateInstance()->StringPathSplit(cfile);
+
+
+	if(pinfo.extension!=MENTHOLEXTENSION && pinfo.extension!=MENTHOLPACKAGEEXTENSION)
+	{
+		delete als;
+		delete _WCommon;
+		delete _MError;
+		char str[256]={0};
+		sprintf(str,"%s is not menthol execute or package",cfile);
+		MError::CreateInstance()->PrintError(str,-1);
+		return 0;
+	}
+	als->CreateCode(als->CompileStructTable,pinfo.extension,isdebug);
+	if(!yyerrorcount){
+		MFile::CreateInstance()->GenerateFileData(als->CodeList,0,0,0,pinfo.extension,pinfo.name);
+	}
 	/*for (std::vector<Statement*>::iterator it =als->CompileStructTable->begin() ; it != als->CompileStructTable->end(); ++it)
 	{*/
 	VECTORFORSTART(Statement*,als->CompileStructTable,it)
@@ -85,7 +126,7 @@ int Compile2(char* cfile)
 	VECTORFOREND
 	/*}*/
 	fclose(file);
-	als->CompileStructTable->clear();
+	
 	als->ResetIpi();
 	als->SetLocalCountValue(0);
 	als->CodeList->clear();
@@ -95,9 +136,10 @@ int Compile2(char* cfile)
 	als->GetFunctionList()->clear();
 	als->GetStringConstants()->clear();
 	als->GetDictKeyConstants()->clear();
-	lineno  = 0;
-	
-	
+	als->GetMentholDebug()->clear();
+	als->CompileStructTable->clear();
+	lineno  = 1;
+	yyerrorcount = 0;
 	delete als;
 	delete _WCommon;
 	delete _MError;
@@ -112,20 +154,24 @@ int Run(char* files,char* arg1,char* arg2)
 {
 	new MCommon();
 	new MError();
+	MError::CreateInstance()->SetRunTimePrintErrorFunc(_PrintRunTimerrorFunc);
 	Vm::Init();
 
 	StackState v1;
 	v1.v = M_NULL;
+	v1.i=0;
 		
 	StackState v2;
 	v2.v = M_NULL;
+	v2.i=0;
+
 
 	if(arg1){
-		v1.str=MGc::CreateString(arg1);
+		v1.str=Vm::CreateString(arg1);
 		v1.v = M_STRING;
 	}
 	if(arg2){
-		v2.str=MGc::CreateString(arg2);
+		v2.str=Vm::CreateString(arg2);
 		v2.v = M_STRING;
 	}
 
@@ -139,9 +185,55 @@ int Run(char* files,char* arg1,char* arg2)
 	strcpy(pa.pname,pinfo.name.c_str());
 	strcpy(pa.fname,files);
 	pa.ptype = MPA_PACKAGE;
-	//{const_cast<char*>(pinfo.name.c_str()),const_cast<char*>(pinfo.filename.c_str()),WPA_PACKAGE, MCommon::CreateInstance()->ELFHash(pinfo.name)};
-	Vm::EntryPoint(pa,const_cast<char*>((pinfo.drive+pinfo.dir).c_str()));
-	//delete v;
+
+
+	std::ifstream t;  
+	int length;  
+	t.open(files,std::ios::in | ofstream::binary);      // open input file  
+	t.seekg(0, std::ios::end);    // go to the end  
+	length = t.tellg();           // report location (this is the length)  
+	t.seekg(0, std::ios::beg);    // go back to the beginning  
+	char *bufferf = new char[length];    // allocate memory for a buffer of appropriate dimension  
+	t.read(bufferf, length);       // read the whole file into the buffer  
+	t.close();                    // close file handle  
+
+
+	string flag;
+	int i=0;
+
+
+	CodeInst ci;
+	ci.m.c1 = bufferf[i++];
+	ci.m.c2 = bufferf[i++];
+	ci.m.c3 = bufferf[i++];
+	ci.m.c4 = bufferf[i++];
+	flag.push_back(ci.i);
+
+	ci.m.c1 = bufferf[i++];
+	ci.m.c2 = bufferf[i++];
+	ci.m.c3 = bufferf[i++];
+	ci.m.c4 = bufferf[i++];
+	flag.push_back(ci.i);
+
+	ci.m.c1 = bufferf[i++];
+	ci.m.c2 = bufferf[i++];
+	ci.m.c3 = bufferf[i++];
+	ci.m.c4 = bufferf[i++];
+	flag.push_back(ci.i);
+
+	if(flag == MENTHOLPACKAGEDLLEXTENSION2){
+		MError::CreateInstance()->PrintRunTimeError(files+string(" is menthol package"));
+		return 0;
+	}
+
+	if(flag != MENTHOLEXECUTEEXTENSION2){
+		MError::CreateInstance()->PrintRunTimeError(files+string(" is not menthol executable program"));
+		return 0;
+	}
+
+	delete[] bufferf;
+	Vm::EntryPoint(pa,CONSTCAST(char)((pinfo.drive+pinfo.dir).c_str()));
+	
 	return 0;
 }
 
@@ -165,7 +257,7 @@ StackState GetParam(int index)
 StackState Array_CreateArray()
 {
 	StackState sk;
-	sk.parray = MGc::CreateArray();
+	sk.parray = Vm::CreateArray();
 	sk.v= M_ARRAY;	
 	return sk;
 }
@@ -173,27 +265,26 @@ StackState Array_CreateArray()
 
 int Array_Length(pArray p)
 {
-	vector<StackState>* ar  = static_cast<vector<StackState>*>(p->array);
+	VECOTRSTACKSTATEPOINTER ar  = STATICCASTPARRAY(p);
 	return ar->size();
 }
 
 StackState Array_Get(pArray sk1,int index){
 
-	vector<StackState>* ar  = static_cast<vector<StackState>*>(sk1->array);
+	//vector<StackState>* ar  = static_cast<vector<StackState>*>(sk1->array);
+	VECOTRSTACKSTATEPOINTER ar  = STATICCASTPARRAY(sk1);
 	return ar->at(index);;
 }
 
 void Array_Set(pArray sk1,StackState sk2,int index){
 
-	vector<StackState>* ar  = static_cast<vector<StackState>*>(sk1->array);
-	//StackState  _systemtype;
-	//MGc::MarkGc(ar->at(index));
+	VECOTRSTACKSTATEPOINTER ar  = STATICCASTPARRAY(sk1);
 	ar->at(index)=sk2;
 }
 
 pString Array_Join(pArray a1,char* link)
 {
-	vector<StackState>* ar1  = static_cast<vector<StackState>*>(a1->array);
+	VECOTRSTACKSTATEPOINTER ar1  = STATICCASTPARRAY(a1);
 	string str;
 	//for (std::vector<StackState>::iterator it = ar1->begin() ; it != ar1->end(); ++it)
 	//{
@@ -234,18 +325,18 @@ pString Array_Join(pArray a1,char* link)
 	//}
 	VECTORFOREND
 	str.erase(str.end() - 1);  
-	return  Vm::CreateString(const_cast<char*>(str.c_str()));
+	return  Vm::CreateString(CONSTCAST(char)(str.c_str()));
 }
 
 pArray Array_Reverse(pArray a1)
 {
-	vector<StackState>* ar1  = static_cast<vector<StackState>*>(a1->array);
+	VECOTRSTACKSTATEPOINTER ar1  = STATICCASTPARRAY(a1);
 	reverse(ar1->begin(),ar1->end());
 	return a1;
 }
 
 void Array_Push(pArray p,StackState st){
-	vector<StackState>* ar1  = static_cast<vector<StackState>*>(p->array);
+	VECOTRSTACKSTATEPOINTER ar1  =STATICCASTPARRAY(p);
 	ar1->push_back(st);
 }
 

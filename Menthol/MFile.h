@@ -28,7 +28,7 @@ public:
 	MFile(void);
 	~MFile(void);
 	static  MFile* CreateInstance();	
-	void GenerateFileData(vector<Instruction>* codelist,vector<StringAtter>* stringlist,vector <FunctionAtter> * funcitonlist,vector <const char*> * importfiles,string file);
+	void GenerateFileData(vector<Instruction>* codelist,vector<StringAtter>* stringlist,vector <FunctionAtter> * funcitonlist,vector <const char*> * importfiles,string extension,string name);
 	void WReadImportFiles(const char* fp,stack<const char*> *filetree);
 	bool IsFileExist(string csFile);
 private:	

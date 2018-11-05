@@ -23,6 +23,11 @@ long GetGarBageMemorySize()
 	return garbagememorysize;
 }
 
+vector<Garbage*> * GetGarbageCollect()
+{
+	return garbagecollect;
+}
+
 void CopyToGlobalGarBage(Garbage* g)
 {
 	globalgarbagelist->push_back(g);
@@ -36,7 +41,7 @@ void MarkGlobalGarBage()
 	VECTORFORSTART(Garbage*,globalgarbagelist,it)
 		if((*it)->v==M_ARRAY)
 		{
-			MarkArray((vector<StackState>*)(*it)->array);	
+			MarkArray((VECOTRSTACKSTATEPOINTER)(*it)->array);	
 		}
 		
 		if((*it)->v==M_DICT)
@@ -87,8 +92,8 @@ void ClearGarbage()
 				continue;
 			}
 			if((*it)->v==M_ARRAY){
-				delete (vector<StackState>*)((*it)->array);
-				garbagememorysize-=sizeof(vector<StackState>);
+				delete (VECOTRSTACKSTATEPOINTER)((*it)->array);
+				garbagememorysize-=sizeof(VECOTRSTACKSTATE);
 				delete (*it);
 				garbagememorysize-=sizeof(Garbage);
 				it = garbagecollect->erase(it);
@@ -113,7 +118,7 @@ void ClearGarbage()
 
 
 
-Garbage* CollectGarbage_Array(vector<StackState>* p)
+Garbage* CollectGarbage_Array(VECOTRSTACKSTATEPOINTER p)
 {
 	Garbage *g =new Garbage(p);
 	garbagememorysize+=sizeof(Garbage);
@@ -173,8 +178,8 @@ Garbage* CreateNullString(size_t len)
 
 Garbage* CreateArray()
 {
-	vector<StackState>* ar =new vector<StackState>();
-	garbagememorysize+=sizeof(vector<StackState>);
+	VECOTRSTACKSTATEPOINTER ar =new VECOTRSTACKSTATE();
+	garbagememorysize+=sizeof(VECOTRSTACKSTATE);
 	return CollectGarbage_Array(ar);
 }
 
@@ -185,14 +190,14 @@ Garbage* CreateDict()
 	return CollectGarbage_Dict(ma);
 }
 
-void MarkArray(vector<StackState>* arr){
+void MarkArray(VECOTRSTACKSTATEPOINTER arr){
 
 	/*for (std::vector<StackState>::iterator it = arr->begin() ; it != arr->end();++it)
 	{	*/
 	VECTORFORSTART(StackState,arr,it)
 		if((*it).v==M_ARRAY){
 				MarkGarbage((*it).parray,1);
-				MarkArray((vector<StackState>*)(*it).parray->array);			
+				MarkArray((VECOTRSTACKSTATEPOINTER)(*it).parray->array);			
 		}
 		if((*it).v==M_STRING)		
 		{
@@ -220,7 +225,7 @@ void MarkDict(map<hashValue,StackState>* arr){
 		}
 		if((*it).second.v==M_ARRAY){
 			MarkGarbage((*it).second.parray,1);
-			MarkArray((vector<StackState>*)(*it).second.parray->array);	
+			MarkArray((VECOTRSTACKSTATEPOINTER)(*it).second.parray->array);	
 		}
 	}
 }

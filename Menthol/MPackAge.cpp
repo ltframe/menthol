@@ -12,6 +12,8 @@ MPackAge::MPackAge(void)
 }
 MPackAge::~MPackAge(void)
 {
+		_inst=0;
+
 }
 
 PackAgeType MPackAge::GetPackAgeType(char* f)

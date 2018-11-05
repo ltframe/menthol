@@ -53,8 +53,21 @@ void FunctionDefinition::CreateCode()
 int FunctionDefinition::GetParamerCount()
 {
 	if(Member->at(0)==0)return 0;
-	FunctionParameterStatement* _fps =static_cast<FunctionParameterStatement*>(Member->at(0));
+	FunctionParameterStatement* _fps =STATICCAST(FunctionParameterStatement,Member->at(0));
 	return _fps->Count();
+}
+
+
+void FunctionDefinition::GetDefaultValueList()
+{
+	StatementList* sl = StatementList::GetInstance();
+	FunctionParameterStatement* _fps =STATICCAST(FunctionParameterStatement,Member->at(0));
+	if(_fps){
+		vector<int>* list =  _fps->GetDefaultValueList();
+		VECTORFORSTART(int,list,it)
+			sl->AddCode(*it);
+		VECTORFOREND
+	}
 }
 FunctionDefinition::~FunctionDefinition()
 {
@@ -81,19 +94,54 @@ FunctionParameter::FunctionParameter(string s){
 	wfileaddressline = lineno;
 	name = s;
 	NType = MNT_FunctionParameter;
-	
+	defaultvalue = 0;
 }
+
+
+FunctionParameter::FunctionParameter(string s,Statement* _defaultvalue){
+	wfileaddressline = lineno;
+	name = s;
+	NType = MNT_FunctionParameterWithDefault;
+	defaultvalue = _defaultvalue;
+	/*if(_defaultvalue->NType==MNT_PlusExpression || _defaultvalue->NType==MNT_MinusExpression)
+	{
+		ValueType v = static_cast<BuiltinTypeDeclare*>(_defaultvalue)->GetBuiltinTypeValue().v;
+		if(v!=M_NUMBER && v!=M_DOUBLE){
+			MError::CreateInstance()->PrintError("There are no \"-\" operators that match these operands");
+		}
+	}*/
+}
+
 void FunctionParameter::CreateCode()
 {
 	StatementList* sl = StatementList::GetInstance();
-	sl->StackID++;
-	sl->AddLocalMemory(name);
+	if(defaultvalue){
+		defaultvalue->CreateCode();
+	}else
+	{
+		sl->StackID++;
+	}
+	if(!sl->AddLocalMemory(name,wfileaddressline))
+	{
+		MError::CreateInstance()->PrintError(name+" redefinition",wfileaddressline);
+	}
+
 }
 
+Statement* FunctionParameter::GetDefalutValue()
+{
+	return defaultvalue;
+}
+
+string FunctionParameter::GetParameterName()
+{
+	return name;
+}
 void FunctionParameter::Release()
 {	
 	DELETETHIS
 }
+
 
 VarIdentIfier::VarIdentIfier(string s){
 	wfileaddressline = lineno;
@@ -112,16 +160,16 @@ void VarIdentIfier::CreateCode()
 		hashValue index = sl->FindGlobalMemory(name).hash;
 		if(index==0)
 		{
-			MError::CreateInstance()->PrintError(name +string(" undeclared identifier"));//未找到	
+			MError::CreateInstance()->PrintError(name +string(" undeclared identifier"),wfileaddressline);//未找到	
 		}else
 		{
-			sl->AddCode(OP_LOADM);		
+			sl->AddCode(OP_LOADM,wfileaddressline);		
 		}
-		sl->AddCode(index);
+		sl->AddCode(index,wfileaddressline);
 	}else
 	{
-		sl->AddCode(OP_LOADS);
-		sl->AddCode(localinfo.index);
+		sl->AddCode(OP_LOADS,wfileaddressline);
+		sl->AddCode(localinfo.index,wfileaddressline);
 	}
 	sl->StackID++;
 }
@@ -139,12 +187,18 @@ FunctionParameterStatement::FunctionParameterStatement(){
 	Member=new vector <Statement*>();
 	NType = MNT_FunctionParameterStatement;
 	wfileaddressline = lineno;
+	defalutvaluelengthlist = new vector<int>();
 }
 void FunctionParameterStatement::AddChilder(Statement* s)
 {
 	if(s)
 	{
 		s->ParentNode = this;
+	}
+	FunctionParameter* _f = (FunctionParameter*)s;
+	if(Member->size()!=0 && ((FunctionParameter*)Member->at(Member->size()-1))->GetDefalutValue()!=0 && _f->GetDefalutValue()==0)
+	{
+		MError::CreateInstance()->PrintError("The default argument is not at the end of the parameter list,"+_f->GetParameterName());	
 	}
 	Member->push_back(s);
 }
@@ -155,11 +209,17 @@ void FunctionParameterStatement::CreateCode()
 	//for (std::vector<Statement*>::iterator it = Member->begin() ; it != Member->end(); ++it)
 	//{	
 	VECTORFORSTART(Statement*,Member,it)
+		int length = sl->GetIpi();
 		(*it)->CreateCode();
+		int _length=sl->GetIpi()-length;
+		defalutvaluelengthlist->push_back(_length);
 	//}
 	VECTORFOREND
 }
-
+vector<int>* FunctionParameterStatement::GetDefaultValueList()
+{
+	return defalutvaluelengthlist;
+}
 void FunctionParameterStatement::InsertChilder(Statement* s)
 {
 	Member->insert(Member->begin(),s);
@@ -178,6 +238,7 @@ FunctionParameterStatement::~FunctionParameterStatement()
 		}
 	//}
 	VECTORFOREND
+	delete defalutvaluelengthlist;
 	delete Member;
 }
 
@@ -240,6 +301,7 @@ TernaryExpression::TernaryExpression(Statement* _exprssion1,Statement* _exprssio
 	exprssion2 = _exprssion2;
 	exprssion3 = _exprssion3;
 	NType= MNT_TernaryExpression;
+	wfileaddressline = lineno;
 }
 void TernaryExpression::CreateCode()
 {
@@ -247,15 +309,15 @@ void TernaryExpression::CreateCode()
 
 	SAVESTACKID
 	exprssion1->CreateCode(); //this is if statment condition
-	sl->AddCode(OP_TJMP);
+	sl->AddCode(OP_TJMP,wfileaddressline);
 	int postion1=sl->GetIpi();
-	sl->AddCode(OP_NOP);//this is else postion
+	sl->AddCode(OP_NOP,wfileaddressline);//this is else postion
 
 	//if the condition is true,then code run,in end,jmp
 	exprssion2->CreateCode();
-	sl->AddCode(OP_UJMP);
+	sl->AddCode(OP_UJMP,wfileaddressline);
 	int postion2=sl->GetIpi();
-	sl->AddCode(OP_NOP);
+	sl->AddCode(OP_NOP,wfileaddressline);
 
 	sl->SetCode(sl->GetIpi()-postion1,postion1); // set else postion
 	exprssion3->CreateCode();
@@ -324,8 +386,8 @@ void CodeBlockStatement::CreateCode()
 	RESTORESTACKID
 	sl->GetLocalMemory()->resize(sopcelocalvars);
 	sl->SetLocalCountValue(sopcelocalvars);
-	sl->AddCode(OP_ADJUSTSP);
-	sl->AddCode(sl->FindLastLocalMemory().index);
+	sl->AddCode(OP_ADJUSTSP,wfileaddressline);
+	sl->AddCode(sl->FindLastLocalMemory().index,wfileaddressline);
 }
 
 ExpressionList::ExpressionList()
@@ -403,13 +465,16 @@ void InitializationList::ModfiyMemberScope(Scope _scope)
 	StatementList* sl = StatementList::GetInstance();
 	//for (std::vector<Statement*>::iterator it = Member->begin() ; it != Member->end(); ++it)
 	//{
-	VECTORFORSTART(Statement*,Member,it)
-		InitializationDefinition* initdef = static_cast<InitializationDefinition*>(*it);
+	VECTORFORSTART(Statement*,Member,it)		
+		InitializationDefinition* initdef = STATICCAST(InitializationDefinition,*it);
 		if(!sl->IsGlobalVar(initdef->name)){
 			MError::CreateInstance()->PrintError("Local variables are not allowed to be declared externally "+initdef->name);	
 		}
-		/*if(initdef->GetRightNodeType()==MNT_FunctionCall || initdef->GetRightNodeType()==MNT_PackAgeFunCall){
-			MError::CreateInstance()->PrintError("全局变量不能初始化为函数"+name);	
+		/*else
+		{
+			if (initdef->GetRightNodeType() == MNT_FunctionCall || initdef->GetRightNodeType() == MNT_PackAgeFunCall){
+				MError::CreateInstance()->PrintError("Global variables " + string(name) + " cannot be initialized to functions call");
+			}
 		}*/
 		initdef->ModfiyScope(_scope);
 	//}
@@ -425,17 +490,20 @@ AssignmentDefinition::AssignmentDefinition(Statement * _s,string _oper,Statement
 	} 
 	
 
+
+
+
 	if(_s->NType==MNT_ArrayElement){
-		ArrayElement* ae = static_cast<ArrayElement*>(_s);
+		ArrayElement* ae = STATICCAST(ArrayElement,_s);
 		ae->SetOpt(2);
 
 	}
 	if(_s->NType==MNT_DictElement){
-		DictElemenet* ae = static_cast<DictElemenet*>(_s);
+		DictElemenet* ae = STATICCAST(DictElemenet,_s);
 		ae->SetOpt(2);
 	}
 	if(_s->NType==MNT_PackAgeExpresson){
-		PackAgeExpresson* ae = static_cast<PackAgeExpresson*>(_s);
+		PackAgeExpresson* ae = STATICCAST(PackAgeExpresson,_s);
 		ae->SetOpt(2);
 	}
 	
@@ -459,7 +527,16 @@ AssignmentDefinition::~AssignmentDefinition(){
 }
 void AssignmentDefinition:: CreateCode()
 {
-		StatementList* sl = StatementList::GetInstance();
+
+
+	StatementList* sl = StatementList::GetInstance();
+	/*
+	Statement* p = this;
+	ISTOPLEVLE(p)
+
+	if ((e->NType == MNT_FunctionCall || e->NType == MNT_PackAgeFunCall) && sl->IsGlobalVar(s->name) && p == 0){
+		MError::CreateInstance()->PrintError("Function calls cannot be assigned to global variables " + s->name);
+	}*/
 	bytenumber = sl->GetIpi();
 
 	if(s->NType==MNT_VarIdentIfier)
@@ -471,20 +548,20 @@ void AssignmentDefinition:: CreateCode()
 			LocalVarAttr lva = sl->FindLocalMemory(name);
 			if(lva.index==-1)
 			{
- 					MError::CreateInstance()->PrintError(name+" undeclared identifier");	//未找到
+ 					MError::CreateInstance()->PrintError(name+" undeclared identifier",wfileaddressline);	//未找到
 			}else
 			{
-				sl->AddCode(OP_STORES);
-				sl->AddCode(lva.index);
+				sl->AddCode(OP_STORES,wfileaddressline);
+				sl->AddCode(lva.index,wfileaddressline);
 				//sl->StackID++;
 			}
 		}else
 		{
 				if(sl->FindGlobalMemory(name).hash==-1){
-					MError::CreateInstance()->PrintError(string(name +string(" undeclared identifier")));//未找到	
+					MError::CreateInstance()->PrintError(string(name +string(" undeclared identifier")),wfileaddressline);//未找到	
 				}
-				sl->AddCode(OP_STOREM);
-				sl->AddCode(MCommon::CreateInstance()->ELFHash(name));
+				sl->AddCode(OP_STOREM,wfileaddressline);
+				sl->AddCode(MCommon::CreateInstance()->ELFHash(name),wfileaddressline);
 
 		}
 		//sl->StackID++;
@@ -520,7 +597,7 @@ void AssignmentDefinition::Release()
 	DELETETHIS
 }
 
-InitializationDefinition::InitializationDefinition(string _name,Statement * _e):btd(0)
+InitializationDefinition::InitializationDefinition(Statement * _name,Statement * _e):btd(0)
 {
 	StatementList* sl = StatementList::GetInstance();
 	e = _e;
@@ -529,7 +606,8 @@ InitializationDefinition::InitializationDefinition(string _name,Statement * _e):
 		btd->SetNull();	
 		e = btd;
 	}
-	name = _name;
+	n = _name;
+	name = _name->name;
 	NType = MNT_InitializationExpression;
 	wfileaddressline = lineno;
 	e->ParentNode=this;
@@ -542,6 +620,8 @@ InitializationDefinition::~InitializationDefinition(){
 	if(btd){
 		btd->Release();
 	}
+
+	n->Release();
 }
 void InitializationDefinition::CreateCode()
 {
@@ -555,21 +635,21 @@ void InitializationDefinition::CreateCode()
 
 		if(scope==GLOBAL && !sl->AddGlobalMemory(name))
 		{
-			MError::CreateInstance()->PrintError(name+" redefinition");
+			MError::CreateInstance()->PrintError(name+" redefinition",wfileaddressline);
 		}
 		
 		if(scope==LOCAL)
 		{
-			if(!sl->AddLocalMemory(name))
+			if(!sl->AddLocalMemory(name,wfileaddressline))
 			{
-				MError::CreateInstance()->PrintError(name+" redefinition");
+				MError::CreateInstance()->PrintError(name+" redefinition",wfileaddressline);
 			}
 		}
 		if(scope==GLOBAL)
 		{
 			
-			sl->AddCode(OP_INITM);
-			sl->AddCode(sl->FindGlobalMemory(name).hash);
+			sl->AddCode(OP_INITM,wfileaddressline);
+			sl->AddCode(sl->FindGlobalMemory(name).hash,wfileaddressline);
 		}
 		RESTORESTACKID	
 		if(scope==LOCAL)
@@ -598,9 +678,15 @@ BuiltinTypeDeclare::BuiltinTypeDeclare()
 	wfileaddressline = lineno;
 }
 
+
+BuiltinTypeValue BuiltinTypeDeclare::GetBuiltinTypeValue()
+{
+	return v;
+}
 void BuiltinTypeDeclare::SetNull()
 {
 	v.v = M_NULL;
+	v.i=0;
 }
 
 void BuiltinTypeDeclare::SetNumber(int n)
@@ -651,38 +737,38 @@ void BuiltinTypeDeclare::CreateCode()
 	StatementList* sl = StatementList::GetInstance();
 	bytenumber = sl->GetIpi();
 	if(v.v==M_NUMBER){
-		sl->AddCode(OP_PUSHNUMBER);
-		sl->AddCode(v.i);
+		sl->AddCode(OP_PUSHNUMBER,wfileaddressline);
+		sl->AddCode(v.i,wfileaddressline);
 	    
 	}
 	if(v.v==M_DOUBLE){
-		sl->AddCode(OP_PUSHDOUBLE);
+		sl->AddCode(OP_PUSHDOUBLE,wfileaddressline);
 		int doubleindex = sl->FindDoubleConstant(v.d);
-		sl->AddCode(doubleindex);
+		sl->AddCode(doubleindex,wfileaddressline);
 	    
 	}
 	if(v.v==M_STRING){
-		sl->AddCode(OP_PUSHSTRING);
+		sl->AddCode(OP_PUSHSTRING,wfileaddressline);
 		int strindex = sl->FindStringConstant(v.str);
-		sl->AddCode(strindex);
+		sl->AddCode(strindex,wfileaddressline);
 		
 	}
 	if(v.v==M_BOOL){
-		sl->AddCode(OP_PUSHBOOL);
-		sl->AddCode(v.i);
+		sl->AddCode(OP_PUSHBOOL,wfileaddressline);
+		sl->AddCode(v.i,wfileaddressline);
 	}
 	if(v.v==M_NULL){
-		sl->AddCode(OP_PUSHRS);
+		sl->AddCode(OP_PUSHRS,wfileaddressline);
 
 	}
 	if(v.v==M_FUN ){
-		sl->AddCode(OP_PUSHFUN);
-		sl->AddCode(v.i);
+		sl->AddCode(OP_PUSHFUN,wfileaddressline);
+		sl->AddCode(v.i,wfileaddressline);
 	}
 
 	if(v.v==M_PACKAGE){
-		sl->AddCode(OP_PUSHPACKAGE);
-		sl->AddCode(v.i);
+		sl->AddCode(OP_PUSHPACKAGE,wfileaddressline);
+		sl->AddCode(v.i,wfileaddressline);
 	}
 	sl->StackID++;
 }
@@ -721,47 +807,47 @@ void ArithmeticExpressionDefinition::CreateCode()
 	s1->CreateCode();
 	s2->CreateCode();
 	if(!strcmp(op.c_str(),"+")){
-		sl->AddCode(OP_ADD);
+		sl->AddCode(OP_ADD,wfileaddressline);
    }
    if(!strcmp(op.c_str(),"-")){
-		sl->AddCode(OP_SUB);
+		sl->AddCode(OP_SUB,wfileaddressline);
    }
    if(!strcmp(op.c_str(),"*")){
-		sl->AddCode(OP_MUL);
+		sl->AddCode(OP_MUL,wfileaddressline);
    }
    if(!strcmp(op.c_str(),"/")){
-		sl->AddCode(OP_DIV);
+		sl->AddCode(OP_DIV,wfileaddressline);
    }
    if(!strcmp(op.c_str(),"<")){
-		sl->AddCode(OP_LT);
+		sl->AddCode(OP_LT,wfileaddressline);
    }
    if(!strcmp(op.c_str(),">")){
-		sl->AddCode(OP_LE);
+		sl->AddCode(OP_LE,wfileaddressline);
    }
    if(!strcmp(op.c_str(),">=")){
-		sl->AddCode(OP_GEEQ);
+		sl->AddCode(OP_GEEQ,wfileaddressline);
    }  
    if(!strcmp(op.c_str(),"<=")){
-		sl->AddCode(OP_LEEQ);
+		sl->AddCode(OP_LEEQ,wfileaddressline);
    }   		
    if(!strcmp(op.c_str(),"==")){
-		sl->AddCode(OP_EQEQ);
+		sl->AddCode(OP_EQEQ,wfileaddressline);
    }  
    if(!strcmp(op.c_str(),"<>")){
-		sl->AddCode(OP_NEQ);
+		sl->AddCode(OP_NEQ,wfileaddressline);
    } 
    if(!strcmp(op.c_str(),"%")){
-		sl->AddCode(OP_MOD);
+		sl->AddCode(OP_MOD,wfileaddressline);
    } 
    
    if(!strcmp(op.c_str(),"<<")){
-		sl->AddCode(OP_SHIFTL);
+		sl->AddCode(OP_SHIFTL,wfileaddressline);
    }
    if(!strcmp(op.c_str(),">>")){
-		sl->AddCode(OP_SHIFTR);
+		sl->AddCode(OP_SHIFTR,wfileaddressline);
    }
    if(!strcmp(op.c_str(),"**")){
-		sl->AddCode(OP_POWER);
+		sl->AddCode(OP_POWER,wfileaddressline);
    }
 
    sl->StackID = sl->StackID-1;
@@ -810,9 +896,9 @@ void IfStatement::CreateCode()
 
 			if(it-Member->begin()==0)
 			{
-				sl->AddCode(OP_JMP);
+				sl->AddCode(OP_JMP,wfileaddressline);
 				postion1=sl->GetIpi();
-				sl->AddCode(OP_NOP);
+				sl->AddCode(OP_NOP,wfileaddressline);
 				sl->StackID--;
 			}
 		//}
@@ -831,9 +917,9 @@ void IfStatement::CreateCode()
 			{
 				SAVESTACKID
 				(*it)->CreateCode(); //this is if statment condition
-				sl->AddCode(OP_JMP);
+				sl->AddCode(OP_JMP,wfileaddressline);
 				postion1=sl->GetIpi();
-				sl->AddCode(OP_NOP);//this is else postion
+				sl->AddCode(OP_NOP,wfileaddressline);//this is else postion
 				sl->StackID--;
 				RESTORESTACKID
 			}			
@@ -841,11 +927,11 @@ void IfStatement::CreateCode()
 				//if the condition is true,then code run,in end,jmp
 				SAVESTACKID
 				(*it)->CreateCode();
-				sl->AddCode(OP_ADJUSTSP);
-				sl->AddCode(_tempstackid);
-				sl->AddCode(OP_UJMP);
+				sl->AddCode(OP_ADJUSTSP,wfileaddressline);
+				sl->AddCode(_tempstackid,wfileaddressline);
+				sl->AddCode(OP_UJMP,wfileaddressline);
 				postion2=sl->GetIpi();
-				sl->AddCode(OP_NOP);
+				sl->AddCode(OP_NOP,wfileaddressline);
 				RESTORESTACKID
 			}
 
@@ -878,6 +964,7 @@ WhileStatement::WhileStatement()
 WhileStatement::~WhileStatement()
 {
 	DESTRUCTORRELEASE
+	delete breakpostionvector;
 	delete Member;
 }
 void WhileStatement:: AddChilder(Statement* s)
@@ -907,17 +994,17 @@ void WhileStatement::CreateCode()
 		{	
 			postion1=sl->GetIpi(); //while开始位置，判断部分
 			(*it)->CreateCode();	
-			sl->AddCode(OP_JMP); //如果是FALSE 的跳转位置
+			sl->AddCode(OP_JMP,wfileaddressline); //如果是FALSE 的跳转位置
 			postion2=sl->GetIpi();
-			sl->AddCode(OP_NOP);
+			sl->AddCode(OP_NOP,wfileaddressline);
 			sl->StackID--;
 		}
 		if(it-Member->begin()==1){ //while的内容部分
 			(*it)->CreateCode();
-			sl->AddCode(OP_ADJUSTSP);
-			sl->AddCode(_tempstackid);
-			sl->AddCode(OP_UJMPS); //无条件跳转回开始位置
-			sl->AddCode(sl->GetIpi()-postion1);
+			sl->AddCode(OP_ADJUSTSP,wfileaddressline);
+			sl->AddCode(_tempstackid,wfileaddressline);
+			sl->AddCode(OP_UJMPS,wfileaddressline); //无条件跳转回开始位置
+			sl->AddCode(sl->GetIpi()-postion1,wfileaddressline);
 		}
 	//}
 	VECTORFOREND
@@ -956,6 +1043,9 @@ ForStatement::ForStatement(Statement* _assignment,Statement* _expression,Stateme
 	assignment =_assignment;
 	expression =_expression;
 	userexpression = _userexpression;
+	if(assignment->NType!=MNT_InitializationList){
+		MError::CreateInstance()->PrintError("for ",wfileaddressline);
+	}
 	assignment ->ParentNode = this;
 	expression->ParentNode = this;
 	userexpression ->ParentNode = this;
@@ -971,6 +1061,8 @@ ForStatement::~ForStatement()
 
 	if(userexpression)
 	userexpression->Release();
+
+	delete breakpostionvector;
 }
 void ForStatement::CreateCode()
 {
@@ -989,43 +1081,46 @@ void ForStatement::CreateCode()
 	int assigmentindex = sl->StackID;
 
 	//压入一个变量，当作集合的索引
-	sl->AddCode(OP_PUSHNUMBER);
-	sl->AddCode(0);
+	sl->AddCode(OP_PUSHNUMBER,wfileaddressline);
+	sl->AddCode(0,wfileaddressline);
 	sl->StackID++;
 	int index = sl->StackID;
 
 	postion1 = sl->GetIpi();
 	//获取集合内容
 
-	sl->AddCode(OP_GETSEQ);
+	sl->AddCode(OP_GETSEQ,wfileaddressline);
+	InitializationList * initializtionlist = STATICCAST(InitializationList,assignment);
+	int pcount = initializtionlist->Member->size();
+	sl->AddCode(pcount);
 	postion2 = sl->GetIpi();
-	sl->AddCode(OP_NOP); //如果超出索引范围，这跳出循环
+	sl->AddCode(OP_NOP,wfileaddressline); //如果超出索引范围，这跳出循环
 	//把内容存入前面的临时变量
 	//sl->AddCode(OP_STORES);
-	sl->AddCode(assigmentindex);
-
+	//sl->AddCode(assigmentindex,wfileaddressline);
+	//sl->StackID+=pcount;
 	//索引增加1
 
 
-	sl->AddCode(OP_ADD1);
-	sl->AddCode(index);
+	/*sl->AddCode(OP_ADD1,wfileaddressline);
+	sl->AddCode(index,wfileaddressline);*/
 	//执行正式代码，以上都是初始化的过程,执行用户代码
 	userexpression->CreateCode();
 
-	sl->AddCode(OP_ADJUSTSP);
-	sl->AddCode(_tempstackid+3);
+	sl->AddCode(OP_ADJUSTSP,wfileaddressline);
+	sl->AddCode(_tempstackid+2+pcount,wfileaddressline);
 
 
-	sl->AddCode(OP_UJMPS);
-	sl->AddCode(sl->GetIpi()-postion1);
+	sl->AddCode(OP_UJMPS,wfileaddressline);
+	sl->AddCode(sl->GetIpi()-postion1,wfileaddressline);
 
 
 
 	sl->SetCode(sl->GetIpi()-postion2,postion2);
 
 
-	sl->AddCode(OP_ADJUSTSP);
-	sl->AddCode(_tempstackid);
+	sl->AddCode(OP_ADJUSTSP,wfileaddressline);
+	sl->AddCode(_tempstackid,wfileaddressline);
 
 
 	int endip = sl->GetIpi();
@@ -1079,11 +1174,11 @@ void ArrayDeclare::CreateCode()
 	StatementList* sl = StatementList::GetInstance();
 			
 	bytenumber = sl->GetIpi();
-	sl->AddCode(OP_CREATEARRAY);
+	sl->AddCode(OP_CREATEARRAY,wfileaddressline);
 	SAVESTACKID
 	expressionlist->CreateCode();
-	sl->AddCode(OP_SETARRAY);
-	sl->AddCode(static_cast<ExpressionList*>(expressionlist)->ExpressionSize());
+	sl->AddCode(OP_SETARRAY,wfileaddressline);
+	sl->AddCode(STATICCAST(ExpressionList,expressionlist)->ExpressionSize(),wfileaddressline);
 	RESTORESTACKID
 	sl->StackID++;
 }
@@ -1103,6 +1198,8 @@ ArrayElement::ArrayElement(Statement* _ar,Statement* _index,int _gettype):index2
 	gettype=_gettype;
 	_ar->ParentNode =this;
 	_index->ParentNode =this;
+	wfileaddressline = lineno;
+
 }
 ArrayElement::ArrayElement(Statement* _ar,Statement* _index,Statement* _index2)
 {
@@ -1138,7 +1235,7 @@ void ArrayElement::CreateCode()
 	index->CreateCode();
 
 	if(opt==2){
-		sl->AddCode(OP_SETARRAYELEMENT);
+		sl->AddCode(OP_SETARRAYELEMENT,wfileaddressline);
 	}
 
 	if(opt==1){
@@ -1146,14 +1243,14 @@ void ArrayElement::CreateCode()
 		{
 			index2->CreateCode();
 		}else{
-			sl->AddCode(OP_PUSHRS);
+			sl->AddCode(OP_PUSHRS,wfileaddressline);
 			sl->StackID++;
 		}
-		sl->AddCode(OP_PUSHNUMBER);
-		sl->AddCode(gettype);
+		sl->AddCode(OP_PUSHNUMBER,wfileaddressline);
+		sl->AddCode(gettype,wfileaddressline);
 		sl->StackID++;
 	
-		sl->AddCode(OP_GETARRAYELEMENT);
+		sl->AddCode(OP_GETARRAYELEMENT,wfileaddressline);
 	}
 
 
@@ -1177,6 +1274,7 @@ DictExpression::DictExpression(string _k,Statement* _v)
 	value  = _v;
 	_v->ParentNode =this;
 	NType = MNT_DictExpression;
+	wfileaddressline = lineno;
 }
 DictExpression::~DictExpression()
 {
@@ -1187,8 +1285,8 @@ void DictExpression::CreateCode()
 {
 	StatementList* sl = StatementList::GetInstance();
 	value->CreateCode();
-	sl->AddCode(OP_PUSHHASH);
-	sl->AddCode(MCommon::CreateInstance()->ELFHash(key));
+	sl->AddCode(OP_PUSHHASH,wfileaddressline);
+	sl->AddCode(MCommon::CreateInstance()->ELFHash(key),wfileaddressline);
 
 }
 
@@ -1204,6 +1302,7 @@ DictStatement::DictStatement()
 {
 	Member = new vector <Statement*>();
 	NType = MNT_DictDeclare;
+	wfileaddressline = lineno;
 }
 void DictStatement::AddChilder(Statement* s)
 {
@@ -1219,15 +1318,15 @@ void DictStatement::CreateCode()
 {
 	StatementList* sl = StatementList::GetInstance();
 	SAVESTACKID	
-	sl->AddCode(OP_CREATEDICT);
+	sl->AddCode(OP_CREATEDICT,wfileaddressline);
 	//for (std::vector<Statement*>::iterator it = Member->begin() ; it != Member->end(); ++it)
 	//{
 	VECTORFORSTART(Statement*,Member,it)
 		(*it)->CreateCode();
 	VECTORFOREND
 	//}
-	sl->AddCode(OP_SETDICT);
-	sl->AddCode(Member->size());
+	sl->AddCode(OP_SETDICT,wfileaddressline);
+	sl->AddCode(Member->size(),wfileaddressline);
 	RESTORESTACKID
 	sl->StackID++;
 
@@ -1245,8 +1344,11 @@ DictElemenet::DictElemenet(Statement* _exprssion,string _key)
 {
 	exprssion = _exprssion;
 	key = _key;
+	StatementList::GetInstance()->AddStringConstant(key);
+	StatementList::GetInstance()->AddDictKeyConstant(key);
 	NType =MNT_DictElement;
 	_exprssion->ParentNode =this;
+	wfileaddressline = lineno;
 }
 DictElemenet::~DictElemenet()
 {
@@ -1259,14 +1361,14 @@ void DictElemenet::CreateCode()
 	SAVESTACKID	
 	exprssion->CreateCode();
 	if(opt==1){
-		sl->AddCode(OP_GETDICTELEMENT);
+		sl->AddCode(OP_GETDICTELEMENT,wfileaddressline);
 		
 
 	}
 	if(opt==2){
-		sl->AddCode(OP_SETDICTELEMENT);
+		sl->AddCode(OP_SETDICTELEMENT,wfileaddressline);
 	}
-	sl->AddCode(MCommon::CreateInstance()->ELFHash(key));
+	sl->AddCode(MCommon::CreateInstance()->ELFHash(key),wfileaddressline);
 
 	RESTORESTACKID
 	sl->StackID++;
@@ -1296,29 +1398,29 @@ void ContinueExpression::CreateCode()
 	FINDPARENT(p)
 	if(!p)
 	{
-		MError::CreateInstance()->PrintError("continue keyword can only be used in the for,while statement");
+		MError::CreateInstance()->PrintError("continue keyword can only be used in the for,while statement",wfileaddressline);
 	}
 	
 	if(p->NType==MNT_WhileStatement)
 	{		
-		WhileStatement* w =static_cast<WhileStatement*>(p);
+		WhileStatement* w =STATICCAST(WhileStatement,p);
 
-		sl->AddCode(OP_ADJUSTSP);
-		sl->AddCode(w->GetTemplateid());
-		sl->AddCode(OP_UJMPS);
-		sl->AddCode(sl->GetIpi()-w->GetJmpPostion());
+		sl->AddCode(OP_ADJUSTSP,wfileaddressline);
+		sl->AddCode(w->GetTemplateid(),wfileaddressline);
+		sl->AddCode(OP_UJMPS,wfileaddressline);
+		sl->AddCode(sl->GetIpi()-w->GetJmpPostion(),wfileaddressline);
 	}
 
 	if(p->NType==MNT_ForStatement)
 	{
-		ForStatement* w =static_cast<ForStatement*>(p);
-		sl->AddCode(OP_ADJUSTSP);
-		sl->AddCode(w->GetTemplateid());
-		sl->AddCode(OP_UJMPS);
+		ForStatement* w =STATICCAST(ForStatement,p);
+		sl->AddCode(OP_ADJUSTSP,wfileaddressline);
+		sl->AddCode(w->GetTemplateid(),wfileaddressline);
+		sl->AddCode(OP_UJMPS,wfileaddressline);
 		//int ip = sl->GetIpi();
 		//sl->AddCode(OP_NOP);
 
-		sl->AddCode(sl->GetIpi()-w->GetJmpPostion());
+		sl->AddCode(sl->GetIpi()-w->GetJmpPostion(),wfileaddressline);
 	}
 }
 
@@ -1345,27 +1447,27 @@ void BreakExpression::CreateCode()
 	FINDPARENT(p)
 	if(!p)
 	{
-		MError::CreateInstance()->PrintError("Break keyword can only be used in the for,while statement");
+		MError::CreateInstance()->PrintError("Break keyword can only be used in the for,while statement",wfileaddressline);
 	}
 	
 	if(p->NType==MNT_WhileStatement)
 	{
-		WhileStatement* w =static_cast<WhileStatement*>(p);
-		sl->AddCode(OP_ADJUSTSP);
-		sl->AddCode(w->GetTemplateid());
-		sl->AddCode(OP_UJMP);
+		WhileStatement* w =STATICCAST(WhileStatement,p);
+		sl->AddCode(OP_ADJUSTSP,wfileaddressline);
+		sl->AddCode(w->GetTemplateid(),wfileaddressline);
+		sl->AddCode(OP_UJMP,wfileaddressline);
 		jmppostion = sl->GetIpi();
-		sl->AddCode(OP_NOP);
+		sl->AddCode(OP_NOP,wfileaddressline);
 		w->SetBreakPostion(jmppostion);
 	}
 	if(p->NType==MNT_ForStatement)
 	{
-		ForStatement* w =static_cast<ForStatement*>(p);
-		sl->AddCode(OP_ADJUSTSP);
-		sl->AddCode(w->GetTemplateid());
-		sl->AddCode(OP_UJMP);
+		ForStatement* w =STATICCAST(ForStatement,p);
+		sl->AddCode(OP_ADJUSTSP,wfileaddressline);
+		sl->AddCode(w->GetTemplateid(),wfileaddressline);
+		sl->AddCode(OP_UJMP,wfileaddressline);
 		jmppostion = sl->GetIpi();
-		sl->AddCode(OP_NOP);
+		sl->AddCode(OP_NOP,wfileaddressline);
 		w->SetBreakPostion(jmppostion);
 	}
 
@@ -1392,6 +1494,7 @@ FunctionCall::FunctionCall(Statement* _perfix,Statement* s)
 	_perfix->ParentNode =this;
 	s->ParentNode =this;
 	NType = MNT_FunctionCall;
+	wfileaddressline = lineno;
 }
 FunctionCall::~FunctionCall()
 {
@@ -1407,19 +1510,19 @@ void FunctionCall::CreateCode()
 	StatementList* sl = StatementList::GetInstance();
 	
 
-	sl->AddCode(OP_PUSHRS);
+	sl->AddCode(OP_PUSHRS,wfileaddressline);
 	sl->StackID++;
 	SAVESTACKID
 	//sl->AddCode(OP_ADJUSTBP);
-	sl->AddCode(OP_PUSHMARK);
-	FunctionArguments* fas = static_cast<FunctionArguments*>(ag);
-	sl->AddCode(fas->FunctionArgumentsCount());
+	sl->AddCode(OP_PUSHMARK,wfileaddressline);
+	FunctionArguments* fas = STATICCAST(FunctionArguments,ag);
+	sl->AddCode(fas->FunctionArgumentsCount(),wfileaddressline);
 	if(ag){
 		ag->CreateCode();
 	}
 
 	perfix->CreateCode();
-	sl->AddCode(OP_CALLFUNC);
+	sl->AddCode(OP_CALLFUNC,wfileaddressline);
 	RESTORESTACKID
 
 }
@@ -1434,6 +1537,7 @@ FunctionArguments::FunctionArguments()
 {
 	Member = new vector <Statement*>();
 	NType = MNT_FunctionArguments;
+	wfileaddressline = lineno;
 }
 FunctionArguments::~FunctionArguments()
 {
@@ -1477,6 +1581,7 @@ LogiceEpressionDefintion::LogiceEpressionDefintion(Statement* _s1,string _op,Sta
 	_s1->ParentNode=this;
 	_s2->ParentNode=this;
 	NType = MNT_LogiceEpressionDefintion;
+	wfileaddressline = lineno;
 }
 LogiceEpressionDefintion::~LogiceEpressionDefintion()
 {
@@ -1494,19 +1599,19 @@ void LogiceEpressionDefintion::CreateCode()
 	s2->CreateCode();
 
 	if(op =="|"){
-		sl->AddCode(OP_BIT_OR);
+		sl->AddCode(OP_BIT_OR,wfileaddressline);
 	}
 	if(op =="&"){
-		sl->AddCode(OP_BIT_AND);
+		sl->AddCode(OP_BIT_AND,wfileaddressline);
 	}
 	if(op =="||"){
-		sl->AddCode(OP_OR);
+		sl->AddCode(OP_OR,wfileaddressline);
 	}
 	if(op =="&&"){
-		sl->AddCode(OP_AND);
+		sl->AddCode(OP_AND,wfileaddressline);
 	}
 	if(op =="^"){
-		sl->AddCode(OP_XOR);
+		sl->AddCode(OP_XOR,wfileaddressline);
     }
 }
 void LogiceEpressionDefintion::Release()
@@ -1524,11 +1629,13 @@ ReturnExpression::ReturnExpression()
 	btd =new BuiltinTypeDeclare();
 	btd->SetNull();
 	s = btd;
+	type = 1;
 }
 
 ReturnExpression::ReturnExpression(Statement* _s)
 {
 	NType =MNT_ReturnExpression;
+	type=0;
 	wfileaddressline = lineno;
 	s = _s;  //if return has value the _s nonzero,otherwise _s is 0
 	if(_s)
@@ -1536,8 +1643,13 @@ ReturnExpression::ReturnExpression(Statement* _s)
 }
 ReturnExpression::~ReturnExpression()
 {
-	if(s){
-		s->Release();
+	if(type){
+		delete btd;
+	}else
+	{
+		if(s){
+			s->Release();
+		}
 	}
 }
 void ReturnExpression::CreateCode()
@@ -1546,7 +1658,7 @@ void ReturnExpression::CreateCode()
 	if(s){
 		s->CreateCode();
 	}
-		sl->AddCode(OP_RET);
+		sl->AddCode(OP_RET,wfileaddressline);
 }
 
 void ReturnExpression::Release()
@@ -1569,6 +1681,7 @@ TryStatement::TryStatement(Statement* _s1,Statement* _s2,Statement* _s3){
 		_s3->ParentNode = this;
 	}
 	NType = MNT_TryStatement;
+	wfileaddressline = lineno;
 }
 TryStatement::~TryStatement()
 {
@@ -1584,12 +1697,12 @@ TryStatement::~TryStatement()
 void TryStatement::CreateCode()
 {
 	StatementList* sl = StatementList::GetInstance();
-	sl->AddCode(OP_PUSHTRYMARK);
+	sl->AddCode(OP_PUSHTRYMARK,wfileaddressline);
 	sl->StackID++;
 	int i1 = sl->GetIpi(); //记录except的代码地址
-	sl->AddCode(OP_NOP);//return表示except内的地址，paramercount表示excetp的参数数量
+	sl->AddCode(OP_NOP,wfileaddressline);//return表示except内的地址，paramercount表示excetp的参数数量
 	int i2 = sl->GetIpi(); //记录except的参数的代码地址
-	sl->AddCode(OP_NOP);//paramercount表示excetp的参数数量 
+	sl->AddCode(OP_NOP,wfileaddressline);//paramercount表示excetp的参数数量 
 
 
 	sopcelocalvars = sl->GetLocalMemory()->size();
@@ -1598,19 +1711,19 @@ void TryStatement::CreateCode()
 	RESTORESTACKID
 	sl->SetLocalCountValue(sopcelocalvars);
 	sl->GetLocalMemory()->resize(sopcelocalvars);
-	sl->AddCode(OP_ADJUSTSP);
-	sl->AddCode(_tempstackid);
+	sl->AddCode(OP_ADJUSTSP,wfileaddressline);
+	sl->AddCode(_tempstackid,wfileaddressline);
 
 
-	sl->AddCode(OP_UJMP);
+	sl->AddCode(OP_UJMP,wfileaddressline);
 	int i3 = sl->GetIpi();//记录try except后的第一句的代码地址
-	sl->AddCode(OP_NOP);
+	sl->AddCode(OP_NOP,wfileaddressline);
 
 	{
 		sopcelocalvars = sl->GetLocalMemory()->size();
 		SAVESTACKID
 		s2->CreateCode();
-		TryParameterStatement* tps =static_cast<TryParameterStatement*>(s2);
+		TryParameterStatement* tps =STATICCAST(TryParameterStatement,s2);
 		sl->SetCode(tps->Count(),i2);//更新except的参数数量的代码地址
 
 		sl->SetCode(sl->GetIpi()-i1,i1);//更新except的代码地址
@@ -1618,8 +1731,8 @@ void TryStatement::CreateCode()
 		RESTORESTACKID
 		sl->SetLocalCountValue(sopcelocalvars);
 		sl->GetLocalMemory()->resize(sopcelocalvars);
-		sl->AddCode(OP_ADJUSTSP);
-		sl->AddCode(_tempstackid);
+		sl->AddCode(OP_ADJUSTSP,wfileaddressline);
+		sl->AddCode(_tempstackid,wfileaddressline);
 
 
 	}
@@ -1647,9 +1760,9 @@ ThrowExpression::~ThrowExpression(){
 void ThrowExpression::CreateCode()
 {
 	StatementList* sl = StatementList::GetInstance();
-	sl->AddCode(OP_THROWSTART);
+	sl->AddCode(OP_THROWSTART,wfileaddressline);
 	s->CreateCode();
-	sl->AddCode(OP_THROWEND);
+	sl->AddCode(OP_THROWEND,wfileaddressline);
 }
 
 void ThrowExpression::Release()
@@ -1669,7 +1782,10 @@ void TryParameter::CreateCode()
 {
 	StatementList* sl = StatementList::GetInstance();
 	sl->StackID++;
-	sl->AddLocalMemory(name);
+	if(!sl->AddLocalMemory(name,wfileaddressline))
+	{
+		MError::CreateInstance()->PrintError(name+" redefinition",wfileaddressline);
+	}
 }
 
 void TryParameter::Release()
@@ -1735,6 +1851,7 @@ void ImportFileExpression::Release()
 
 PackAgeExpresson::PackAgeExpresson(Statement* _exprssion,string _key,Statement* _arguments,int _type,int _opt)
 {
+	wfileaddressline = lineno;
 	exprssion = _exprssion;
 	key = _key;
     arguments = _arguments;
@@ -1746,6 +1863,7 @@ PackAgeExpresson::PackAgeExpresson(Statement* _exprssion,string _key,Statement* 
 
 	if(_arguments)
 	_arguments->ParentNode = this;
+
 
 }
 PackAgeExpresson::~PackAgeExpresson()
@@ -1770,17 +1888,17 @@ void PackAgeExpresson::CreateCode()
 {
 	StatementList* sl = StatementList::GetInstance();
 	if(type==1){
-		sl->AddCode(OP_PUSHRS);
+		sl->AddCode(OP_PUSHRS,wfileaddressline);
 		sl->StackID++;
 		SAVESTACKID
 		//sl->AddCode(OP_ADJUSTBP);
-		sl->AddCode(OP_PUSHMARK);
+		sl->AddCode(OP_PUSHMARK,wfileaddressline);
 		if(arguments){
-			FunctionArguments* fas = static_cast<FunctionArguments*>(arguments);
-			sl->AddCode(fas->FunctionArgumentsCount());
+			FunctionArguments* fas = STATICCAST(FunctionArguments,arguments);
+			sl->AddCode(fas->FunctionArgumentsCount(),wfileaddressline);
 		}else
 		{
-			sl->AddCode(0);
+			sl->AddCode(0,wfileaddressline);
 		}
 		if(arguments){
 			arguments->CreateCode();
@@ -1788,26 +1906,26 @@ void PackAgeExpresson::CreateCode()
 		
 		exprssion->CreateCode();
 	
-		sl->AddCode(OP_PUSHPACKAGEFUNC);
-		sl->AddCode(MCommon::CreateInstance()->ELFHash(key));
-		sl->AddCode(OP_CALLFUNC);
+		sl->AddCode(OP_PUSHPACKAGEFUNC,wfileaddressline);
+		sl->AddCode(MCommon::CreateInstance()->ELFHash(key),wfileaddressline);
+		sl->AddCode(OP_CALLFUNC,wfileaddressline);
 		RESTORESTACKID
 	}
 	if(type==2){
 		exprssion->CreateCode();
 		if(opt==1){
-			sl->AddCode(OP_GETPACKAGEATTER);
-			sl->AddCode(MCommon::CreateInstance()->ELFHash(key));
+			sl->AddCode(OP_GETPACKAGEATTER,wfileaddressline);
+			sl->AddCode(MCommon::CreateInstance()->ELFHash(key),wfileaddressline);
 		}
 		if(opt==2){
-			sl->AddCode(OP_SETPACKAGEATTER);
-			sl->AddCode(MCommon::CreateInstance()->ELFHash(key));
+			sl->AddCode(OP_SETPACKAGEATTER,wfileaddressline);
+			sl->AddCode(MCommon::CreateInstance()->ELFHash(key),wfileaddressline);
 		}
 	}
 	if(type==3){
 		exprssion->CreateCode();
-		sl->AddCode(OP_PUSHPACKAGEFUNC);
-		sl->AddCode(MCommon::CreateInstance()->ELFHash(key));
+		sl->AddCode(OP_PUSHPACKAGEFUNC,wfileaddressline);
+		sl->AddCode(MCommon::CreateInstance()->ELFHash(key),wfileaddressline);
 	}
 	
 
@@ -1820,6 +1938,7 @@ void PackAgeExpresson::Release()
 
 MinusExpression::MinusExpression(Statement* _exprssion):exprssion(0)
 {
+	wfileaddressline = lineno;
 	exprssion = _exprssion;
 	_exprssion->ParentNode =this;
 	NType = MNT_MinusExpression;
@@ -1838,12 +1957,13 @@ void MinusExpression::CreateCode()
 {
 	StatementList* sl = StatementList::GetInstance();
 	exprssion->CreateCode();
-	sl->AddCode(OP_MINUS);
+	sl->AddCode(OP_MINUS,wfileaddressline);
 }
 
 
 PlusExpression::PlusExpression(Statement* _exprssion):exprssion(0)
 {
+	wfileaddressline = lineno;
 	exprssion = _exprssion;
 	_exprssion->ParentNode =this;
 	NType = MNT_PlusExpression;
@@ -1867,9 +1987,11 @@ void PlusExpression::CreateCode()
 
 InverterExpression::InverterExpression(Statement* _exprssion):exprssion(0)
 {
+	wfileaddressline = lineno;
 	exprssion = _exprssion;
 	_exprssion->ParentNode =this;
 	NType = MNT_InverterExpression;
+
 }
 InverterExpression::~InverterExpression()
 {
@@ -1885,7 +2007,7 @@ void InverterExpression::CreateCode()
 {
 	StatementList* sl = StatementList::GetInstance();
 	exprssion->CreateCode();
-	sl->AddCode(OP_INVERTER);
+	sl->AddCode(OP_INVERTER,wfileaddressline);
 }
 
 void NopExpression::Release()
@@ -1895,5 +2017,28 @@ void NopExpression::Release()
 void NopExpression::CreateCode()
 {
 	StatementList* sl = StatementList::GetInstance();
-	sl->AddCode(OP_NOP);
+	sl->AddCode(OP_NOP,wfileaddressline);
+}
+
+
+TypeOfExpression::TypeOfExpression(Statement* _exprssion):exprssion(0)
+{
+	wfileaddressline = lineno;
+	exprssion = _exprssion;
+	_exprssion->ParentNode =this;
+	NType = MNT_TypeOfExpression;
+}
+TypeOfExpression::~TypeOfExpression()
+{
+	exprssion->Release();
+}
+void TypeOfExpression::Release()
+{
+	DELETETHIS
+}
+void TypeOfExpression::CreateCode()
+{
+	StatementList* sl = StatementList::GetInstance();
+	exprssion->CreateCode();
+	sl->AddCode(OP_TYPEOF,wfileaddressline);
 }

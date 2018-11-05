@@ -11,7 +11,7 @@ MCommon::MCommon(void)
 
 MCommon::~MCommon(void)
 {
-	
+	_inst=0;
 }
 
 MCommon* MCommon::CreateInstance()
@@ -29,11 +29,11 @@ PathInfo MCommon::StringPathSplit(string _path)
 	return info;
 }
 
-unsigned int MCommon::ELFHash(string ss)
+M_UInt MCommon::ELFHash(string ss)
 {
-	char* str = const_cast<char*>(ss.c_str());
+	char* str = CONSTCAST(char)(ss.c_str());
 	size_t l=strlen(str);
-	unsigned int h = l;  /* seed */
+	M_UInt h = l;  /* seed */
 	size_t step = (l>>5)|1;  /* if string is too long, don't hash all its chars */
 	for (; l>=step; l-=step)
 		h = h ^ ((h<<5)+(h>>2)+(unsigned char)*(str++));

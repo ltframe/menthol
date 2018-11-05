@@ -16,6 +16,10 @@
 #define MENTHOLEXTENSION ".me"
 #define MENTHOLEXECUTEEXTENSION ".mee"
 
+
+#define MENTHOLPACKAGEDLLEXTENSION2 "MED"
+#define MENTHOLEXECUTEEXTENSION2 "MEE"
+
 struct LocalVarAttr
 {
    string name;
@@ -27,6 +31,8 @@ struct GlobalVarAttr
    hashValue hash;
 };
 
+
+
 #define ipiadd ipi = ipi+1;
 
 
@@ -35,8 +41,9 @@ class StatementList
 {
 public:
 	StatementList();
+	~StatementList(void);
 	void SetCompileStructTable(Statement* b);
-	void AddCode(Instruction x);
+	void AddCode(Instruction x,int lineno=0);
 	void SetCode(Instruction x,int ipp);  
 	void AddCharCode(char x);
 	int GetIpi();
@@ -46,10 +53,10 @@ public:
 	void AddDictKeyConstant(string s);
 	void AddDoubleConstant(double d);
 	static StatementList* GetInstance();
-	bool AddLocalMemory(string _name);
+	bool AddLocalMemory(string _name,int _lineno);
 	LocalVarAttr FindLocalMemory(string _name);
 	void ClearLocalMemory();
-	void CreateCode(vector<Statement*>* _CompileStructTable);
+	void CreateCode(vector<Statement*>* _CompileStructTable,string extension,bool isdebug);
 	int  FindInCompileStructTable(string b);
 	bool IsGlobalVar(string name);
 	LocalVarAttr FindLastLocalMemory();
@@ -72,6 +79,8 @@ public:
 	vector <string>* GetDictKeyConstants();
 	vector<GlobalVarAttr>* GetGlobalMemory();
 	vector<LocalVarAttr>* GetLocalMemory();
+	vector<MentholDebug>* GetMentholDebug();
+	void RestDebugIpi();
 public:
 	vector<Instruction> *CodeList;
 	vector <Statement*> *CompileStructTable;
@@ -79,6 +88,7 @@ public:
 	string currentpackagename;
 private:
 	int ipi;
+	int debugipi;
 	static StatementList* _StatementList;
 	int localcount;
 	vector <double> *doubleconstants;
@@ -89,5 +99,6 @@ private:
 	vector <string> *dictkeyconstants;	
 	vector<GlobalVarAttr>* GlobalMemory;
 	vector<LocalVarAttr>* LocalMemory;
+	vector<MentholDebug> *MentholDebugList;
 };
 #endif

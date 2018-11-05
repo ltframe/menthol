@@ -1,0 +1,11 @@
+import "lib/Deelx";
+import "example1";
+_mmain:$a,$c
+{	
+
+	var $str = example1.HttpGet("http://www.ltplayer.com/");
+	$a = Deelx.Exec($str,"<img.*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>",0);	
+	for(var $s in $a){		
+		MIo.Out($s[1]);		
+	}	
+}

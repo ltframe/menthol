@@ -9,25 +9,29 @@
 
 namespace Vm
 {
-	static Instruction* codelist;
+	static int runflag = 0; // 0 global init 1 code
+	static Instruction* codelist,*codeliststart;
 	static vector<RunTimeState*> *runtimestatelist;
 	static char ModulePath[_MAX_PATH];
 	static RunTimeState* currentruntimestate;
-	static StackState* sp;
-	static StackState* bp;
-	static StackState* stackbase;
+	static STACKSTATEPOINTER sp;
+	static STACKSTATEPOINTER bp;
+	static STACKSTATEPOINTER stackbase;
 	static vector<StringValue> *dictkeys;
-	static vector<StackState> stacklist;
+	static VECOTRSTACKSTATE stacklist;
 	static vector<PackageAttr> *filetree;
 	static int calltype = 0;
-	static StackState* callbp=0;
+	static STACKSTATEPOINTER callbp=0;
 	static int garbagescount;
+	char* mtypes[] = {"M_NUMBER","M_LONG","M_DOUBLE","M_STRING","M_STRING","M_FUN","M_PFUN","","M_BOOL","M_ARRAY","M_DICT","M_NULL","","","M_PACKAGE","M_HASH","M_UNKONWN","M_POINTER"};
+
+
 
 	static void MarkStack()
 	{
 		for(int i=0;i<sp-stackbase;i++)
 		{
-			StackState* _s = stackbase+i;
+			STACKSTATEPOINTER _s = stackbase+i;
 			if(_s->v==M_ARRAY)
 			{
 				MGc::MarkArray(_s->parray->array);
@@ -76,13 +80,30 @@ namespace Vm
 
 	Garbage* GetStringConstants(int index)
 	{
+		/*vector<Garbage*>* list = MGc::GetGarbageCollect();
+		VECTORFORSTART(Garbage*,list,it)
+			if((*it)->v==M_SSTRING && !strcmp((*it)->string,currentruntimestate->strings->at(index).c_str())){
+				(*it)->mark = 0;
+				return (*it);
+			}
+		VECTORFOREND*/
+
+		FINDGARBAGE(M_SSTRING,currentruntimestate->strings->at(index).c_str());
 		MarkGarbages();
-		return MGc::CollectGarbage_String(const_cast<char*>(currentruntimestate->strings->at(index).c_str()),M_SSTRING);
+		return MGc::CollectGarbage_String(CONSTCAST(char)(currentruntimestate->strings->at(index).c_str()),M_SSTRING);
 	}
 
 
 	Garbage* CreateString(char* str)
 	{
+		/*vector<Garbage*>* list = MGc::GetGarbageCollect();
+		VECTORFORSTART(Garbage*,list,it)
+			if((*it)->v==M_STRING && !strcmp((*it)->string,str)){
+				(*it)->mark = 0;
+				return (*it);
+			}
+		VECTORFOREND*/	
+		FINDGARBAGE(M_STRING,str);
 		MarkGarbages();
 		return MGc::CreateString(str);
 	}
@@ -90,8 +111,16 @@ namespace Vm
 
 	Garbage* CreateDictKeyString(hashValue value)
 	{
+		/*vector<Garbage*>* list = MGc::GetGarbageCollect();
+		VECTORFORSTART(Garbage*,list,it)
+			if((*it)->v==M_SSTRING && !strcmp((*it)->string,GetDictKeyByHash(value))){
+				(*it)->mark = 0;
+				return (*it);
+			}
+		VECTORFOREND*/
+		FINDGARBAGE(M_SSTRING,GetDictKeyByHash(value));
 		MarkGarbages();
-		return MGc::CollectGarbage_String(const_cast<char*>(GetDictKeyByHash(value)),M_SSTRING);
+		return MGc::CollectGarbage_String(CONSTCAST(char)(GetDictKeyByHash(value)),M_SSTRING);
 	}
 
 
@@ -137,17 +166,25 @@ namespace Vm
 			return 0;
 	}
 
-StackState FindGlobalMemory(hashValue hash)
+StackState FindGlobalMemory(hashValue hash,RunTimeState* _curentruntimestate,RunTimeState* _callruntimestate)
 {
-	//for (std::vector<StackState>::iterator it = currentruntimestate->globalvalues->begin() ; it != currentruntimestate->globalvalues->end(); ++it)
-	//{
-	VECTORFORSTART(StackState,currentruntimestate->globalvalues,it)
+	if(_curentruntimestate->ptype==MPA_DLL || _curentruntimestate->ptype==MPA_SDLL)
+	{
+		currentruntimestate = _callruntimestate;
+		MError::CreateInstance()->PrintRunTimeError(GetStringConstantsByHash(hash,_callruntimestate)+string(" is not defined"));
+	}
+	VECTORFORSTART(StackState,_curentruntimestate->globalvalues,it)
 		if(hash==(*it).namehash)
 		{
 			return	(*it);
 		}
 	VECTORFOREND
-	//}
+
+    if(_curentruntimestate->ptype==MPA_PACKAGE || _curentruntimestate->ptype==MPA_SPACKAGE){
+		
+		currentruntimestate = _callruntimestate;
+		MError::CreateInstance()->PrintRunTimeError(GetStringConstantsByHash(hash,_callruntimestate)+string(" is not defined"));
+	}
 	StackState d = {0,0,0,M_NULL};
 	return d;
 }
@@ -195,25 +232,20 @@ void InitStack(StackState v1,StackState  v2)
 
 int GetRunTimeRecored(string name)
 {
-	//for (std::vector<FunctionAtter>::iterator it = currentruntimestate->functionlist->begin() ; it != currentruntimestate->functionlist->end(); ++it)
-	//{
 	VECTORFORSTART(FunctionAtter,currentruntimestate->functionlist,it)
 		
 		if((*it).name== name)
 		{
 			return it-currentruntimestate->functionlist->begin();
 		}
-	//}
 	VECTORFOREND
 	return -1;
 }
 
 
-FunctionAtter GetRunTimeFunctionAtter(hashValue hash)
+FunctionAtter GetRunTimeFunctionAtter(hashValue hash,RunTimeState* _currentruntimestate)
 {
-	//for (std::vector<FunctionAtter>::iterator it = currentruntimestate->functionlist->begin() ; it != currentruntimestate->functionlist->end(); ++it)
-	//{
-	VECTORFORSTART(FunctionAtter,currentruntimestate->functionlist,it)
+	VECTORFORSTART(FunctionAtter,_currentruntimestate->functionlist,it)
 		if((*it).hash== hash)
 		{
 			return (*it);
@@ -247,31 +279,28 @@ void CreateFunctionRecoredList(FunctionAtter fa)
 
 void CreateStringConstants(char* s)
 {
-	//for (std::vector<string>::iterator it = currentruntimestate->strings->begin() ; it != currentruntimestate->strings->end(); ++it)
-	//{
+
 	VECTORFORSTART(string,currentruntimestate->strings,it)
 		if((*it)==s){
 			return;
 		}
-	//}
 	VECTORFOREND
 	
 	currentruntimestate->strings->push_back(s);
 }
 
 
-const char* GetStringConstantsByHash(hashValue hash)
+const char* GetStringConstantsByHash(hashValue hash,RunTimeState* _runtimestate)
 {
-	//for (std::vector<string>::iterator it = currentruntimestate->strings->begin() ; it != currentruntimestate->strings->end(); ++it)
-	//{
-	VECTORFORSTART(string,currentruntimestate->strings,it)
+
+	VECTORFORSTART(string,_runtimestate->strings,it)
 		if(MCommon::CreateInstance()->ELFHash(*it)==hash){
 			return (*it).c_str();
 		}
-	//}
 	VECTORFOREND
 	return "";
 }
+
 
 const char* GetDictKeyByHash(hashValue hash)
 {
@@ -361,20 +390,20 @@ void CreateFunctionCall(int paramcount)
 StackState CallFunction(StackState fun)
 {
 
-	StackState *b = sp-1;
+	STACKSTATEPOINTER b = sp-1;
 	while (b->v != M_BPMARK) b--;
 	bp = b;
 	(bp)->m.address = codelist; //保存现在ip
 
-	StackState *func = &fun;
+	STACKSTATEPOINTER func = &fun;
 	FunctionAtter fa;
 
 					
-	currentruntimestate = static_cast<RunTimeState*>(func->p);
+	currentruntimestate = STATICCAST(RunTimeState,func->p);
 
 	if(func->v==M_PFUN)
 	{
-		fa= GetRunTimeFunctionAtter(func->hash);
+		fa= GetRunTimeFunctionAtter(func->hash,currentruntimestate);
 	}else 
 	{
 		fa = GetRunTimeFunctionAtterByIndex(func->i);
@@ -383,7 +412,9 @@ StackState CallFunction(StackState fun)
 	if(fa.name=="")
 	{
 		currentruntimestate = (bp->m.rts);
-		MError::CreateInstance()->PrintRunTimeError(GetStringConstantsByHash(func->hash)+string(" is not defined"));
+		string functionname = GetStringConstantsByHash(func->hash,currentruntimestate);
+		
+		MError::CreateInstance()->PrintRunTimeError(functionname+string(" is not defined"));
 	}
 
 	int stackargcount = sp-1-(bp+1);//当前栈内参数					 
@@ -416,6 +447,7 @@ StackState CallFunction(StackState fun)
 
 
 
+
 inline void MainFuncitonCode(int &codespostion,vector<Instruction>& codealllist)
 {
 	//InitCode(OP_ADJUSTBP,codespostion,codealllist);
@@ -442,6 +474,20 @@ void PintCode(int c){
 	cout<<"\r\n------------------------------------------"<<endl;
 }
 
+Instruction* GetCurrentCodeList(){
+	return codelist-1;
+}
+
+Instruction* GetCodeListStart(){
+	if(!codeliststart)return 0;
+	return codeliststart+currentruntimestate->codeoffset;
+}
+
+vector<MentholDebug> *GetDebugList(){
+	if(!currentruntimestate)return 0;
+
+	return currentruntimestate->debuglist;
+}
 
 void EntryPoint(PackageAttr pa,char* workdir)
 {
@@ -486,15 +532,15 @@ void EntryPoint(PackageAttr pa,char* workdir)
 		currentruntimestate->functionlist = new vector <FunctionAtter>();
 		currentruntimestate->strings = new vector<string>();
 		currentruntimestate->includepackages = new vector<PackageState*>();
-		currentruntimestate->globalvalues =new vector<StackState>();
-
+		currentruntimestate->globalvalues =new VECOTRSTACKSTATE();
+		currentruntimestate->debuglist =new vector<MentholDebug>();
 		
 		currentruntimestate->hash = MCommon::CreateInstance()->ELFHash(pa.pname);
 		currentruntimestate->pname = pa.pname;
 		currentruntimestate->ptype = pa.ptype;
 		if(pa.ptype==MPA_PACKAGE || pa.ptype==MPA_SPACKAGE){
 			const char* filename = pa.fname;
-			wb->ReadBinary(filename,currentruntimestate->functionlist,currentruntimestate->strings,&codealllist,globalcodelist,currentruntimestate->doubles,currentruntimestate->includepackages,runtimestatelist,dictkeys);
+			wb->ReadBinary(filename,currentruntimestate->functionlist,currentruntimestate->strings,&codealllist,globalcodelist,currentruntimestate->doubles,currentruntimestate->includepackages,runtimestatelist,dictkeys,currentruntimestate->debuglist);
 			
 			///CreateVmState(FunctionRecoredList,stringconstants,doubleconstants,packagelist,f);
 			AddRunTimeStateList(currentruntimestate);
@@ -537,30 +583,40 @@ void EntryPoint(PackageAttr pa,char* workdir)
 	codelist = 0;
 	//garbagescope = LOCAL;
 	codelist =new Instruction[codealllist.size()];
+	codeliststart = codelist;
 	memset(codelist,0,codealllist.size()+1);
 	for (int i = 0; i < codealllist.size(); i++)
 	{
 		codelist[i]=(codealllist[i]);
 	}
 
-	for (std::vector<RunTimeState*>::iterator it1 = runtimestatelist->begin() ; it1 != runtimestatelist->end(); ++it1){		
-		for (std::vector<FunctionAtter>::iterator it = (*it1)->functionlist->begin() ; it != (*it1)->functionlist->end(); ++it)
+
+	//for (std::vector<RunTimeState*>::iterator it1 = runtimestatelist->begin() ; it1 != runtimestatelist->end(); ++it1){	
+	VECTORFORSTART(RunTimeState*,runtimestatelist,it1)		
+		if((*it1)->ptype==MPA_DLL || (*it1)->ptype==MPA_SDLL)
 		{
+			continue;
+		}
+		(*it1)->codeoffset=codespostion;
+		VECTORFORSTART(FunctionAtter,(*it1)->functionlist,it)		
+		//for (std::vector<FunctionAtter>::iterator it = (*it1)->functionlist->begin() ; it != (*it1)->functionlist->end(); ++it)
+		//{
 			if((*it).lenght!=-1){
 				(*it).postion = codelist+codespostion;
 				codespostion+=(*it).lenght;
 			}
-		}
-	}
+		VECTORFOREND
+	VECTORFOREND
 
 #ifndef NDEBUG
 	PintCode(codealllist.size());
-#endif
-	//clock_t start = clock();
+#endif	
 	filetree->clear();
+	clock_t start = clock();
+	runflag = 1;
   	Execute();
-	//clock_t end = clock();
-
+	clock_t end = clock();
+	printf("%ld",end-start);
 }
 
 
@@ -570,41 +626,32 @@ int Execute()
 
 		switch (*codelist++)
 		{	 
-			case OP_PUSHNUMBER:
-				{
+			SWITCHCASESTART(OP_PUSHNUMBER)
 					(*sp).v = M_NUMBER;
 					(*sp++).d = *codelist++;
-					break;
-				}
+			SWITCHCASEEND
 				
-			case OP_PUSHDOUBLE:
-				{
+			SWITCHCASESTART(OP_PUSHDOUBLE)
 					(*sp).v = M_NUMBER;
 					(*sp++).d =currentruntimestate->doubles->at(*codelist++);
-					break;
-				}
+			SWITCHCASEEND
 				
-			case OP_PUSHHASH:
-				{
-
+			SWITCHCASESTART(OP_PUSHHASH)
 					(*sp).v = M_HASH;
 					(*sp++).hash =*codelist++;	
-					break;
-				}
-			case OP_PUSHSTRING:
-				{ 
-					(*sp).v = M_STRING;
-					(*sp++).str=GetStringConstants(*codelist++);
-					break;
-				}
-			case OP_PUSHBOOL:
-				{
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_PUSHSTRING)
+					(*sp).str=GetStringConstants(*codelist++);
+					(*sp++).v = M_STRING;			
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_PUSHBOOL)
 					(*sp).v = M_BOOL;
 					(*sp++).b = (bool)(*codelist++);	
-					break;
-				}
-			case OP_RET:
-				 {		
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_RET)
 					currentruntimestate = bp->m.rts;
      			 	AdjustStack();
 					if(calltype && bp==callbp)
@@ -613,11 +660,9 @@ int Execute()
 						callbp =0;
 						return 1;
 					}
-					break;
-				 }
-			case OP_PUSHMARK:
-				{
-					
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_PUSHMARK)					
 					StackState value;					
 					value.v= M_BPMARK;
 					 //执行函数前，压入MARK记录当前的（函数调用前的，为了返回以后恢复原有）bp,sp,ip					
@@ -625,32 +670,28 @@ int Execute()
 					value.m = m;				
 					//bp = sp - stackbase; //sp为当前栈的栈指针
 					*sp++ = value;	
-					break;
-				}
+			SWITCHCASEEND
 			
-			case OP_PUSHTRYMARK:
-				{
+			SWITCHCASESTART(OP_PUSHTRYMARK)
 					StackState value;					
 					value.v= M_TRYMARK;
 					Instruction* _ip = codelist;
-
+					
 					int address = *codelist++;
-					unsigned int paramercount= *codelist++;
+					M_UInt paramercount= *codelist++;
 
 					TryMark m = {bp,_ip+(address<0?address+1:address),paramercount,currentruntimestate};
 					value.m = m;	
 					*sp++ = value;
-					break;
-				}
-			case OP_THROWSTART:
-				{
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_THROWSTART)
 					while (sp->v != M_TRYMARK) sp--;
 					sp++;
-					break;
-				}
-			case OP_THROWEND:
-				{
-					StackState *b = sp-1;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_THROWEND)
+					STACKSTATEPOINTER b = sp-1;
 					while (b->v != M_TRYMARK) b--;
 					int stackargcount = sp-b-1;
 
@@ -667,32 +708,34 @@ int Execute()
 							*sp++ = value;	
 						}
 					}
+			SWITCHCASEEND
 
-					break;
-				}
-			case OP_PUSHFUN:
-				{
+			SWITCHCASESTART(OP_PUSHFUN)
 					(*sp).v = M_FUN;
 					(*sp).p = currentruntimestate;
 					(*sp++).i = *codelist++;//表示自定义函数名字的hash值
-					break;
-				}
-			case OP_CALLFUNC:
-				{						
-					StackState *b = sp-1;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_CALLFUNC)
+					if(!runflag){
+						MError::CreateInstance()->PrintRunTimeError("Global variables  cannot be initialized or assigned to functions call");
+						return 1;
+					}
+					STACKSTATEPOINTER b = sp-1;
 					while (b->v != M_BPMARK) b--;
 					bp = b;
 					(bp)->m.address = codelist; //保存现在ip
 
-					StackState *func = sp-1;
+					STACKSTATEPOINTER func = --sp;
 					FunctionAtter fa;
 
 					
-					currentruntimestate = static_cast<RunTimeState*>(func->p);
+					currentruntimestate = STATICCAST(RunTimeState,func->p);
+
 
 					if(func->v==M_PFUN || func->hash==MMAINHASH)
 					{
-						fa= GetRunTimeFunctionAtter(func->hash);
+						fa= GetRunTimeFunctionAtter(func->hash,currentruntimestate);
 					}else 
 					{
 						fa = GetRunTimeFunctionAtterByIndex(func->i);
@@ -704,29 +747,33 @@ int Execute()
 							erromsg = "mmain";
 						}else
 						{
-							erromsg =GetStringConstantsByHash(func->hash);
+							currentruntimestate = (bp->m.rts);
+							erromsg =GetStringConstantsByHash(func->hash,bp->m.rts);
 						}
-						currentruntimestate = (bp->m.rts);
+					
+
 						MError::CreateInstance()->PrintRunTimeError(erromsg+string(" is not defined"));
 						return 1;
 					}
 
 
-					int stackargcount = sp-1-(bp+1);//当前栈内参数					 
+					int stackargcount = sp-(bp+1);//当前栈内参数					 
 					if(stackargcount>fa.paramcount){
 						sp=sp-(stackargcount-fa.paramcount);
-					}
-					if(stackargcount<fa.paramcount){
-						for(int i=0;i<fa.paramcount-stackargcount;i++){
-							StackState value;					
-							value.v= M_NULL;
-							*sp++ = value;	
-						}
+						stackargcount = fa.paramcount;
 					}
 					
-
+				
 					if(fa.lenght==-1)//外部扩展的函数
 					{
+						if(stackargcount<fa.paramcount)
+						{
+							for(int i=0;i<fa.paramcount-stackargcount;i++){
+								StackState value;					
+								value.v= M_NULL;
+								*sp++ = value;	
+							}
+						}	
 						funcallback f = (funcallback)fa.postion;
 						StackState st= f();
 						*sp++ = st;
@@ -735,255 +782,261 @@ int Execute()
 
 					}else
 					{
-						//currentruntimestate = currentruntimestate->returnruntimestate;
+						
+							int dc = fa.defaultvaluelengthlist->size();
+							//int _stackargcount = stackargcount;
+							
+							/*
+							for (int i =_stackargcount; i <dc ; i++)
+							{
+								if(fa.defaultvaluelengthlist->at(i)!=0){
+									if(i!=0){
+										fa.postion+=fa.defaultvaluelengthlist->at(i-1);
+									}
+									stackargcount+=(dc-i);
+									SWITCHBREAK;
+								}
+							}*/
+
+
+							int _i =0; //把已经有的参数的默认参数的字符跳过
+							for (;_i <= stackargcount; _i++)
+							{
+								fa.postion+=fa.defaultvaluelengthlist->at(_i);
+							}
+
+							//增加剩余默认参数的个数
+							for (int j = _i; j < dc; j++)
+							{
+								if(fa.defaultvaluelengthlist->at(j)!=0)
+								stackargcount++;
+							}
+
+							if(stackargcount<fa.paramcount)
+							{
+								for(int i=0;i<fa.paramcount-stackargcount;i++){
+									StackState value;					
+									value.v= M_NULL;
+									*sp++ = value;	
+								}
+							}	
 						codelist =fa.postion;
-						//if(fa.name=="_wmain"){
-							sp--;
-						//}
+						//sp--;
 					}
-				
-				   break;
-				}
+			SWITCHCASEEND
 	
 			
 
-			case OP_ADD:
-				{
-					StackState* value1 =sp-2;
-					StackState* value2 =sp-1;
+			SWITCHCASESTART(OP_ADD)
+					STACKSTATEPOINTER value1 =sp-2;
+					STACKSTATEPOINTER value2 =sp-1;
 					if(!MMath::Add(value1,value2))
 					{
 						return 0;
 					}
 					sp--;
-					break;
-				}
-			case OP_ADD1:
-				{
-					StackState* _t =(bp+*codelist++); 
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_ADD1)
+					STACKSTATEPOINTER _t =(bp+*codelist++); 
 					_t->d+=1;
 					_t->v=M_NUMBER;
-					break;
-				}
-			case OP_POWER:
-				{
-					StackState* value1 =sp-2;
-					StackState* value2 =sp-1;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_POWER)
+					STACKSTATEPOINTER value1 =sp-2;
+					STACKSTATEPOINTER value2 =sp-1;
 					if(!MMath::Power(value1,value2))
 					{
 						return 0;
 					}
 					sp--;
-					break;
-				}
-			case OP_SUB:
-				{
-					StackState* value1 =sp-2;
-					StackState* value2 =sp-1;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_SUB)
+					STACKSTATEPOINTER value1 =sp-2;
+					STACKSTATEPOINTER value2 =sp-1;
 					if(!MMath::Sub(value1,value2))
 					{
 						return 0;
 					}
 					sp--;
-					break;
-				}
-			case OP_MUL:
-				{
-					StackState* value1 =sp-2;
-					StackState* value2 =sp-1;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_MUL)
+					STACKSTATEPOINTER value1 =sp-2;
+					STACKSTATEPOINTER value2 =sp-1;
 					if(!MMath::Mul(value1,value2))
 					{
 						return 0;
 					}
 					sp--;
-					break;
-				}
-			case OP_DIV:
-				{
-					StackState* value1 =sp-2;
-					StackState* value2 =sp-1;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_DIV)
+					STACKSTATEPOINTER value1 =sp-2;
+					STACKSTATEPOINTER value2 =sp-1;
 					if(!MMath::Div(value1,value2))
 					{
 						return 0;
 					}
 					sp--;
-					break;
-				}
-			case OP_MOD:
-				{
-					StackState* value1 =sp-2;
-					StackState* value2 =sp-1;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_MOD)
+					STACKSTATEPOINTER value1 =sp-2;
+					STACKSTATEPOINTER value2 =sp-1;
 					if(!MMath::Mod(value1,value2))
 					{
 						return 0;
 					}
 					sp--;
-					break;
-				}
-			case OP_XOR:
-				{
-					StackState* value1 =sp-2;
-					StackState* value2 =sp-1;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_XOR)
+					STACKSTATEPOINTER value1 =sp-2;
+					STACKSTATEPOINTER value2 =sp-1;
 					if(!MLogic::Xor(value1,value2))
 					{
 						return 0;
 					}
 					sp--;
-					break;
-				}
-			case OP_STOREM:
-				{
-					StackState* value = sp-1;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_STOREM)
+					STACKSTATEPOINTER value = sp-1;
 					//int k =_code.i;
 					value->namehash = *codelist++; //函数名称的HASH值
-					RestoreGlobalMemory(*value);
-					
+					RestoreGlobalMemory(*value);					
 					//sp++;
-					break;
-				}
-			case OP_INITM:
-				{
-					StackState* value = --sp;
-					value->namehash = *codelist++;//函数名称的HASH值
-					
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_INITM)
+					STACKSTATEPOINTER value = --sp;
+					value->namehash = *codelist++;//函数名称的HASH值					
 					RestoreGlobalMemory(*value);
-					break;
-				}
-			case OP_STORES:
-				{
-					StackState* v = (bp+*codelist++); //被更新的栈
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_STORES)
+					STACKSTATEPOINTER v = (bp+*codelist++); //被更新的栈
 					*v=*(sp-1);//更新的数据
-					break;
-				}
+			SWITCHCASEEND
+
 		
-		  case OP_LOADM:
-				{
-					StackState value= FindGlobalMemory(*codelist++);
+		    SWITCHCASESTART(OP_LOADM)
+					StackState value= FindGlobalMemory(*codelist++,currentruntimestate,currentruntimestate);
 					(*sp++) =value;
-					break;
-				}
-		case OP_LOADS:
-				{
+		    SWITCHCASEEND
+
+		    SWITCHCASESTART(OP_LOADS)
 					int kkkk = *codelist++;
 					*sp++=*(bp+kkkk);
-					break;
-				}
-		 case OP_NOP:
-			 {
-				break;
-			 }
-		case OP_LT:
-			 {
-			 		StackState* value1 =sp-2;
-					StackState* value2 =sp-1;
-					value1->v = M_BOOL;
-					value1->b=(value1->d<value2->d);
+		    SWITCHCASEEND
+
+		    SWITCHCASESTART(OP_NOP)
+		    SWITCHCASEEND
+
+			SWITCHCASESTART(OP_LT)
+			 		STACKSTATEPOINTER value1 =sp-2;
+					STACKSTATEPOINTER value2 =sp-1;
+					if(!MLogic::Lt(value1,value2))
+					{
+						return 0;
+					}
 					sp--;
-					break;
-			 }
+			SWITCHCASEEND
 			 
-		 case OP_LE:
-			 {
-			 		StackState* value1 =sp-2;
-					StackState* value2 =sp-1;
+			SWITCHCASESTART(OP_LE)
+			 		STACKSTATEPOINTER value1 =sp-2;
+					STACKSTATEPOINTER value2 =sp-1;
 					if(!MLogic::Le(value1,value2))
 					{
 						return 0;
 					}
 					sp--;
-				break;
-			 }
-		 case OP_GEEQ:
-			 {
-					StackState* value1 =sp-2;
-					StackState* value2 =sp-1;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_GEEQ)
+					STACKSTATEPOINTER value1 =sp-2;
+					STACKSTATEPOINTER value2 =sp-1;
 					if(!MLogic::Geeq(value1,value2))
 					{
 						return 0;
 					}
 					sp--;
-					break;
-			 }
-		 case OP_LEEQ:
-			 {
-				StackState* value1 =sp-2;
-					StackState* value2 =sp-1;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_LEEQ)
+				STACKSTATEPOINTER value1 =sp-2;
+					STACKSTATEPOINTER value2 =sp-1;
 					if(!MLogic::Leeq(value1,value2))
 					{
 						return 0;
 					}
 					sp--;
-					break;
-			 }
-		   case OP_EQEQ:
-			 {
-					StackState* value1 =sp-2;
-					StackState* value2 =sp-1;
+			SWITCHCASEEND
+
+		    SWITCHCASESTART(OP_EQEQ)
+					STACKSTATEPOINTER value1 =sp-2;
+					STACKSTATEPOINTER value2 =sp-1;
 					if(!MLogic::EqEq(value1,value2))
 					{
 						return 0;
 					}
 					sp--;
-					break;
-			 }
-		   case  OP_NEQ:
-			   {
-					StackState* value1 =sp-2;
-					StackState* value2 =sp-1;
+			SWITCHCASEEND
+
+		    SWITCHCASESTART(OP_NEQ)
+					STACKSTATEPOINTER value1 =sp-2;
+					STACKSTATEPOINTER value2 =sp-1;
 					if(!MLogic::Neq(value1,value2))
 					{
 						return 0;
 					}
 					sp--;
-					break;
-			   }
-		   case OP_SHIFTL:
-			   {
-					StackState* value1 =sp-2;
-					StackState* value2 =sp-1;
+			SWITCHCASEEND
+
+		    SWITCHCASESTART(OP_SHIFTL)
+					STACKSTATEPOINTER value1 =sp-2;
+					STACKSTATEPOINTER value2 =sp-1;
 					if(!MBitwise::SHIFTL(value1,value2))
 					{
 						return 0;
 					}
 					sp--;
-					break;
-			   }
-		 case OP_SHIFTR:
-			   {
-					StackState* value1 =sp-2;
-					StackState* value2 =sp-1;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_SHIFTR)
+					STACKSTATEPOINTER value1 =sp-2;
+					STACKSTATEPOINTER value2 =sp-1;
 					if(!MBitwise::SHIFTR(value1,value2))
 					{
 						return 0;
 					}
 					sp--;
-					break;
-			   }
-		 case OP_CREATEARRAY:
-			 {
-				StackState  result;
-				result.v = M_ARRAY;
-				result.parray = CreateArray();
-				*sp++ = result;
-				break;
-			 }
-		 case OP_SETARRAY:
-			 {
+			SWITCHCASEEND
 
-				unsigned int c =*codelist++;
-				vector<StackState>* _ss = (vector<StackState>*)(sp-c-1)->parray->array;	
+			SWITCHCASESTART(OP_CREATEARRAY)
+				StackState  result;
+				result.parray = CreateArray();
+				result.v = M_ARRAY;
+				*sp++ = result;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_SETARRAY)
+				M_UInt c =*codelist++;
+				VECOTRSTACKSTATEPOINTER _ss = (VECOTRSTACKSTATEPOINTER)(sp-c-1)->parray->array;	
 				_ss->resize(c);
 				sp = sp-c;
 				for (int i = 0; i < c; i++)
 				{
 					_ss->at(i)=*(sp+i);
 				}
-				break;
-			 }
-		case OP_SETARRAYELEMENT:
-			 {				  
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_SETARRAYELEMENT)
 				  int index = (--sp)->d;		
-				  StackState* pa = (--sp);
+				  STACKSTATEPOINTER pa = (--sp);
 				  StackState value =*(sp-1);
 				  if(pa->v!=M_ARRAY && pa->v!=M_STRING)
 				  {
@@ -992,7 +1045,7 @@ int Execute()
 				  }
 
 				  if(pa->v==M_ARRAY){
-					  vector<StackState>* _arr = (vector<StackState>*)pa->parray->array; 
+					  VECOTRSTACKSTATEPOINTER _arr = (VECOTRSTACKSTATEPOINTER)pa->parray->array; 
 					  int size =_arr->size();
 					  if(size>index) {
 						  _arr->at(index) = value;
@@ -1015,15 +1068,14 @@ int Execute()
 						  pa->str->string[index] = value.str->string[0]; 
 					  }
 				  }
-				  break;
-			 }
-		case OP_GETARRAYELEMENT:
-			{
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_GETARRAYELEMENT)
 				int gettype = (--sp)->d;
 				int index2= (--sp)->d;
 				int index =(--sp)->d;
 				
-				StackState* stt= (--sp);
+				STACKSTATEPOINTER stt= (--sp);
 
 				if(stt->v!=M_ARRAY && stt->v!=M_STRING)
 				{
@@ -1034,15 +1086,19 @@ int Execute()
 				if(stt->v==M_STRING)
 				{
 					if(gettype==0){
+						if(index>=strlen(stt->str->string)  || index<0){
+							MError::CreateInstance()->PrintRunTimeError("Array out of bounds");
+							return 1;
+						}
 						char str[2] = {(stt->str->string)[index],'\0'};
-						StackState  result;
-						result.v = M_STRING;
+						StackState  result;					
 						result.str = CreateString(str);
+						result.v = M_STRING;
 						*sp=result;
 					}
 					if(gettype==1){
 						int stringlenght = strlen(stt->str->string);
-						if(index>=stringlenght){
+						if(index>=stringlenght  || index<0){
 							MError::CreateInstance()->PrintRunTimeError("Array out of bounds");
 							return 1;
 						}
@@ -1059,15 +1115,15 @@ int Execute()
 						}
 						dest = _dest;
 						dest[memorylenght] = '\0';
-						StackState  result;
-						result.v = M_STRING;
+						StackState  result;					
 						result.str = CreateString(dest);
+						result.v = M_STRING;
 						*sp=result;
 						delete[] dest;
 					}
 
 					if(gettype==2){
-						if(index>=strlen(stt->str->string)){
+						if(index>=strlen(stt->str->string)  || index<0){
 							MError::CreateInstance()->PrintRunTimeError("Array out of bounds");
 							return 1;
 						}
@@ -1084,8 +1140,8 @@ int Execute()
 						dest = _dest;
 						dest[index+1] = '\0';
 						StackState  result;
-						result.v = M_STRING;
 						result.str = CreateString(dest);
+						result.v = M_STRING;
 						*sp=result;
 						delete[] dest;
 					}
@@ -1122,17 +1178,17 @@ int Execute()
 						dest = _dest;
 						dest[length] = '\0';
 						StackState  result;
-						result.v = M_STRING;
 						result.str = CreateString(dest);
+						result.v = M_STRING;
 						*sp=result;
 						delete[] dest;
 					}
 					
 				}else{
 
-					vector<StackState>* _arr = (vector<StackState>*)stt->parray->array;
+					VECOTRSTACKSTATEPOINTER _arr = (VECOTRSTACKSTATEPOINTER)stt->parray->array;
 					if(gettype==0){
-						if(index>_arr->size()-1){
+						if(index>_arr->size()-1 || index<0){
 							MError::CreateInstance()->PrintRunTimeError("Array out of bounds");
 							return 1;
 						}else{
@@ -1144,7 +1200,12 @@ int Execute()
 						StackState  result;
 						result.v = M_ARRAY;
 						pArray arr = CreateArray();
-						vector<StackState>* _t = arr->array;
+						VECOTRSTACKSTATEPOINTER _t = arr->array;
+
+						if(index>=_arr->size() || index<0)
+						{
+							MError::CreateInstance()->PrintRunTimeError("Array out of bounds");
+						}
 						for (int i=index;i<_arr->size();i++){			
 							_t->push_back(_arr->at(i));
 						}
@@ -1156,8 +1217,12 @@ int Execute()
 						StackState  result;
 						result.v = M_ARRAY;
 						pArray arr = CreateArray();
-						vector<StackState>* _t = arr->array;
-						for (int i=0;i<index;i++){			
+						VECOTRSTACKSTATEPOINTER _t = arr->array;
+						if(index>=_arr->size() || index<0)
+						{
+							MError::CreateInstance()->PrintRunTimeError("Array out of bounds");
+						}
+						for (int i=0;i<=index;i++){			
 							_t->push_back(_arr->at(i));
 						}
 						result.parray = arr;
@@ -1168,7 +1233,13 @@ int Execute()
 						StackState  result;
 						result.v = M_ARRAY;
 						pArray arr = CreateArray();
-						vector<StackState>* _t =  arr->array;
+						VECOTRSTACKSTATEPOINTER _t =  arr->array;
+						int s = _arr->size();
+						if(index>=s || index<0 || index2>=s || index2<0 || index>index2)
+						{
+							MError::CreateInstance()->PrintRunTimeError("Array out of bounds");
+						}
+
 						for (int i=index;i<=index2;i++){			
 							_t->push_back(_arr->at(i));
 						}
@@ -1177,20 +1248,16 @@ int Execute()
 					}
 				}
 				sp++;
-				break;
-			}
+			SWITCHCASEEND
 
-		case OP_CREATEDICT:
-			{
+			SWITCHCASESTART(OP_CREATEDICT)
 				StackState  result;
 				result.v = M_DICT;
 				result.pdict = CreateDict();	
 				*sp++ = result;
-				break;
-			}
-		case OP_SETDICT:
-			{
+			SWITCHCASEEND
 
+			SWITCHCASESTART(OP_SETDICT)
 				int c =*codelist++;				
 				map<hashValue,StackState>* _ss = (map<hashValue,StackState>*)(sp-(c*2)-1)->pdict->dict;	
 				sp = sp-(2*c);
@@ -1201,12 +1268,11 @@ int Execute()
 					StackState key =*(sp+(i*2+1));					
 					_ss->insert(pair<hashValue,StackState>(key.hash,value));
 				}
-				break;
-			}
-		case OP_GETDICTELEMENT:
-			{
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_GETDICTELEMENT)
 				hashValue key = *codelist++;			
-				StackState* p = --sp;
+				STACKSTATEPOINTER p = --sp;
 				if(p->v!=M_DICT){
 					MError::CreateInstance()->PrintRunTimeError("It is not a dictionary");
 					return 1;
@@ -1222,12 +1288,11 @@ int Execute()
 					*sp=it->second;
 				}			
 				sp++;
-				break;
-			}
-		case OP_SETDICTELEMENT:
- 			{
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_SETDICTELEMENT)
 				 hashValue key = *codelist++;			
-				  StackState* pa = (--sp);
+				  STACKSTATEPOINTER pa = (--sp);
 				  if(pa->v!=M_DICT){
 					MError::CreateInstance()->PrintRunTimeError("It is not a dictionary");
 					return 1;
@@ -1241,11 +1306,10 @@ int Execute()
 					  _ss->find(key)->second = value;
 				  }
 				  sp++;
-				  break;
-			}
-		case OP_JMP:
-			{
-				StackState *b = sp-1;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_JMP)
+				STACKSTATEPOINTER b = sp-1;
 				if(b->v!=M_BOOL)
 				{
 					b->v = M_BOOL;
@@ -1259,99 +1323,86 @@ int Execute()
 					codelist +=_ip;
 				}
 				sp--;
-				break;
-			}
-		case OP_UJMPS:
-			{
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_UJMPS)
 			 	Instruction _ip = *codelist;//为什么没有做*codelist++，因为如果如果在++，则代码现在指向的是要跳跃数字的下一个代码，则下面减的时候需要多减掉1，减去刚才被++的那个代码
 				codelist -=_ip;
-				break;
-				}
-		case OP_UJMP:
-			{
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_UJMP)
 			 	Instruction _ip = *codelist;
 				codelist +=_ip;
-				break;
-				}
-		 case OP_HALT:
-			 {				
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_HALT)
 				return 1;
-			 }
-		 case OP_OR:
-			 {
-					StackState* value1 =sp-2;
-					StackState* value2 =sp-1;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_OR)
+					STACKSTATEPOINTER value1 =sp-2;
+					STACKSTATEPOINTER value2 =sp-1;
 					if(!MLogic::Or(value1,value2))
 					{
 						return 0;
 					}
 					sp--;
-					break;
-			 }
-		 case OP_AND:
-			{
-				StackState* value1 =sp-2;
-					StackState* value2 =sp-1;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_AND)
+				STACKSTATEPOINTER value1 =sp-2;
+					STACKSTATEPOINTER value2 =sp-1;
 					if(!MLogic::And(value1,value2))
 					{
 						return 0;
 					}
 					sp--;
-					break;
-			}
-		case OP_BIT_OR:
-			 {
-				 StackState* value1 =sp-2;
-					StackState* value2 =sp-1;
-					if(!MBitwise::BitOr(value1,value2))
-					{
-						return 0;
-					}
-					sp--;
-					break;
-			 }
-		 case OP_BIT_AND:
-			{
-					StackState* value1 =sp-2;
-					StackState* value2 =sp-1;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_BIT_OR)
+				STACKSTATEPOINTER value1 =sp-2;
+				STACKSTATEPOINTER value2 =sp-1;
+				if(!MBitwise::BitOr(value1,value2))
+				{
+					return 0;
+				}
+				sp--;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_BIT_AND)
+					STACKSTATEPOINTER value1 =sp-2;
+					STACKSTATEPOINTER value2 =sp-1;
 					if(!MBitwise::BitAnd(value1,value2))
 					{
 						return 0;
 					}
 					sp--;
-					break;
-			}
+			SWITCHCASEEND
 		
-			case OP_ADJUSTSP:
-			{
-
-				StackState* newsp = bp+(*codelist++)+1;		
+			SWITCHCASESTART(OP_ADJUSTSP)
+				STACKSTATEPOINTER newsp = bp+(*codelist++)+1;		
 				sp= newsp;
-				break;
-			}
-			case OP_ADJUSTBP:
-			{
-				StackState *b = sp-1;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_ADJUSTBP)
+				STACKSTATEPOINTER b = sp-1;
 				while (b->v != M_BPMARK) b--;
 				bp = b;	
-				break;
-			}
+			SWITCHCASEEND
 
-			case OP_PUSHRS:
-			{
+			SWITCHCASESTART(OP_PUSHRS)
 				StackState value;					
 				value.v= M_NULL;
 				value.d = 0;
 				/*CodeNumber _code;
 				_code.m.c1 = *codelist++; _code.m.c2 = *codelist++;;_code.m.c3 = *codelist++;; _code.m.c4 = *codelist++;*/
 				*sp++ = value;
-				break;
-			}
-			case OP_GETSEQ: //for in 的集合专用，in 后面的集合无法判断出是数组还是字典，所以要用专们的指令取出
-			{
+			SWITCHCASEEND
 
+			SWITCHCASESTART(OP_GETSEQ) //for in 的集合专用，in 后面的集合无法判断出是数组还是字典，所以要用专们的指令取出
+				int pcount = *codelist++;
 				int key = (sp-1)->d;	
-				StackState* seq=sp-3;
+				STACKSTATEPOINTER seq=sp-pcount-2;
 				
 				if(seq->v!=M_ARRAY && seq->v!=M_DICT && seq->v!=M_STRING)
 				{
@@ -1365,25 +1416,28 @@ int Execute()
 					}else
 					{
 						codelist++;					
-						//*sp=_arr->at(key);	
-						//sp++;
+						/*
 						StackState* _t = bp+*codelist++;
-						char str[2] = {(seq->str->string)[key],'\0'};
-						_t->v = M_STRING;
+						char str[2] = {(seq->str->string)[key],'\0'};					
 						_t->str = CreateString(str);
+						_t->v = M_STRING;*/
+						char str[2] = {(seq->str->string)[key],'\0'};	
+						(seq+1)->v = M_STRING;
+						(seq+1)->str = CreateString(str);
 					}
 				}
 
 				if(seq->v==M_ARRAY){
-					vector<StackState>* _arr = (vector<StackState>*)seq->parray->array;
+					VECOTRSTACKSTATEPOINTER _arr = (VECOTRSTACKSTATEPOINTER)seq->parray->array;
 					if(key>=_arr->size()){
 							codelist +=*codelist;
 					}else
 					{
-						codelist++;					
-						//*sp=_arr->at(key);	
-						//sp++;
-						*(bp+*codelist++) = _arr->at(key);
+						codelist++;	
+
+						*(seq+1) = _arr->at(key);
+
+						//*(bp+*codelist++) = _arr->at(key);
 					}
 				}
 				if(seq->v==M_DICT){
@@ -1397,13 +1451,17 @@ int Execute()
 					{
 							int index = 0;
 							codelist++;
-							StackState* _t = bp+*codelist++;
+							//StackState* _t = bp+*codelist++;
+							STACKSTATEPOINTER _t = seq+1;
+							STACKSTATEPOINTER _t2 = seq+2;
 							for(map <hashValue, StackState>::iterator m1_Iter = _ss->begin( ); m1_Iter != _ss->end( ); m1_Iter++)
 							{
 								if(index==key){	
-									_t->v = M_HASH;
-									_t->hash = (*m1_Iter).first;
-									break;
+									
+									_t->str = CreateDictKeyString((*m1_Iter).first);
+									_t->v = M_STRING;
+									*_t2 =(*m1_Iter).second; 
+									SWITCHBREAK;
 								}
 								index++;
 							}	
@@ -1412,39 +1470,54 @@ int Execute()
 					//此处可能需要删除原来的字典
 
 				}	
-				break;
-			}
-			case OP_PUSHPACKAGE:
-			{
+				(sp-1)->d++;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_PUSHPACKAGE)
 				(*sp).v = M_PACKAGE;
-				(*sp++).i = *codelist++;
-				break;
-			}
-			case OP_PUSHPACKAGEFUNC:
-			{
-				StackState *b = sp-1;
-				PackageState* pa = GetPackageAttr(b->i);
+			    (*sp++).ps = GetPackageAttr(*codelist++);
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_PUSHPACKAGEFUNC)
+				STACKSTATEPOINTER b = sp-1;
+				if (b->v != M_PACKAGE){
+					MError::CreateInstance()->PrintRunTimeError("expression is not package");
+					return 1;
+				}
+				PackageState* pa =b->ps;
 				b->v = M_PFUN;
 				b->hash = *codelist++; //function's hash value
 				b->p = pa->rts;
-				break;
-			}		
-			case OP_GETPACKAGEATTER:
+
+				if(GetRunTimeFunctionAtter(b->hash,pa->rts).name=="")
 				{
-					StackState *b = sp-1;
-					PackageState* pa = GetPackageAttr(b->i);
+					MError::CreateInstance()->PrintRunTimeError(GetStringConstantsByHash(b->hash,currentruntimestate)+string(" is not defined"));
+					return 1;
+				}
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_GETPACKAGEATTER)
+					STACKSTATEPOINTER b = sp-1;
+					if (b->v != M_PACKAGE){
+						MError::CreateInstance()->PrintRunTimeError("expression is not package");
+						return 1;
+					}
+					PackageState* pa = b->ps;
 					RunTimeState* _rts = currentruntimestate;
 					currentruntimestate = pa->rts;
 
-					*b = FindGlobalMemory(*codelist++);
+					*b = FindGlobalMemory(*codelist++,currentruntimestate,_rts);
 					currentruntimestate = _rts;
-					break;
-				}
-			case OP_SETPACKAGEATTER:
-				{
-					StackState *attr  = --sp;
-					StackState *value = sp-1;
-					PackageState* pa = GetPackageAttr(attr->i);
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_SETPACKAGEATTER)
+					STACKSTATEPOINTER attr  = --sp;
+					if (attr->v != M_PACKAGE){
+						MError::CreateInstance()->PrintRunTimeError("expression is not package");
+						return 1;
+					}
+					STACKSTATEPOINTER value = sp-1;
+					PackageState* pa = attr->ps;
 					RunTimeState* _rts = currentruntimestate;
 					currentruntimestate = pa->rts;
 					*attr = *value;
@@ -1452,23 +1525,20 @@ int Execute()
 					
 					RestoreGlobalMemory(*attr);
 					currentruntimestate = _rts;
-					break;
-				}
-			case OP_MINUS:
-				{
-					StackState *v = sp-1;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_MINUS)
+					STACKSTATEPOINTER v = sp-1;
 					if(v->v==M_NUMBER){
 						v->d = -1*v->d;
 					}
-					break;
-				}
-			case OP_POP:
-				{
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_POP)
 					sp--;
-					break;
-				}
-			case OP_TJMP:
-				{
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_TJMP)
 					if((--sp)->b)
 					{  
 						*codelist++;
@@ -1477,25 +1547,28 @@ int Execute()
 						Instruction _ip = *codelist;
 						codelist +=_ip;
 					}
-					break;
-				}
-			case OP_INVERTER:
-				{
-					StackState *v = sp-1;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_INVERTER)
+					STACKSTATEPOINTER v = sp-1;
 					if(v->v!=M_BOOL)
 					{
 						v->b = v->d;
 					}
 					v->v = M_BOOL;
 					v->b=!(v->b);
-					break;
-				}
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_TYPEOF)
+					STACKSTATEPOINTER v = sp-1;			
+					v->str = CreateString(mtypes[v->v]);
+					v->v=M_STRING;
+			SWITCHCASEEND
+
 			default:
 				return 0;
-				break;
-
+				SWITCHBREAK;
 		}
-		//printf("%s\n", OperateCodeString[code.s-1]);
 	}
 	return 1;
 }
@@ -1506,21 +1579,21 @@ int Execute()
 
 StackState GetParam(int x)
 {
-	StackState _v;
+	//注释掉，原代码意思不明
+	/*StackState _v;
 	_v.v = M_UNKONWN;
 	StackState v =  *(bp);
 	if(x>v.m.paramercount){
 		return _v;
-	}
-	v =  *(bp+x); 	
-	return v;
+	}*/
+	return  *(bp+x);
 }
 
 void AdjustStack()
 {
 	*(bp-1) = *(--sp);
 	codelist = (bp)->m.address;
-	StackState* newsp = (bp);
+	STACKSTATEPOINTER newsp = (bp);
     sp = newsp;
 	bp = ((bp)->m.bp);
 }

@@ -34,7 +34,7 @@ public:
 	Instruction ReadCode(char* bufferf,int &i);
 	void ReadCode(string filename);	
 	void ReadBinary(string filename,vector <FunctionAtter>* FunctionRecoredList,vector<string>* stringconstants,vector<Instruction> *codelist,
-		vector<Instruction> &globalcodelist,vector<double>* doubleconstants,vector<PackageState*>* packagelist,vector<RunTimeState*> *vrts,vector<StringValue>* dictkeyconstants);
+		vector<Instruction> &globalcodelist,vector<double>* doubleconstants,vector<PackageState*>* packagelist,vector<RunTimeState*> *vrts,vector<StringValue>* dictkeyconstants,vector<MentholDebug>* debuglist);
 	void MReadImportFiles(const char* fp,vector<PackageAttr> *filetree,char* modidr,char* workdir);
 	bool IsInInclude(vector<PackageState*>* packagelist,hashValue hash);
 };

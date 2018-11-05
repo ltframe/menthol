@@ -3,7 +3,6 @@
 #include "MFile.h"
 
 
-
 void StatementList::SetCompileStructTable(Statement* b)
 {
    if(b->NType==MNT_FunctionDefinition && FindInCompileStructTable(b->name)!=-1)
@@ -27,7 +26,19 @@ int StatementList::FindInCompileStructTable(string b)
 }
 
 
-void StatementList::AddCode(Instruction x){	    
+void StatementList::AddCode(Instruction x,int line){	
+
+	if(line!=0){
+		if(!MentholDebugList->size())
+		{
+			MentholDebug info = {debugipi++,line,strlen(currentyyfile),currentyyfile};
+			MentholDebugList->push_back(info);
+		}else
+		{
+			MentholDebug info = {debugipi++,line,0,""};
+			MentholDebugList->push_back(info);
+		}
+	}
 	CodeList->push_back(x);ipiadd;
 }
 
@@ -56,18 +67,33 @@ StatementList* StatementList::_StatementList = 0;
 StatementList::StatementList():CompileStructTable(new vector <Statement*>())
 	,CodeList(new vector<Instruction>()),functionlist(new vector<string>()),
    localcount(0),stringconstants(new vector <string>()),dictkeyconstants(new vector <string>()),GlobalMemory(new vector <GlobalVarAttr>()),ipi(0),StackID(0),LocalMemory(new vector<LocalVarAttr>()),
-   PackAgeList(new vector<PackageAttr>()),doubleconstants(new vector <double>())
+   PackAgeList(new vector<PackageAttr>()),doubleconstants(new vector <double>()),debugipi(0)
 
 {
 	_StatementList =this;
+	debugipi = 0;
+	MentholDebugList = new vector<MentholDebug>();
 	
+}
 
-	
+StatementList::~StatementList(void)
+{
+	delete CompileStructTable;
+	delete CodeList;
+	delete functionlist;
+	delete stringconstants;
+	delete dictkeyconstants;
+	delete GlobalMemory;
+	delete LocalMemory;
+	delete PackAgeList;
+	delete doubleconstants;
+	delete MentholDebugList;
 }
 
 
 
-bool StatementList::AddLocalMemory(string _name){
+
+bool StatementList::AddLocalMemory(string _name,int _lineno){
 
 	/*string classname = "";
 	if(_name.substr(0,2) =="$0"){
@@ -75,7 +101,7 @@ bool StatementList::AddLocalMemory(string _name){
 		_name = "$0";
 	}*/
 	if(IsGlobalVar(_name)){
-		MError::CreateInstance()->PrintError("Do not allow global variables to be declared inside a function "+_name);	
+		MError::CreateInstance()->PrintError("Do not allow global variables to be declared inside a function "+_name,_lineno);	
 
 	}
 
@@ -225,8 +251,22 @@ void StatementList::ResetInitPackageList()
 	AddPackAgeList("MSystem");
 	AddPackAgeList("MIo");
 }
-void StatementList::CreateCode(vector<Statement*>* _CompileStructTable)
+void StatementList::CreateCode(vector<Statement*>* _CompileStructTable,string extension,bool isdebug)
 {	
+
+	if(extension==MENTHOLEXTENSION){
+		string fileext = MENTHOLEXECUTEEXTENSION2;
+		for(int i=0;i<fileext.length();i++){
+			AddCharCode(fileext[i]);
+		}
+	}
+	if(extension==MENTHOLPACKAGEEXTENSION){
+		string fileext = MENTHOLPACKAGEDLLEXTENSION2;
+		for(int i=0;i<fileext.length();i++){
+			AddCharCode(fileext[i]);
+		}
+	}
+
 	int importentry = GetIpi();
 	AddCode(0); //import files entry point
 	int globalentry = GetIpi();
@@ -241,9 +281,13 @@ void StatementList::CreateCode(vector<Statement*>* _CompileStructTable)
 	int dictkeyentry = GetIpi();
 	AddCode(0);//dict key lsit  entry
 	
+
+	int montholdebugentry = GetIpi();
+	AddCode(0);//debug lsit  entry
+
+
+
 	SetCode(GetIpi(),importentry);
-
-
 	int allimportstart = GetIpi();
 	AddCode(0); ////set strings length
 /*	for (std::vector<PackageAttr>::iterator it = PackAgeList->begin() ; it != PackAgeList->end(); ++it)
@@ -301,7 +345,7 @@ void StatementList::CreateCode(vector<Statement*>* _CompileStructTable)
 	VECTORFORSTART(Statement*,_CompileStructTable,it)
 		if((*it)->NType==MNT_FunctionDefinition){
 
-			FunctionDefinition* fd = static_cast<FunctionDefinition*>(*it);
+			FunctionDefinition* fd = STATICCAST(FunctionDefinition,*it);
 			int functionnamelengthpostion = GetIpi();
 			AddCode(0);
 			int functionnamestart = GetIpi();
@@ -312,12 +356,12 @@ void StatementList::CreateCode(vector<Statement*>* _CompileStructTable)
 			AddCode(0);
 			AddCode(MCommon::CreateInstance()->ELFHash((*it)->name));
 			AddCode(fd->GetParamerCount());
-			
 			int codelengthpostion = GetIpi();
 			AddCode(0); ////set strings length
 			int codestart = GetIpi();
 			(*it)->CreateCode();
-			SetCode(GetIpi()-codestart,codelengthpostion);
+			SetCode(GetIpi()-codestart,codelengthpostion);			
+			fd->GetDefaultValueList();
 		}
 	//}
 	VECTORFOREND
@@ -387,6 +431,24 @@ void StatementList::CreateCode(vector<Statement*>* _CompileStructTable)
 	/*}*/
 	VECTORFOREND
 	SetCode(GetIpi()-alldictkeystart,alldictkeystart);
+
+
+
+	/////////////////////////////////debug start
+	int montholdebugstart  = GetIpi();
+	SetCode(montholdebugstart,montholdebugentry);
+	AddCode(0); ////set strings length
+	if(isdebug){
+		VECTORFORSTART(MentholDebug,MentholDebugList,it)
+				AddCode((*it).instno);
+				AddCode((*it).lineno);
+				AddCode((*it).filenamelenght);
+				for(int i=0;i<(*it).filenamelenght;i++){
+					AddCharCode((*it).filename[i]);
+				}
+		VECTORFOREND
+	}
+	SetCode(GetIpi()-montholdebugstart,montholdebugstart);
 }
 
 
@@ -514,4 +576,14 @@ vector<GlobalVarAttr>* StatementList::GetGlobalMemory()
 vector<LocalVarAttr>* StatementList::GetLocalMemory()
 {
 	return LocalMemory;
+}
+
+vector<MentholDebug>* StatementList::GetMentholDebug()
+{
+	return MentholDebugList;
+}	
+
+void StatementList::RestDebugIpi()
+{
+	debugipi = 0;
 }

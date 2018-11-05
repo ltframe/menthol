@@ -21,7 +21,7 @@ bool MBinary::IsInInclude(vector<PackageState*>* packagelist,hashValue hash)
 }
 
 void MBinary::ReadBinary(string filename,vector <FunctionAtter>* functionlist,vector<string>* stringconstants,vector<Instruction> *codelist,
-						 vector<Instruction> &globalcodelist,vector<double>* doubleconstants,vector<PackageState*>* packagelist,vector<RunTimeState*> *vrts,vector<StringValue>* dictkeyconstants){	
+						 vector<Instruction> &globalcodelist,vector<double>* doubleconstants,vector<PackageState*>* packagelist,vector<RunTimeState*> *vrts,vector<StringValue>* dictkeyconstants,vector<MentholDebug>* debuglist){	
 
 
 	std::ifstream t;  
@@ -34,12 +34,18 @@ void MBinary::ReadBinary(string filename,vector <FunctionAtter>* functionlist,ve
 	t.read(bufferf, length);       // read the whole file into the buffer  
 	t.close();                    // close file handle  
 	int i=0;
+
+	for(int mm=0;mm<3;mm++){ //跳过文件类型
+		ReadCode(bufferf,i);
+	}
+
 	int importentry = ReadCode(bufferf,i);;	
 	int globalentry =  ReadCode(bufferf,i);
 	int functionentry = ReadCode(bufferf,i);
 	int stringentry = ReadCode(bufferf,i);
 	int doubleentry = ReadCode(bufferf,i);
 	int dictkeyentry = ReadCode(bufferf,i);
+	int debugentry = ReadCode(bufferf,i);
 
 	{
 		i = importentry*4;	
@@ -107,11 +113,23 @@ void MBinary::ReadBinary(string filename,vector <FunctionAtter>* functionlist,ve
 			int postion = ReadCode(bufferf,loopid); //函数位置
 			int hash = ReadCode(bufferf,loopid);;
 			int paramcount = ReadCode(bufferf,loopid);
+
+
+
+
 			int codelenght = ReadCode(bufferf,loopid);
 
 			for(int si = 0;si<codelenght;si++){
 				codelist->push_back(ReadCode(bufferf,loopid));
-			}			FunctionAtter fa = {str,0,hash,paramcount,codelenght};
+			}
+
+			vector <int> *defaultvaluelenghtlist =new vector <int>();
+			defaultvaluelenghtlist->push_back(0);
+			for (int i = 0; i < paramcount; i++)
+			{
+				defaultvaluelenghtlist->push_back(ReadCode(bufferf,loopid));
+			}
+			FunctionAtter fa = {str,0,hash,paramcount,codelenght,defaultvaluelenghtlist};
 			functionlist->push_back(fa);
 
 		}
@@ -186,7 +204,24 @@ void MBinary::ReadBinary(string filename,vector <FunctionAtter>* functionlist,ve
 			
 		}
 	}
+	{
+		i = debugentry*4;
+		int allstringlength =  ReadCode(bufferf,i);
+   		int loopid = i;
+		int c = i+allstringlength*4-4;
+		while(loopid<c){		
 
+			int instno =ReadCode(bufferf,loopid);
+			int lineno =ReadCode(bufferf,loopid);
+			int filenamelenght = ReadCode(bufferf,loopid);
+			string str;
+			for(int si = 0;si<filenamelenght;si++){
+				str.push_back(ReadCode(bufferf,loopid));
+			}
+			MentholDebug debuginfo = {instno,lineno,filenamelenght,str};
+			debuglist->push_back(debuginfo);
+		}
+	}
 	delete [] bufferf;
 	
 }
@@ -214,6 +249,11 @@ void MBinary::MReadImportFiles(const char* fp,vector<PackageAttr> *filetree,char
 	t.close();                    // close file handle  
 	int i=0;
 	//WBhead* head =new WBhead();
+
+	for(int mm=0;mm<3;mm++){ //跳过文件类型
+		ReadCode(bufferf,i);
+	}
+
 	int importentry = ReadCode(bufferf,i);
 	i = importentry*4;
 	
@@ -233,9 +273,6 @@ void MBinary::MReadImportFiles(const char* fp,vector<PackageAttr> *filetree,char
 
 		packagestr[packagestringlength]=0;
 
-
-
-		
 		int fnamestringlength = ReadCode(bufferf,loopid);
 		char * fnamestr =new char[fnamestringlength+1];
 		for(int s=0;s<fnamestringlength;s++)

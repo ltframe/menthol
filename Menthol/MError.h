@@ -20,14 +20,16 @@ class MError
 public:
 	MError(void);
 	~MError(void);
-	void PrintError(string s);
+	void PrintError(string s,int _lineno = -1);
 	static MError* CreateInstance();
 	int ErrorCount();
-	void DataTypeOpertatError(StackState* value1,StackState* value2,char* str);
+	void DataTypeOpertatError(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2,char* str);
 	void PrintRunTimeError(string s);
-public:
-	
+	void SetCompilePrintErrorFunc(PrintErrorFunc func);
+	void SetRunTimePrintErrorFunc(PrintErrorFunc func);
 private:
 	static MError* _inst;
+	PrintErrorFunc _PrintCompileErrorFunc;
+	PrintErrorFunc _PrintRunTimeErrorFunc;
 };
 #endif

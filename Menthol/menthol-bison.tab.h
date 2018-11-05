@@ -89,7 +89,8 @@ extern int yydebug;
      VAR = 298,
      IN = 299,
      ARRAYSECTION = 300,
-     DICT_OP = 301
+     DICT_OP = 301,
+     TYPEOF = 302
    };
 #endif
 

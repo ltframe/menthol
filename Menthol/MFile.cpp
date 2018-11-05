@@ -16,7 +16,7 @@ MFile* MFile::CreateInstance()
 }
 MFile::~MFile(void)
 {
-
+		_inst=0;
 }
 
 
@@ -77,18 +77,18 @@ string MFile::currentDateTime() {
 }
 
 
-void MFile::GenerateFileData(vector<Instruction>* codelist,vector<StringAtter>* stringlist,vector <FunctionAtter> * functionlist,vector <const char*> * importfiles,string file)
+void MFile::GenerateFileData(vector<Instruction>* codelist,vector<StringAtter>* stringlist,vector <FunctionAtter> * functionlist,vector <const char*> * importfiles,string extension,string name)
 {	
-	PathInfo pinfo = MCommon::CreateInstance()->StringPathSplit(file);
+	//PathInfo pinfo = MCommon::CreateInstance()->StringPathSplit(file);
 	string fileext;
-	if(pinfo.extension==MENTHOLEXTENSION){
+	if(extension==MENTHOLEXTENSION){
 		fileext = MENTHOLEXECUTEEXTENSION;
 	}
-	if(pinfo.extension==MENTHOLPACKAGEEXTENSION){
+	if(extension==MENTHOLPACKAGEEXTENSION){
 		fileext = MENTHOLPACKAGEDLLEXTENSION;
 	}
 	ofstream fileOut;
-	fileOut.open((pinfo.name+fileext).c_str(), std::ios::out | ofstream::binary);		
+	fileOut.open((name+fileext).c_str(), std::ios::out | ofstream::binary);		
 	string _t;
 	int strlen = codelist->size();
 

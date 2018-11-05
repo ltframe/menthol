@@ -18,7 +18,11 @@
 #include <math.h>
 #include "libzplay.h"
 #include "windows.h";
-using namespace std;
+#include <stdio.h>
+#include <windows.h>
+#include <wininet.h>
+#pragma comment(lib,"Wininet.lib")
+using namespace std; 
 
 
 StackState test()
@@ -196,8 +200,70 @@ StackState GetStatus()
 }
 
 
+StackState HttpGet()
+{
+	StackState ret;
+	string v;
+	char* szUrl = GetParam(1).str->string;
+    char* szAgent= "";
+    HINTERNET hInternet1 = 
+        InternetOpen(NULL,INTERNET_OPEN_TYPE_PRECONFIG,NULL,NULL,NULL);
+    if (NULL == hInternet1)
+     {
+        InternetCloseHandle(hInternet1);
+		ret.v=M_NULL;
+        return ret;
+     }
+    HINTERNET hInternet2 = 
+        InternetOpenUrl(hInternet1,szUrl,NULL,NULL,INTERNET_FLAG_NO_CACHE_WRITE,NULL);
+    if (NULL == hInternet2)
+     {
+        InternetCloseHandle(hInternet2);
+        InternetCloseHandle(hInternet1);
+        ret.v=M_NULL;
+        return ret;
+     }
+    DWORD dwMaxDataLength = 500;
+    PBYTE pBuf = (PBYTE)malloc(dwMaxDataLength*sizeof(TCHAR));
+    if (NULL == pBuf)
+     {
+        InternetCloseHandle(hInternet2);
+        InternetCloseHandle(hInternet1);
+        ret.v=M_NULL;
+        return ret;
+     }
+    DWORD dwReadDataLength = NULL;
+    BOOL bRet = TRUE;
+    do 
+    {
+        ZeroMemory(pBuf,dwMaxDataLength*sizeof(TCHAR));
+        bRet = InternetReadFile(hInternet2,pBuf,dwMaxDataLength,&dwReadDataLength);
+        for (DWORD dw = 0;dw < dwReadDataLength;dw++)
+         {
+            v.push_back(pBuf[dw]);
+         }
+     } while (NULL != dwReadDataLength);
+	 InternetCloseHandle(hInternet2);
+     InternetCloseHandle(hInternet1);
+	 ret = String_CreateString(const_cast<char*>(v.c_str()));
+	 free(pBuf);
+	return ret;
+}
+
+StackState HideCursor()
+{
+	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_CURSOR_INFO CursorInfo;
+	GetConsoleCursorInfo(handle, &CursorInfo);
+	CursorInfo.bVisible = false; 
+	SetConsoleCursorInfo(handle, &CursorInfo);
+	StackState st;
+	st.v=M_NULL;
+	return st;
+}
 MentholPackMethod void example1_Init()
 {
+	RegisterPackAgeFunciton("HideCursor",HideCursor,0);	
 	RegisterPackAgeFunciton("test",test,0);	
 	RegisterPackAgeFunciton("CallBack",CallBack,1);	
 	RegisterPackAgeFunciton("CreatePlay",CreatePlay,0);	
@@ -208,5 +274,6 @@ MentholPackMethod void example1_Init()
 	RegisterPackAgeFunciton("Play2",Play2,1);	
 	RegisterPackAgeFunciton("GetPosition",GetPosition,1);
 	RegisterPackAgeFunciton("GetStatus",GetStatus,1);
+	RegisterPackAgeFunciton("HttpGet",HttpGet,1);
 }
 

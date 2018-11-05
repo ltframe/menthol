@@ -34,7 +34,7 @@ StackState Out()
 	}
 	if(value.v==M_STRING){	
 		//cout<<value.str->string<<endl;
-		printf(value.str->string);
+		printf("%s\n",value.str->string);
 		return st;
 	}
 	if(value.v==M_BOOL){
@@ -61,6 +61,48 @@ StackState Out()
 	return st;
 }
 
+StackState Oute()
+{
+	StackState value =GetParam(1);
+	StackState st;
+	st.v=M_NULL;
+	if(value.v==M_NUMBER){
+		if(value.d != (int)value.d){
+			printf("%.6lf",value.d);
+		}
+		else{
+			printf("%d",(int)value.d);
+		}	
+		return st;
+	}
+	if(value.v==M_STRING){	
+		//cout<<value.str->string<<endl;
+		printf("%s",value.str->string);
+		return st;
+	}
+	if(value.v==M_BOOL){
+		printf("%s",(value.b?"true":"false"));
+		return st;
+	}
+	if(value.v==M_NULL){
+		printf("NULL");
+		return st;
+	}
+	if(value.v==M_ARRAY){
+		printf("{Array Object}");
+		return st;
+	}
+	if(value.v==M_DICT)
+	{	printf("{Dictionary Object}");
+		return st;
+	}
+	if(value.v==M_FUN){
+		printf("{Function Object}");
+		return st;
+	}
+	printf("{Object}");
+	return st;
+}
 
 
 StackState In()
@@ -100,6 +142,7 @@ StackState Writefile()
 
 MentholPackMethod void MIo_Init()
 {
+	RegisterPackAgeFunciton("Oute",Oute,1);	
 	RegisterPackAgeFunciton("Out",Out,1);	
 	RegisterPackAgeFunciton("In",In,0);	
 	RegisterPackAgeFunciton("Readfile",Readfile,1);	

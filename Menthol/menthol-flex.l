@@ -1,7 +1,7 @@
 %{
 #include "header.h"
 #include "menthol-bison.tab.h"
-extern int lineno = 0;
+extern int lineno = 1;
 extern int yyerrorcount=0;
 extern char* currentyyfile;
 #include <io.h>
@@ -37,6 +37,7 @@ extern int yyerror(char*);
 "def"			{return DEF;}
 "var"			{return VAR;}
 "in"            {return IN;} 
+"typeof"        {return TYPEOF;}
 "+" 			{return('+');}
 
 "-" 			{return('-');}
@@ -97,14 +98,15 @@ extern int yyerror(char*);
 
 [ \t]			/* ignore white space */
 .							return yytext[0];
-"\n"                    { ++lineno; }
+
+\n                    { lineno++; }
      
-\"([^\\\"]|\\.)*\"  { 
+\"([^\\"]|\\.)*\"  { 
 								
 								convert(yytext);
 				
 								yylval.vSTRING = string(yytext).substr(1,string(yytext).length()-2);
-							
+								
 								return STRING;
 
 								 }
@@ -128,12 +130,15 @@ static void convert(char *a)
         {
             a[j++] = '\b';
             i++;
+        }else if(a[i] == '\\' && a[i+1] == '"')
+        {
+            a[j++] = '\"';
+            i++;
         }
         else a[j++] = a[i];
  
     a[j] = 0;
 }
-
 
 static void comment_block()
 {
@@ -144,7 +149,7 @@ static void comment_block()
 
     while (c2 != EOF && !(c2 == '/')) {
         if (c1 == '\n')
-            ++lineno;
+            lineno++;
         c1 = c2;
         c2 = yyinput();
     }
@@ -156,7 +161,7 @@ static void comment_line(void)
 
     while ((c = yyinput()) != EOF && c != '\n')
         ;
-    ++lineno;
+    lineno++;
 }
 
 int yywrap()

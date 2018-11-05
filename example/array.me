@@ -1,11 +1,22 @@
 _mmain:$a,$c
-{	
+{			
 	var $arr = {1,2,3,4,5,6};
-	MIo.Out($arr[1]);
-	MIo.Out($arr[1..][1]);
-	MIo.Out($arr[..3][1]);
-	MIo.Out($arr[2..5][1]);
+	$a = $arr[1..];
+	for(var $i in $a){
+		MIo.Out($i);
+	}
+	MIo.Out("************");
+	$a = $arr[..3];
+	for(var $i in $a){
+		MIo.Out($i);
+	}
+	MIo.Out("************");
+	$a = $arr[2..5];
+	for(var $i in $a){
+		MIo.Out($i);
+	}
+
+	MIo.Out("************");
 	$arr = "abcdefghi";
 	MIo.Out($arr[1]);
-
 }

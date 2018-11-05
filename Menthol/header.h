@@ -37,6 +37,22 @@ class Statement;
 #define VECTORFOREND }
 
 
+#define STACKSTATEPOINTER StackState*
+
+#define VECOTRSTACKSTATE  vector<StackState>
+#define VECOTRSTACKSTATEPOINTER  VECOTRSTACKSTATE*
+#define STATICCAST(T,P) static_cast<T*>(P)
+#define CONSTCAST(T)  const_cast<T*>
+#define STATICCASTPARRAY(P) STATICCAST(VECOTRSTACKSTATE,P->array)
+
+
+#define SWITCHBREAK break
+
+#define SWITCHCASESTART(op) case op:{ \
+
+#define SWITCHCASEEND SWITCHBREAK; \
+						  } \
+
 typedef union
 {
  struct {char c1; char c2;char c3; char c4;char c5; char c6;char c7; char c8;} m;
@@ -47,7 +63,7 @@ typedef union
 {
  struct {char c1; char c2;char c3; char c4;} m;
  int i;
- unsigned int h;
+ M_UInt h;
 }CodeInt;
 
 
@@ -76,6 +92,7 @@ struct StringValue
 
 enum NodeType{
 	MNT_FunctionParameter,
+	MNT_FunctionParameterWithDefault,
 	MNT_TryParameter,
 	MNT_VarIdentIfier,
 	MNT_FunctionParameterStatement,
@@ -113,7 +130,8 @@ enum NodeType{
 	MNT_MinusExpression,
 	MNT_PlusExpression,
 	MNT_Release,
-	MNT_InverterExpression
+	MNT_InverterExpression,
+	MNT_TypeOfExpression
 };
 
 
@@ -186,7 +204,8 @@ enum OperateCode{
 	OP_POP,
 	OP_TJMP,
 	OP_ADD1,
-	OP_INVERTER
+	OP_INVERTER,
+	OP_TYPEOF
 	};
 
 enum PackAgeType{
@@ -216,6 +235,16 @@ enum DataType{
 
 
 
+struct BuiltinTypeValue
+{
+	double d;
+	int i;
+	hashValue hash;
+	string str;
+	pInst p;
+	bool b;
+	ValueType v;
+};
 
 
 //记录函数的状态
@@ -226,8 +255,16 @@ struct FunctionAtter
 	hashValue hash; //如果是内置函数则本属性无用
 	int paramcount;
 	int lenght;
+	vector <int> *defaultvaluelengthlist;
 };
 
+struct MentholDebug
+{
+	int instno;
+	int lineno;
+	int filenamelenght;
+	string filename;
+};
 
 
 
@@ -261,8 +298,10 @@ struct RunTimeState
 	vector<double>* doubles;
 	vector<FunctionAtter>* functionlist;
 	vector<PackageState*>* includepackages;
-	vector<StackState>* globalvalues;
+	VECOTRSTACKSTATEPOINTER globalvalues;
+	vector<MentholDebug> *debuglist;
 	PackAgeType ptype;
+	int codeoffset;
 
 };
 
@@ -283,7 +322,7 @@ typedef struct YYSTYPE
 	string vSTRING;
 	int  vINTEGER;
 	double vDOUBLE;
-	struct StackState*  vStackState;
+	struct STACKSTATEPOINTER  vStackState;
 	struct CompileStruct* vCompileStruct;
 	Statement* vStatement;
 } YYSTYPE;
