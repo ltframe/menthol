@@ -18,7 +18,7 @@ Menthol是一个简单、易用、易学的脚本语言,语法简单,开发简�
 ```html
 if else for break true false
 try except throw continue return while
-null import _mmain def var in
+null import _mmain def var in typeof
 ```
 
 ###### 操作符
@@ -115,16 +115,33 @@ _mmain:$a,$c
 	{
 		MIo.Out($i);
 	}
-	$arr =(key1::"key1",key2::"key2");
-	for(var $i in $arr)
+	$arr =(key1::"value1",key2::"value2");
+	for(var $key,$value in $arr)
 	{
-		MIo.Out(MDict.GetKey($arr,$i));
-		MIo.Out(MDict.GetValue($arr,$i));
+		MIo.Out($key+":"+$value);
 	}
 }
 
 ```
 
+
+###### 函数
+
+```html
+
+def func:$i1,$i2=333
+{	
+	MIo.Out($i1);
+	MIo.Out($i2);
+}
+
+_mmain:$a,$c
+{	
+	func(222,1000,333);
+	func(555);
+}
+
+```
 
 ###### 自定义包
 packagetest.mep
