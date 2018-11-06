@@ -19,7 +19,7 @@ int main(int argc, char * argv[])
 			 debug = true;
 		}else
 		{
-			int c = Compile2(argv[i],debug);
+			int c = Compile(argv[i],debug);
 			if(!c){
 				printf("%s,compile done\r\n",argv[i]);
 			}
