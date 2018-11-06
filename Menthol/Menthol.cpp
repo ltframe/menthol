@@ -20,68 +20,9 @@ void SetPrintRunTimeErrorFunc(PrintErrorFunc _pef)
 {
 	_PrintRunTimerrorFunc = _pef;
 }
-/*
-int Compile(char** files,int c)
-{
-	StatementList *als =new StatementList();
-	MCommon* _WCommon  = new MCommon();
-	MError* _MError = new MError();
-	for(int f=0;f<c;f++){
-		FILE* file;
-		file = fopen(files[f], "r");
-		if (!file) {
-			fprintf(stderr,"could not open %s\n",files[f]);
-			return 0;
-		}
-		currentyyfile = files[f];
-		yyin = file;
-		als->currentpackagename = _WCommon->StringPathSplit(string(files[f])).name;
-		als->ResetInitPackageList();
-		yyparse(als);
-		PathInfo pinfo = MCommon::CreateInstance()->StringPathSplit(string(files[f]));
 
 
-		if(pinfo.extension!=MENTHOLEXTENSION && pinfo.extension!=MENTHOLPACKAGEEXTENSION)
-		{
-			fprintf(stderr,"%s is not menthol execute or package\n",files[f]);
-			yyerrorcount++;
-			continue;
-		}
-		als->CreateCode(als->CompileStructTable,pinfo.extension,false);
-		if(!yyerrorcount){
-			MFile::CreateInstance()->GenerateFileData(als->CodeList,0,0,0,pinfo.extension,pinfo.name);
-		}
-
-		VECTORFORSTART(Statement*,als->CompileStructTable,it)
-			(*it)->Release();
-		VECTORFOREND
-		fclose(file);
-		als->CompileStructTable->clear();
-		als->ResetIpi();
-		als->SetLocalCountValue(0);
-		als->CodeList->clear();
-		als->GetPackAgeList()->clear();	
-		als->GetGlobalMemory()->clear();
-		als->GetDoubleConstants()->clear();
-		als->GetFunctionList()->clear();
-		als->GetStringConstants()->clear();
-		als->GetDictKeyConstants()->clear();
-		als->RestDebugIpi();
-		lineno  = 1;
-	}
-	
-	
-	delete als;
-	delete _WCommon;
-	delete _MError;
-	if(yyerrorcount){
-		return yyerrorcount;
-	}
-	return 0;
-}
-*/
-
-int Compile2(char* cfile,bool isdebug)
+int Compile(char* cfile,bool isdebug)
 {
 	StatementList *als =new StatementList();
 	MCommon* _WCommon  = new MCommon();

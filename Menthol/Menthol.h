@@ -105,10 +105,9 @@ struct StackState
 typedef StackState (*funcallback)();
 typedef int (*PrintErrorFunc)(char* str,char* cf,int line);
 //global:
-MentholPackMethod int Compile(char** files,int c);
 MentholPackMethod void SetPrintCompileErrorFunc(PrintErrorFunc _pef);
 MentholPackMethod void SetPrintRunTimeErrorFunc(PrintErrorFunc _pef);
-MentholPackMethod int Compile2(char* cfile,bool isdebug);
+MentholPackMethod int Compile(char* cfile,bool isdebug);
 MentholPackMethod int Run(char* files,char* arg1,char* arg2);
 MentholPackMethod void RegisterPackAgeFunciton(char* name,funcallback fun,int pcount);
 MentholPackMethod StackState GetParam(int index);

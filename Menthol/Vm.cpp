@@ -612,11 +612,11 @@ void EntryPoint(PackageAttr pa,char* workdir)
 	PintCode(codealllist.size());
 #endif	
 	filetree->clear();
-	clock_t start = clock();
+	//clock_t start = clock();
 	runflag = 1;
   	Execute();
-	clock_t end = clock();
-	printf("%ld",end-start);
+	//clock_t end = clock();
+	//printf("%ld",end-start);
 }
 
 
