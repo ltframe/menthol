@@ -20,7 +20,7 @@ using namespace std;
 
 StackState Version()
 {
-	return String_CreateString("Menthol 1.0.1,2018/3/14,@2018 ltplayer.com");
+	return String_CreateString("Menthol 1.0.0.2,2018/3/14,@2018 ltplayer.com");
 
 }
 StackState Sleep()
