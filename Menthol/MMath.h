@@ -6,34 +6,38 @@
 
 namespace MMath
 {
-	inline bool Add(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
+
+
+StackState ConvertToNumber(STACKSTATEPOINTER value)
 {
-
-	if(IsNumber(value1) && IsNumber(value2)){
-		value1->v = M_NUMBER;
-		value1->d+=value2->d;
-		return true;
+	StackState ret;
+	if(IsBool(value)){
+		ret.v = M_NUMBER;
+		ret.d = value->b?1:0;
+		return ret;
 	}
 
-
-	if(IsBool(value1) && IsBool(value2)){
-		value1->v = M_NUMBER;
-		value1->d+=value2->d;
-		return true;
+	if(IsNULL(value)){
+		ret.v = M_NUMBER;
+		ret.d = 0;
+		return ret;
 	}
-
-	 if(IsNumber(value1) &&  IsBool(value2)){
-		value1->v = M_NUMBER;
-		value1->d+=value2->d;
-		return true;
+	if(IsNumber(value)){
+		ret = *value;
+		return ret;
 	}
-
-	if((IsNumber(value1) || IsBool(value1)) && (IsNumber(value2) || IsBool(value2))){
+	ret.v = M_UNKONWN;
+	return ret;
+}
+inline bool Add(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
+{
+	StackState ctn1 = ConvertToNumber(value1);
+	StackState ctn2 = ConvertToNumber(value2);
+	if(ctn1.v!=M_UNKONWN && ctn2.v!=M_UNKONWN){	
 		value1->v = M_NUMBER;
-		value1->d+=value2->d;
+		value1->d=(ctn1.d+=ctn2.d);
 		return true;
-	}
-	else if(IsBool(value1) && IsString(value2)){
+	}else if(IsBool(value1) && IsString(value2)){
 
 		int c = strlen(value2->str->string)+10;
 		char *dest = new char[c];
@@ -98,35 +102,20 @@ namespace MMath
 		delete [] dest;
 		return true;
 	}
-	else if(IsArray(value1) && (IsNumber(value2) || IsBool(value2)))
+	else if(IsArray(value1))
 	{
-		VECOTRSTACKSTATEPOINTER _ss = (VECOTRSTACKSTATEPOINTER)(value1->parray);
+		VECOTRSTACKSTATEPOINTER _ss = (VECOTRSTACKSTATEPOINTER)(value1->parray->array);
 		_ss->push_back(*value2);
 		return true;
 	}
-	if((IsNumber(value1) || IsBool(value1)) && IsArray(value2))
+	else if(IsArray(value2))
 	{
 		//MGc::SetGarBageRef(value2->parray,-1);
-		VECOTRSTACKSTATEPOINTER _ss = (VECOTRSTACKSTATEPOINTER)(value2->parray);
+		VECOTRSTACKSTATEPOINTER _ss = (VECOTRSTACKSTATEPOINTER)(value2->parray->array);
 		_ss->push_back(*value1);
 		*value1 = *value2;
 		return true;
 	}
-	else if(IsArray(value1) && IsDict(value2))
-	{
-		//MGc::SetGarBageRef(value2->pdict,-1);
-		VECOTRSTACKSTATEPOINTER _ss = (VECOTRSTACKSTATEPOINTER)(value1->parray);
-		_ss->push_back(*value2);
-		return true;
-	}
-	else if(IsDict(value1) && IsArray(value2))
-	{
-		//MGc::SetGarBageRef(value1->pdict,-1);
-		VECOTRSTACKSTATEPOINTER _ss = (VECOTRSTACKSTATEPOINTER)(value2->parray);
-		_ss->push_back(*value2);
-		*value1=*value2;
-		return true;
-	}	
 	else if(IsNULL(value1) && IsString(value2))
 	{
 		int c = strlen(value2->str->string)+1;
@@ -149,17 +138,6 @@ namespace MMath
 		delete [] dest;
 		return true;
 	}
-	else if(IsNumber(value1) && IsNULL(value2))
-	{
-		return true;
-	}
-	else if(IsNULL(value1) && IsNumber(value2))
-	{
-		value1->v = M_NUMBER;
-		value1->d = value2->d;
-		return true;
-	}
-
 	MError::CreateInstance()->DataTypeOpertatError(value1,value2,"Can't add");
 	return false;
 
@@ -167,9 +145,11 @@ namespace MMath
 }
 inline bool Power(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 {
-	if((IsNumber(value1) || IsBool(value1)) && (IsNumber(value2) || IsBool(value2))){
+	StackState ctn1 = ConvertToNumber(value1);
+	StackState ctn2 = ConvertToNumber(value2);
+	if(ctn1.v!=M_UNKONWN && ctn2.v!=M_UNKONWN){			
 		value1->v = M_NUMBER;
-		value1->d=pow(value1->d,value2->d);
+		value1->d=pow(ctn1.d,ctn2.d);
 		return true;
 	}
 	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't exponent");
@@ -177,10 +157,12 @@ inline bool Power(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 }
 inline bool Sub(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 {
-	if((IsNumber(value1) || IsBool(value1)) && (IsNumber(value2) || IsBool(value2))){
-			value1->v = M_NUMBER;
-			value1->d-=value2->d;
-			return true;
+	StackState ctn1 = ConvertToNumber(value1);
+	StackState ctn2 = ConvertToNumber(value2);
+	if(ctn1.v!=M_UNKONWN && ctn2.v!=M_UNKONWN){			
+		value1->v = M_NUMBER;
+		value1->d=(ctn1.d-=ctn2.d);
+		return true;
 	}
 	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't subtraction");
 	return false;
@@ -188,9 +170,11 @@ inline bool Sub(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 }
 inline bool Mul(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 {
-	if((IsNumber(value1) || IsBool(value1)) && (IsNumber(value2) || IsBool(value2))){
+	StackState ctn1 = ConvertToNumber(value1);
+	StackState ctn2 = ConvertToNumber(value2);
+	if(ctn1.v!=M_UNKONWN && ctn2.v!=M_UNKONWN){			
 			value1->v = M_NUMBER;
-			value1->d*=value2->d;
+			value1->d=(ctn1.d*=ctn2.d);
 			return true;
 	}
 	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't multiply");
@@ -204,9 +188,11 @@ inline bool Div(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		MError::CreateInstance()->PrintRunTimeError("Divisor must not be zero!");
 		return false;
 	}
-	if((IsNumber(value1) || IsBool(value1)) && (IsNumber(value2) || IsBool(value2))){
+	StackState ctn1 = ConvertToNumber(value1);
+	StackState ctn2 = ConvertToNumber(value2);
+	if(ctn1.v!=M_UNKONWN && ctn2.v!=M_UNKONWN){			
 			value1->v = M_NUMBER;
-			value1->d*=value2->d;
+			value1->d=(ctn1.d/=ctn2.d);
 			return true;
 	}
 	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't  Division");
@@ -221,9 +207,14 @@ inline bool Mod(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		MError::CreateInstance()->PrintRunTimeError("do not divide by zero !");
 		return false;
 	}
-	if((IsNumber(value1) || IsBool(value1)) && (IsNumber(value2) || IsBool(value2))){
+	StackState ctn1 = ConvertToNumber(value1);
+	StackState ctn2 = ConvertToNumber(value2);
+	if(ctn1.v!=M_UNKONWN && ctn2.v!=M_UNKONWN){	
+			int a = ctn1.d;
+			int b = ctn2.d;
+			int c = a%b;
 			value1->v = M_NUMBER;
-			value1->d=(int)(value1->d)%(int)(value2->d);
+			value1->d=c;
 			return true;
 	}
 	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't Modulo");

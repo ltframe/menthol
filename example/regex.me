@@ -4,7 +4,7 @@ _mmain:$a,$c
 {	
 
 	var $str = example1.HttpGet("http://www.ltplayer.com/");
-	$a = Deelx.Exec($str,"<img.*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>",0);	
+	$a = Deelx.Exec($str,"<img.*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>");	
 	for(var $s in $a){		
 		MIo.Out($s[1]);		
 	}	

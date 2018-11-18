@@ -1,0 +1,45 @@
+
+import "example1";
+import "script";
+var @p;
+
+
+
+def playercallback:
+{
+	
+	while(true){
+		if(example1.GetStatus(@p)==0){			
+			break;
+		}
+		var $info = example1.GetPosition(@p);
+		MIo.Oute($info::Hour + ":" + $info::Minute + ":" + $info::Second + "\r");
+		MSystem.Sleep(1000);
+	}
+	example1.Release(@p);
+	MIo.Out("play end");
+	script.processbar();
+}
+
+_mmain:$a,$c
+{	
+	
+	script.banner();
+	MIo.Oute("文件地址:");
+	$a = MIo.In();
+	example1.HideCursor();
+	while(true){
+		script.processbar();
+		@p = example1.CreatePlay();
+		if(!example1.OpenFile(@p,$a,script.openfilecallback))
+		{
+			return;
+		}
+		MIo.Out("正在播放:"+$a);
+		var $info = example1.GetStreamInfo(@p);
+		MIo.Out("总时长:"+$info::Hour + ":" + $info::Minute + ":" + $info::Second);
+		example1.Play2(@p);
+		playercallback();
+	}
+	return;
+}

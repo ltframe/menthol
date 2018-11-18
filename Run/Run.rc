@@ -13,11 +13,13 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// 中文(简体，中国) resources
+// 中文(中华人民共和国) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 #pragma code_page(936)
+#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -69,7 +71,7 @@ BEGIN
         BEGIN
             VALUE "FileDescription", "Menthol Run"
             VALUE "FileVersion", "1, 0, 0, 1"
-            VALUE "InternalName", "Menthol Run"
+            VALUE "InternalName", "Run"
             VALUE "LegalCopyright", "Copyright (C) 2018"
             VALUE "OriginalFilename", "Run.exe"
             VALUE "ProductName", "Menthol Run"
@@ -91,7 +93,7 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_ICON1               ICON                    "D:\\project\\vs2008\\Menthol\\ico\\menthol.ico"
-#endif    // 中文(简体，中国) resources
+#endif    // 中文(中华人民共和国) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

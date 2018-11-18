@@ -177,8 +177,9 @@ function_parameter:function_parameter_list
 				   }
 				   ;	
 
-funciton_codeblock_statement: '{' statement_list '}'{
-								$$ = $2;
+funciton_codeblock_statement: '{' statement_list '}'{								
+									$$ = new CodeBlockStatement();
+									$$->AddChilder($2);
 								}
 							|'{'  '}'{
 								$$ = new NopExpression();
@@ -517,11 +518,11 @@ expression_definition:assignment_expression_definition {
 
 	
 			   			   
-array_declare:'{' expression_definition '}'
+array_declare:'[' expression_definition ']'
 			   {
 					$$ = new ArrayDeclare($2);
 			   }
-			   |'{' '}'
+			   |'[' ']'
 			   {
 					$$ = new ArrayDeclare(new ExpressionList());
 			   }	   
@@ -579,13 +580,14 @@ initialization_expression:VAR initialization_list{
 						  }
 						  ;
 
-statement:jump_statement {$$ = $1;}
+statement:funciton_codeblock_statement{$$ = $1;}
+		 |jump_statement {$$ = $1;}
 		 |selection_statement{$$ = $1;}
 		 |iteration_statement{$$ = $1;}
 		 |expression_statement{
 			$$ = $1;
 		 }
-		 |initialization_expression{
+		 |initialization_expression';'{
 			$$ = $1;
 		 }
 		 ;

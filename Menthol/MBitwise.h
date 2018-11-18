@@ -7,39 +7,53 @@
 namespace MBitwise
 {
 
+StackState ConvertToNumber(STACKSTATEPOINTER value)
+{
+	StackState ret;
+	if(IsBool(value)){
+		ret.v = M_NUMBER;
+		ret.d = value->b?1:0;
+		return ret;
+	}
+
+	if(IsNumber(value)){
+		ret = *value;
+		return ret;
+	}
+	ret.v = M_NUMBER;
+	ret.d = 0;
+	return ret;
+}
+
 inline bool SHIFTL(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 {
-	if((IsNumber(value1) || IsBool(value1)) && (IsNumber(value2) || IsBool(value2))){
-			value1->v = M_NUMBER;
-			value1->d=(int)(value1->d)<<(int)(value2->d);
-			return true;
-	}
-	MError::CreateInstance()->DataTypeOpertatError(value1,value2," can't bitwise");
-	return false;
+	
+	value1->d=(int)(ConvertToNumber(value1).d)<<(int)(ConvertToNumber(value2).d);
+	value1->v = M_NUMBER;
+	return true;
 }
 
 inline bool SHIFTR(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 {
-	if((IsNumber(value1) || IsBool(value1)) && (IsNumber(value2) || IsBool(value2))){
-			value1->v = M_NUMBER;
-			value1->d=(int)(value1->d)>>(int)(value2->d);
-			return true;
-	}
-	MError::CreateInstance()->DataTypeOpertatError(value1,value2," can't bitwise");
-	return false;
+	
+	value1->d=(int)(ConvertToNumber(value1).d)>>(int)(ConvertToNumber(value2).d);
+	value1->v = M_NUMBER;
+	return true;
 }
 
 inline bool BitAnd(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 {
+	
+	value1->d=((int)(ConvertToNumber(value1).d) & (int)(ConvertToNumber(value2).d));
 	value1->v = M_NUMBER;
-	value1->d=((int)(value1->d) & (int)(value2->d));
 	return true;
 }
 
 inline bool BitOr(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 {
+	
+	value1->d=((int)(ConvertToNumber(value1).d) | (int)(ConvertToNumber(value2).d));
 	value1->v = M_NUMBER;
-	value1->d=((int)(value1->d) | (int)(value2->d));
 	return true;
 }
 };

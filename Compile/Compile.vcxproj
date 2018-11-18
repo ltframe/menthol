@@ -107,7 +107,6 @@
     <ResourceCompile Include="Compile.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\Menthol\ico\menthol.ico" />
     <Image Include="..\ico\menthol.ico" />
   </ItemGroup>
   <ItemGroup>

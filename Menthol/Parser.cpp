@@ -387,7 +387,7 @@ void CodeBlockStatement::CreateCode()
 	sl->GetLocalMemory()->resize(sopcelocalvars);
 	sl->SetLocalCountValue(sopcelocalvars);
 	sl->AddCode(OP_ADJUSTSP,wfileaddressline);
-	sl->AddCode(sl->FindLastLocalMemory().index,wfileaddressline);
+	sl->AddCode(_tempstackid,wfileaddressline);
 }
 
 ExpressionList::ExpressionList()
@@ -888,6 +888,8 @@ void IfStatement::CreateCode()
 	bytenumber = sl->GetIpi();
 	
 	if(type==0){
+
+		int sopcelocalvars = sl->GetLocalCountValue();
 		SAVESTACKID
 		//for (std::vector<Statement*>::iterator it = Member->begin() ; it != Member->end(); ++it)
 		//{	
@@ -905,6 +907,9 @@ void IfStatement::CreateCode()
 		VECTORFOREND
 		sl->SetCode(sl->GetIpi()-postion1,postion1);
 		RESTORESTACKID
+		sl->GetLocalMemory()->resize(sopcelocalvars);
+		sl->SetLocalCountValue(sopcelocalvars);
+
 	}
 
 	if(type==1){
@@ -925,6 +930,7 @@ void IfStatement::CreateCode()
 			}			
 			if(it-Member->begin()==1){
 				//if the condition is true,then code run,in end,jmp
+				int sopcelocalvars = sl->GetLocalCountValue();
 				SAVESTACKID
 				(*it)->CreateCode();
 				sl->AddCode(OP_ADJUSTSP,wfileaddressline);
@@ -933,13 +939,20 @@ void IfStatement::CreateCode()
 				postion2=sl->GetIpi();
 				sl->AddCode(OP_NOP,wfileaddressline);
 				RESTORESTACKID
+				sl->GetLocalMemory()->resize(sopcelocalvars);
+				sl->SetLocalCountValue(sopcelocalvars);
+
 			}
 
 			if(it-Member->begin()==2){
+				int sopcelocalvars = sl->GetLocalCountValue();
 				SAVESTACKID
-					sl->SetCode(sl->GetIpi()-postion1,postion1); // set else postion
+				sl->SetCode(sl->GetIpi()-postion1,postion1); // set else postion
 				(*it)->CreateCode();
 				RESTORESTACKID
+				sl->GetLocalMemory()->resize(sopcelocalvars);
+				sl->SetLocalCountValue(sopcelocalvars);
+
 			}
 		//}
 		VECTORFOREND
@@ -1017,7 +1030,8 @@ void WhileStatement::CreateCode()
 	//}
 	VECTORFOREND
 	RESTORESTACKID
-		sl->SetLocalCountValue(sopcelocalvars);
+	sl->GetLocalMemory()->resize(sopcelocalvars);
+	sl->SetLocalCountValue(sopcelocalvars);
 	
 }
 

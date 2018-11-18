@@ -35,7 +35,7 @@ int Compile(char* cfile,bool isdebug)
 		char str[256]={0};
 		sprintf(str,"could not open %s",cfile);
 		MError::CreateInstance()->PrintError(str,-1);
-		return 0;
+		return 1;
 	}
 	
 	yyin = file;
@@ -54,7 +54,7 @@ int Compile(char* cfile,bool isdebug)
 		char str[256]={0};
 		sprintf(str,"%s is not menthol execute or package",cfile);
 		MError::CreateInstance()->PrintError(str,-1);
-		return 0;
+		return 1;
 	}
 	als->CreateCode(als->CompileStructTable,pinfo.extension,isdebug);
 	if(!yyerrorcount){
@@ -80,13 +80,13 @@ int Compile(char* cfile,bool isdebug)
 	als->GetMentholDebug()->clear();
 	als->CompileStructTable->clear();
 	lineno  = 1;
-	yyerrorcount = 0;
 	delete als;
 	delete _WCommon;
 	delete _MError;
 	if(yyerrorcount){
 		return yyerrorcount;
 	}
+	yyerrorcount = 0;
 	return 0;
 }
 

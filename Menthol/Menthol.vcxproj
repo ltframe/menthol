@@ -52,8 +52,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
-      <Command>
-      </Command>
+      <Command>grenbisonflex.py</Command>
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Disabled</Optimization>

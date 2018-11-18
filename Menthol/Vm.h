@@ -13,15 +13,6 @@
 #define MMAINHASH  2057163645
                    
 
-#define CONVERTVALUETYPE(value1,value2)\
-		if(value1->v!=M_BOOL)\
-		{\
-			value1->b = value1->d;\
-		}\
-		if(value2->v!=M_BOOL)\
-		{\
-			value2->b = value2->d;\
-		}\
 
 typedef void (*initfuncallback)();
 

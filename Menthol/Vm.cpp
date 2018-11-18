@@ -609,14 +609,14 @@ void EntryPoint(PackageAttr pa,char* workdir)
 	VECTORFOREND
 
 #ifndef NDEBUG
-	PintCode(codealllist.size());
+	//PintCode(codealllist.size());
 #endif	
 	filetree->clear();
 	//clock_t start = clock();
 	runflag = 1;
   	Execute();
 	//clock_t end = clock();
-	//printf("%ld",end-start);
+	
 }
 
 
@@ -1551,12 +1551,10 @@ int Execute()
 
 			SWITCHCASESTART(OP_INVERTER)
 					STACKSTATEPOINTER v = sp-1;
-					if(v->v!=M_BOOL)
+					if(!MLogic::Inv(v))
 					{
-						v->b = v->d;
+						return 0;
 					}
-					v->v = M_BOOL;
-					v->b=!(v->b);
 			SWITCHCASEEND
 
 			SWITCHCASESTART(OP_TYPEOF)
