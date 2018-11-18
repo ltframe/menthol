@@ -83,7 +83,7 @@ _mmain:$a,$c
 ```html
 _mmain:$a,$c
 {    
-	var $arr = {1,2,3,4,5,6};
+	var $arr = [1,2,3,4,5,6];
 	MIo.Out($arr[1]);
 	MIo.Out($arr[1..][1]);
 	MIo.Out($arr[..3][1]);
@@ -105,7 +105,7 @@ _mmain:$a,$c
 import "MDict";
 _mmain:$a,$c
 {    
-    var $arr = {1,2,3,4,6,7};
+    var $arr = [1,2,3,4,6,7];
 	for(var $i in $arr)
 	{
 		MIo.Out($i);
