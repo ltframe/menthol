@@ -37,7 +37,7 @@ enum ValueType{
 	M_PACKAGE,
 	M_HASH,
 	M_UNKONWN,
-	M_POINTER
+	M_OBJECT
 };
 
 struct StackState;

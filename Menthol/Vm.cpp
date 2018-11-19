@@ -23,7 +23,7 @@ namespace Vm
 	static int calltype = 0;
 	static STACKSTATEPOINTER callbp=0;
 	static int garbagescount;
-	char* mtypes[] = {"M_NUMBER","M_LONG","M_DOUBLE","M_STRING","M_STRING","M_FUN","M_PFUN","","M_BOOL","M_ARRAY","M_DICT","M_NULL","","","M_PACKAGE","M_HASH","M_UNKONWN","M_POINTER"};
+	char* mtypes[] = {"M_NUMBER","M_LONG","M_DOUBLE","M_STRING","M_STRING","M_FUN","M_PFUN","","M_BOOL","M_ARRAY","M_DICT","M_NULL","","","M_PACKAGE","M_HASH","M_UNKONWN","M_OBJECT"};
 
 
 
@@ -1309,13 +1309,16 @@ int Execute()
 			SWITCHCASEEND
 
 			SWITCHCASESTART(OP_JMP)
-				STACKSTATEPOINTER b = sp-1;
+				/*STACKSTATEPOINTER b = sp-1;*/
+
+				StackState b = MLogic::ConvertToBool(sp-1);
+				/*
 				if(b->v!=M_BOOL)
 				{
 					b->v = M_BOOL;
 					b->b = b->d;
-				}
-				if(b->b){ //如果为true顺序执行代码即可
+				}*/
+				if(b.b){ //如果为true顺序执行代码即可
 					*codelist++;
 				}else
 				{
@@ -1539,7 +1542,8 @@ int Execute()
 			SWITCHCASEEND
 
 			SWITCHCASESTART(OP_TJMP)
-					if((--sp)->b)
+					StackState b = MLogic::ConvertToBool(--sp);
+					if(b.b)
 					{  
 						*codelist++;
 					}else

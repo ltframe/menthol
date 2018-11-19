@@ -28,6 +28,13 @@ StackState ConvertToBool(STACKSTATEPOINTER value)
 		ret = *value;
 		return ret;
 	}
+
+	if(IsString(value) && !strcmp(value->str->string,"")){
+		ret.v = M_BOOL;
+		ret.b = false;
+		return ret;
+	}
+
 	ret.v = M_BOOL;
 	ret.b = true;
 	return ret;

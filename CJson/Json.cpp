@@ -52,7 +52,7 @@ static StackState getitem(cJSON *obj)
 				break;
 			break;
 		case cJSON_Object:
-				value.v = M_POINTER;
+			value.v = M_OBJECT;
 				value.p = obj;
 			break;
 		default:
@@ -86,7 +86,7 @@ StackState JsonParse()
 	char* str =GetParam(1).str->string;
 	StackState t;
 	t.p = cJSON_Parse(str);
-    t.v = M_POINTER;
+	t.v = M_OBJECT;
     return t;
 }
 

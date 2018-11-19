@@ -296,6 +296,18 @@ StackState Random()
 	return st;
 }
 
+StackState Cbrt()
+{
+	StackState value = GetParam(1);
+	StackState st;
+	if (value.v != M_NUMBER){
+		st.v = M_NULL;
+		return st;
+	}
+	st.d = cbrt(value.d);
+	st.v = M_NUMBER;
+	return st;
+}
 MentholPackMethod void MMath_Init()
 {
 	RegisterPackAgeFunciton("Abs",Abs,1);	
@@ -319,4 +331,5 @@ MentholPackMethod void MMath_Init()
 	RegisterPackAgeFunciton("Tan",Tan,1);
 	RegisterPackAgeFunciton("Tanh",Tanh,1);
 	RegisterPackAgeFunciton("Random",Tanh,1);
+	RegisterPackAgeFunciton("Cbrt", Cbrt, 1);
 }

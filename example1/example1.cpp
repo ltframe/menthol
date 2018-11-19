@@ -57,7 +57,7 @@ StackState CreatePlay()
 	ZPlay *player = CreateZPlay();
 	StackState t;
 	t.p = player;
-	t.v = M_POINTER;
+	t.v = M_OBJECT;
 	return t;
 }
 

@@ -124,7 +124,63 @@ StackState Length()
 	st.v  = M_NUMBER;	
 	return st;
 }
+
+StackState Isdigit()
+{
+	StackState value = GetParam(1);	
+	StackState st;
+	st.v = M_BOOL;
+	if (value.v == M_NUMBER)
+	{
+		st.b = true;
+		return st;
+	}
+	if (value.v != M_STRING)
+	{
+		st.b = false;
+		return st;
+	}
+	char * str = value.str->string;
+	while (*str != '\0'){
+		bool b = isdigit(*str);
+		if (!b){
+			st.b = false;
+			return st;
+		}
+		str++;
+	}
+	st.b = true;
+	return st;
+}
  
+StackState Isalpha()
+{
+	StackState value = GetParam(1);
+	StackState st;
+	st.v = M_BOOL;
+	if (value.v == M_NUMBER)
+	{
+		st.b = false;
+		return st;
+	}
+	if (value.v != M_STRING)
+	{
+		st.b = false;
+		return st;
+	}
+	char * str = value.str->string;
+	while (*str != '\0'){
+		bool b = isalpha(*str);
+		if (!b){
+			st.b = false;
+			return st;
+		}
+		str++;
+	}
+	st.b = true;
+	return st;
+}
+
 MentholPackMethod void MString_Init()
 {
 	RegisterPackAgeFunciton("StoN",StoN,1);	
@@ -133,4 +189,6 @@ MentholPackMethod void MString_Init()
 	RegisterPackAgeFunciton("Replace",Replace,3);
 	RegisterPackAgeFunciton("Toupper",Toupper,1);
 	RegisterPackAgeFunciton("Tolower",Tolower,1);
+	RegisterPackAgeFunciton("Isdigit", Isdigit, 1);
+	RegisterPackAgeFunciton("Isalpha", Isalpha, 1);
 }
