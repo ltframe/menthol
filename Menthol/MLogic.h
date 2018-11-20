@@ -57,9 +57,16 @@ inline bool EqEq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		value1->b=(strcmp(value1->str->string,value2->str->string)==0?true:false);
 		return true;
 	}
-	value1->b=(ConvertToBool(value1).b==ConvertToBool(value2).b);
-	value1->v = M_BOOL;
-	return true;
+	StackState ctn1 = MMath::ConvertToNumber(value1);
+	StackState ctn2 = MMath::ConvertToNumber(value2);
+	if (ctn1.v != M_UNKONWN && ctn2.v != M_UNKONWN){
+		value1->v = M_BOOL;
+		value1->b = (ctn1.d==ctn2.d);
+		return true;
+	}
+	MError::CreateInstance()->DataTypeOpertatError(value1, value2, " Can't compare");
+	return false;
+	
 }
 
 //ะกำฺ
@@ -169,7 +176,7 @@ inline bool Neq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 inline bool Or(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 {
 	
-	value1->b=(ConvertToBool(value1).b) && (ConvertToBool(value2).b);
+	value1->b=(ConvertToBool(value1).b) || (ConvertToBool(value2).b);
 	value1->v = M_BOOL;
 	return true;
 }
