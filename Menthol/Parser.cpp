@@ -715,10 +715,8 @@ void BuiltinTypeDeclare::SetFunctionPointerOrPack(string str,int type)
 		v.v = M_PACKAGE;	
 		v.i = sl->IsHasPackAgeName(str);
 	}else{
-		v.v = M_FUN;	
-		if((v.i =sl->FindFunction(str))==-1){
-			MError::CreateInstance()->PrintError(str+" is not defined");
-		}
+		v.v = M_FUN;
+		functionname =str;
 	}
 
 }
@@ -762,6 +760,10 @@ void BuiltinTypeDeclare::CreateCode()
 
 	}
 	if(v.v==M_FUN ){
+		if((v.i =sl->FindFunction(functionname))==-1){
+			MError::CreateInstance()->PrintError(functionname+" is not defined");
+		}
+
 		sl->AddCode(OP_PUSHFUN,wfileaddressline);
 		sl->AddCode(v.i,wfileaddressline);
 	}

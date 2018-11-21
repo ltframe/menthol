@@ -97,6 +97,7 @@ public:
 	BuiltinTypeValue GetBuiltinTypeValue();
 private:
 	BuiltinTypeValue v;
+	string functionname;
 };
 
 class FunctionDefinition:public Statement{
