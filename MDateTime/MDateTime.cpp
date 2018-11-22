@@ -67,7 +67,7 @@ StackState TimeZone()
 
 
 
-MentholPackMethod void MDateTime_Init()
+MentholPackMethod void MP_Init()
 {
 	RegisterPackAgeFunciton("CurrentDate",CurrentDate,0);	
 	RegisterPackAgeFunciton("CurrentTime",CurrentTime,0);	

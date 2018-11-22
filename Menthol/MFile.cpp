@@ -81,10 +81,10 @@ void MFile::GenerateFileData(vector<Instruction>* codelist,vector<StringAtter>* 
 {	
 	//PathInfo pinfo = MCommon::CreateInstance()->StringPathSplit(file);
 	string fileext;
-	if(extension==MENTHOLEXTENSION){
+	if(MCommon::CreateInstance()->StrCmpNoCase(extension,MENTHOLEXTENSION)){
 		fileext = MENTHOLEXECUTEEXTENSION;
 	}
-	if(extension==MENTHOLPACKAGEEXTENSION){
+	if(MCommon::CreateInstance()->StrCmpNoCase(extension,MENTHOLPACKAGEEXTENSION)){
 		fileext = MENTHOLPACKAGEDLLEXTENSION;
 	}
 	ofstream fileOut;

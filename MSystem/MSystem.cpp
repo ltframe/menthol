@@ -20,7 +20,7 @@ using namespace std;
 
 StackState Version()
 {
-	return String_CreateString("Menthol 1.0.2,2018/11/19,@2018 ltplayer.com");
+	return String_CreateString("Menthol 1.0.0,2018/3/14,@2018 ltplayer.com");
 
 }
 StackState Sleep()
@@ -30,7 +30,7 @@ StackState Sleep()
 	return inst;
 }
 
-MentholPackMethod void MSystem_Init()
+MentholPackMethod void MP_Init()
 {
 	RegisterPackAgeFunciton("Version",Version,0);	
 	RegisterPackAgeFunciton("Sleep",Sleep,0);	

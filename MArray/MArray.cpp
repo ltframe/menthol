@@ -64,7 +64,7 @@ StackState Push()
 }
  
 
-MentholPackMethod void MArray_Init()
+MentholPackMethod void MP_Init()
 {
 	RegisterPackAgeFunciton("Length",Length,1);	
 	RegisterPackAgeFunciton("Join",Join,2);	

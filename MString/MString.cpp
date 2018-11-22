@@ -181,7 +181,7 @@ StackState Isalpha()
 	return st;
 }
 
-MentholPackMethod void MString_Init()
+MentholPackMethod void MP_Init()
 {
 	RegisterPackAgeFunciton("StoN",StoN,1);	
 	RegisterPackAgeFunciton("Length",Length,1);	

@@ -86,7 +86,7 @@ StackState Replace()
 	return ret;
 }
 
-MentholPackMethod void Deelx_Init()
+MentholPackMethod void MP_Init()
 {
 	RegisterPackAgeFunciton("Exec",Exec,3);	
 	RegisterPackAgeFunciton("Test",Test,3);	

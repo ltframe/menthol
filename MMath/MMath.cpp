@@ -308,7 +308,7 @@ StackState Cbrt()
 	st.v = M_NUMBER;
 	return st;
 }
-MentholPackMethod void MMath_Init()
+MentholPackMethod void MP_Init()
 {
 	RegisterPackAgeFunciton("Abs",Abs,1);	
 	RegisterPackAgeFunciton("Acos",Acos,1);	

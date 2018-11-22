@@ -565,13 +565,13 @@ void EntryPoint(PackageAttr pa,char* workdir)
 		if(pa.ptype==MPA_DLL || pa.ptype==MPA_SDLL)
 		{		
 			HMODULE h = ::LoadLibraryA(pa.fname);	
-			int c = strlen(pa.pname)+7;
+			/*int c = strlen(pa.pname)+7;
 			char* _initname =new char[c];
 			memset(_initname,0,c);
 			strcat(_initname,pa.pname);
 			strcat(_initname,"_Init");
-			_initname[c] = '\0';
-			initfuncallback ProcAdd = (initfuncallback) GetProcAddress(h,_initname); 
+			_initname[c] = '\0';*/
+			initfuncallback ProcAdd = (initfuncallback) GetProcAddress(h,"MP_Init"); 
 			ProcAdd();
 			AddRunTimeStateList(currentruntimestate);
 

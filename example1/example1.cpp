@@ -261,7 +261,7 @@ StackState HideCursor()
 	st.v=M_NULL;
 	return st;
 }
-MentholPackMethod void example1_Init()
+MentholPackMethod void MP_Init()
 {
 	RegisterPackAgeFunciton("HideCursor",HideCursor,0);	
 	RegisterPackAgeFunciton("test",test,0);	
