@@ -9,12 +9,12 @@ def func:
 def func1:$i
 {
 	func();
-	MIo.Out($i)
+	MIo.Out($i);
 }
 
 def callback:$func
 {
 	MIo.Out(@g);
 	func();
-	$func()
+	$func();
 }
