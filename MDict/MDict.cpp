@@ -67,7 +67,7 @@ StackState GetKey()
 }
 
 
-MentholPackMethod void MDict_Init()
+MentholPackMethod void MP_Init()
 {
 	RegisterPackAgeFunciton("Length",Length,1);	
 	RegisterPackAgeFunciton("Push",Push,3);	

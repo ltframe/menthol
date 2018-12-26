@@ -136,7 +136,7 @@ StackState Type()
 	return String_CreateString("");
 }
 
-MentholPackMethod void CJson_Init()
+MentholPackMethod void MP_Init()
 {
 	RegisterPackAgeFunciton("JsonParse",JsonParse,1);	
 	RegisterPackAgeFunciton("GetObjectItem",GetObjectItem,2);

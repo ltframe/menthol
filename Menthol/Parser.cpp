@@ -1629,6 +1629,7 @@ void LogiceEpressionDefintion::CreateCode()
 	if(op =="^"){
 		sl->AddCode(OP_XOR,wfileaddressline);
     }
+	sl->StackID--;
 }
 void LogiceEpressionDefintion::Release()
 {

@@ -41,12 +41,11 @@ int Compile(char* cfile,bool isdebug)
 	yyin = file;
 	yyrestart(yyin);
 	als->currentpackagename = _WCommon->StringPathSplit(string(cfile)).name;
-	als->ResetInitPackageList();
+	//als->ResetInitPackageList();
 	yyparse(als);
 	PathInfo pinfo = MCommon::CreateInstance()->StringPathSplit(cfile);
 
-
-	if(pinfo.extension!=MENTHOLEXTENSION && pinfo.extension!=MENTHOLPACKAGEEXTENSION)
+	if(!MCommon::CreateInstance()->StrCmpNoCase(pinfo.extension,MENTHOLEXTENSION) && !MCommon::CreateInstance()->StrCmpNoCase(pinfo.extension,MENTHOLPACKAGEEXTENSION))
 	{
 		delete als;
 		delete _WCommon;

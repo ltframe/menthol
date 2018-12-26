@@ -39,7 +39,7 @@ StackState ToNumber()
 }
 
 
-MentholPackMethod void MNumber_Init()
+MentholPackMethod void MP_Init()
 {
 	RegisterPackAgeFunciton("ToString",ToString,1);	
 	RegisterPackAgeFunciton("ToNumber",ToNumber,1);	

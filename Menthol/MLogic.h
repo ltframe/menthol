@@ -57,6 +57,49 @@ inline bool EqEq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		value1->b=(strcmp(value1->str->string,value2->str->string)==0?true:false);
 		return true;
 	}
+	if(IsArray(value1) && IsArray(value2))
+	{
+		value1->v = M_BOOL;
+		value1->b=value1->parray==value2->parray;
+		return true;
+	}
+	if(IsDict(value1) && IsDict(value2))
+	{
+		value1->v = M_BOOL;
+		value1->b=value1->pdict==value2->pdict;
+		return true;
+	}
+
+
+	if(IsPACKAGE(value1) && IsPACKAGE(value2))
+	{
+		value1->v = M_BOOL;
+		value1->b=value1->ps==value2->ps;
+		return true;
+	}
+	
+	if(IsObject(value1) && IsObject(value2))
+	{
+		value1->v = M_BOOL;
+		value1->b=value1->p==value2->p;
+		return true;
+	}
+
+
+	if(IsFUN(value1) && IsFUN(value2))
+	{
+		value1->v = M_BOOL;
+		value1->b=((value1->p==value2->p) && (value1->i==value2->i));
+		return true;
+	}
+
+	if(IsPFUN(value1) && IsPFUN(value2))
+	{
+		value1->v = M_BOOL;
+		value1->b=((value1->p==value2->p) && (value1->hash==value2->hash));
+		return true;
+	} 
+
 	StackState ctn1 = MMath::ConvertToNumber(value1);
 	StackState ctn2 = MMath::ConvertToNumber(value2);
 	if (ctn1.v != M_UNKONWN && ctn2.v != M_UNKONWN){
@@ -135,14 +178,6 @@ inline bool Geeq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 
 inline bool Leeq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 {
-
-	StackState ctn1 = MMath::ConvertToNumber(value1);
-	StackState ctn2 = MMath::ConvertToNumber(value2);
-	if(ctn1.v!=M_UNKONWN && ctn2.v!=M_UNKONWN){	
-			value1->v = M_BOOL;
-			value1->b=(ctn1.d<=ctn2.d);
-			return true;
-	}
 	if(IsString(value1) && IsString(value2))
 	{
 		value1->v = M_BOOL;
@@ -150,18 +185,21 @@ inline bool Leeq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		value1->b=(k<=0)?true:false;
 		return true;
 	}
+	StackState ctn1 = MMath::ConvertToNumber(value1);
+	StackState ctn2 = MMath::ConvertToNumber(value2);
+	if(ctn1.v!=M_UNKONWN && ctn2.v!=M_UNKONWN){	
+			value1->v = M_BOOL;
+			value1->b=(ctn1.d<=ctn2.d);
+			return true;
+	}
+
 	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't compare");
 	return false;
 }
 inline bool Neq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 {	
-	StackState ctn1 = MMath::ConvertToNumber(value1);
-	StackState ctn2 = MMath::ConvertToNumber(value2);
-	if(ctn1.v!=M_UNKONWN && ctn2.v!=M_UNKONWN){	
-			value1->v = M_BOOL;
-			value1->b=(ctn1.d!=ctn2.d);
-			return true;
-	}
+
+
 	if(IsString(value1) && IsString(value2))
 	{
 		int k=strcmp(value1->str->string,value2->str->string);
@@ -169,6 +207,55 @@ inline bool Neq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		value1->b=(k!=0)?true:false;
 		return true;
 	}
+	if(IsArray(value1) && IsArray(value2))
+	{
+		value1->v = M_BOOL;
+		value1->b=value1->parray!=value2->parray;
+		return true;
+	}
+	if(IsDict(value1) && IsDict(value2))
+	{
+		value1->v = M_BOOL;
+		value1->b=value1->pdict!=value2->pdict;
+		return true;
+	}
+	if(IsPACKAGE(value1) && IsPACKAGE(value2))
+	{
+		value1->v = M_BOOL;
+		value1->b=value1->ps!=value2->ps;
+		return true;
+	}
+
+	if(IsObject(value1) && IsObject(value2))
+	{
+		value1->v = M_BOOL;
+		value1->b=value1->p!=value2->p;
+		return true;
+	}
+
+
+	if(IsFUN(value1) && IsFUN(value2))
+	{
+		value1->v = M_BOOL;
+		value1->b=((value1->p!=value2->p) || (value1->i!=value2->i));
+		return true;
+	}
+
+	if(IsPFUN(value1) && IsPFUN(value2))
+	{
+		value1->v = M_BOOL;
+		value1->b=((value1->p!=value2->p) || (value1->hash!=value2->hash));
+		return true;
+	} 
+
+	StackState ctn1 = MMath::ConvertToNumber(value1);
+	StackState ctn2 = MMath::ConvertToNumber(value2);
+	if(ctn1.v!=M_UNKONWN && ctn2.v!=M_UNKONWN){	
+			value1->v = M_BOOL;
+			value1->b=(ctn1.d!=ctn2.d);
+			return true;
+	}
+
 	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't compare");
 	return false;
 }

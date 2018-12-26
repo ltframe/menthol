@@ -16,7 +16,7 @@
 #define MENTHOLEXTENSION ".me"
 #define MENTHOLEXECUTEEXTENSION ".mee"
 
-
+//文件头使用
 #define MENTHOLPACKAGEDLLEXTENSION2 "MED"
 #define MENTHOLEXECUTEEXTENSION2 "MEE"
 
@@ -63,7 +63,7 @@ public:
 	void ResetIpi();
 	int IsHasPackAgeName(string name);
 	void AddPackAgeList(string name);
-	void ResetInitPackageList();
+	//void ResetInitPackageList();
 	int FindDoubleConstant(double s);
 	int FindStringConstant(string d);
 	int FindDictKeyConstant(string d);

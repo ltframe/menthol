@@ -140,7 +140,7 @@ StackState Writefile()
 
 
 
-MentholPackMethod void MIo_Init()
+MentholPackMethod void MP_Init()
 {
 	RegisterPackAgeFunciton("Oute",Oute,1);	
 	RegisterPackAgeFunciton("Out",Out,1);	

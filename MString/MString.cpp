@@ -181,7 +181,15 @@ StackState Isalpha()
 	return st;
 }
 
-MentholPackMethod void MString_Init()
+
+StackState Toascii()
+{
+	StackState value =GetParam(1);
+	char str[2]={toascii((int)value.d),'\0'};
+	return String_CreateString(str);
+}
+
+MentholPackMethod void MP_Init()
 {
 	RegisterPackAgeFunciton("StoN",StoN,1);	
 	RegisterPackAgeFunciton("Length",Length,1);	
@@ -191,4 +199,5 @@ MentholPackMethod void MString_Init()
 	RegisterPackAgeFunciton("Tolower",Tolower,1);
 	RegisterPackAgeFunciton("Isdigit", Isdigit, 1);
 	RegisterPackAgeFunciton("Isalpha", Isalpha, 1);
+	RegisterPackAgeFunciton("Toascii", Toascii, 1);
 }

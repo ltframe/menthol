@@ -9,6 +9,16 @@ void StatementList::SetCompileStructTable(Statement* b)
    {
 		MError::CreateInstance()->PrintError("function " + b->name + " already has a body");
    }
+
+   if(b->NType==MNT_FunctionDefinition && IsHasPackAgeName(b->name)!=-1)
+   {
+	  MError::CreateInstance()->PrintError("The function name cannot be the same as the package name");
+   }
+   if(MCommon::CreateInstance()->StrCmpNoCase(MCommon::CreateInstance()->StringPathSplit(currentyyfile).extension,MENTHOLPACKAGEEXTENSION) && 
+	   b->NType==MNT_FunctionDefinition && b->name=="_mmain")
+   {
+		MError::CreateInstance()->PrintError("packages cannot contain the _mmain function");
+   }
    CompileStructTable->push_back(b);
 }
 
@@ -189,6 +199,7 @@ void StatementList::AddPackAgeList(string s)
 		PackAgeList->push_back(pa);
 		return;
 	}
+	MError::CreateInstance()->PrintError("Can't find package "+pname);	
 }
 LocalVarAttr StatementList::FindLocalMemory(string _name){
 
@@ -246,21 +257,21 @@ GlobalVarAttr StatementList::FindGlobalMemory(string str)
 }
 
 
-void StatementList::ResetInitPackageList()
-{
-	AddPackAgeList("MSystem");
-	AddPackAgeList("MIo");
-}
+//void StatementList::ResetInitPackageList()
+//{
+//	AddPackAgeList("MSystem");
+//	AddPackAgeList("MIo");
+//}
 void StatementList::CreateCode(vector<Statement*>* _CompileStructTable,string extension,bool isdebug)
 {	
 
-	if(extension==MENTHOLEXTENSION){
+	if(MCommon::CreateInstance()->StrCmpNoCase(extension,MENTHOLEXTENSION)){
 		string fileext = MENTHOLEXECUTEEXTENSION2;
 		for(int i=0;i<fileext.length();i++){
 			AddCharCode(fileext[i]);
 		}
 	}
-	if(extension==MENTHOLPACKAGEEXTENSION){
+	if(MCommon::CreateInstance()->StrCmpNoCase(extension,MENTHOLPACKAGEEXTENSION)){
 		string fileext = MENTHOLPACKAGEDLLEXTENSION2;
 		for(int i=0;i<fileext.length();i++){
 			AddCharCode(fileext[i]);

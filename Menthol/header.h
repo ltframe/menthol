@@ -21,6 +21,10 @@ class Statement;
 #define IsDict(o) (o->v==M_DICT)
 #define IsBool(o) (o->v==M_BOOL)
 #define IsNULL(o) (o->v==M_NULL)
+#define IsObject(o) (o->v==M_OBJECT)
+#define IsPACKAGE(o)(o->v==M_PACKAGE)
+#define IsFUN(o)(o->v==M_FUN)	
+#define IsPFUN(o)(o->v==M_PFUN)	
 
 #define STACKSTATESTRING(o,s)\
 	if(IsNumber(o)){s = "number";}\
@@ -29,7 +33,10 @@ class Statement;
 	if(IsDict(o)){s = "dict";}\
 	if(IsBool(o)){s = "bool";}\
 	if(IsNULL(o)){s = "Null";}\
-
+	if(IsObject(o)){s = "object";}\
+	if(IsPACKAGE(o)){s = "package";}\
+	if(IsFUN(o)){s = "function";}\
+	if(IsPFUN(o)){s = "package function";}\
 
 #define VECTORFORSTART(t,v,it) for (std::vector<t>::iterator it = v->begin() ; it != v->end(); ++it){
 
