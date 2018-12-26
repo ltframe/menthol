@@ -1,4 +1,4 @@
-<div align=center><img src="http://www.ltplayer.com/static/images/gitlogo.png"/></div>
+<div align=center><img src="http://www.ltplayer.com/images/gitlogo.png"/></div>
 
 
 # Menthol
