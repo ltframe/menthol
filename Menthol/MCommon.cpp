@@ -2,6 +2,7 @@
 #include "MCommon.h"
 #include <algorithm>
 #include <windows.h>
+#include <Objbase.h>
 MCommon* MCommon::_inst = 0;
 MCommon::MCommon(void)
 {
@@ -57,4 +58,24 @@ bool MCommon::StrCmpNoCase(string str1,string str2)
 	transform(str2.begin(), str2.end(), str2.begin(),::tolower);
 	if(str1==str2)return true;
 	else return false;
+}
+
+
+string MCommon::CreateGuid()
+{
+	char buffer[64] = { 0 };  
+    GUID guid;  
+    
+    if (CoCreateGuid(&guid))  
+    {  
+        return "";  
+    }  
+    _snprintf(buffer, sizeof(buffer),  
+        "%08X-%04X-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X",  
+        guid.Data1, guid.Data2, guid.Data3,  
+        guid.Data4[0], guid.Data4[1], guid.Data4[2],  
+        guid.Data4[3], guid.Data4[4], guid.Data4[5],  
+        guid.Data4[6], guid.Data4[7]);  
+    return buffer;  
+
 }

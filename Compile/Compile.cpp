@@ -13,20 +13,13 @@ int error(char* str,char* cf,int line)
 int main(int argc, char * argv[])
 {
 	bool debug  = false;
-	SetPrintCompileErrorFunc(error);
-	for(int i=1;i<argc;i++){
-		if (argv[i][0] == '-' && argv[i][1] =='d') {
-			 debug = true;
-		}else
-		{
-			int c = Compile(argv[i],debug);
-			if(!c){
-				printf("%s,compile done\r\n",argv[i]);
-			}
-			else{
-				printf("%s,compile error\r\n",argv[i]);
-			}
-		}
+	SetPrintCompileErrorFunc(error);	
+	int c = Compile(argv[1]);
+	if(!c){
+		printf("%s,compile done\r\n",argv[1]);
+	}
+	else{
+		printf("%s,compile error\r\n",argv[1]);
 	}
 	return 0;
 }

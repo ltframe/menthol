@@ -1,19 +1,20 @@
-import "MIo";
+import "console";
+use Console;
 _mmain:$a,$c
 {	
-		var $arr = [1,2,3,4,6,7];
+	var $arr = [1,2,3,4,6,7];
 	for(var $i in $arr)
 	{
-		MIo.Out($i);
+		Console.Out($i);
 	}
 	$arr ="abcdefghi";
 	for(var $i in $arr)
 	{
-		MIo.Out($i);
+		Console.Out($i);
 	}
 	$arr =(key1::"value1",key2::"value2");
 	for(var $key,$value in $arr)
 	{
-		MIo.Out($key+":"+$value);
+		Console.Out($key+":"+$value);
 	}
 }

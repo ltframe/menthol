@@ -33,10 +33,15 @@ public:
 	~MBinary(void);
 	Instruction ReadCode(char* bufferf,int &i);
 	void ReadCode(string filename);	
-	void ReadBinary(string filename,vector <FunctionAtter>* FunctionRecoredList,vector<string>* stringconstants,vector<Instruction> *codelist,
-		vector<Instruction> &globalcodelist,vector<double>* doubleconstants,vector<PackageState*>* packagelist,vector<RunTimeState*> *vrts,vector<StringValue>* dictkeyconstants,vector<MentholDebug>* debuglist);
-	void MReadImportFiles(const char* fp,vector<PackageAttr> *filetree,char* modidr,char* workdir);
-	bool IsInInclude(vector<PackageState*>* packagelist,hashValue hash);
+	void ReadBinary(ImportFileAttr fileattr, vector<Instruction> *codelist,
+	vector<RunTimeState*> *vrts, vector<StringValue>* dictkeyconstants, void(*_AddRunTimeStateList)(RunTimeState*)
+	,vector<GlobalCodeRuntimeAtter>* globallist);
+	void MReadImportFiles(const char* fp,vector<ImportFileAttr> *filetree,char* modidr,char* workdir);
+	void ReadMEPPackage(string filename,vector<string>* list);
+	static MBinary* CreateInstance();
+	string ReadPackageFormat(string filename);
+private:
+	static MBinary* _inst;
 };
 #endif
 

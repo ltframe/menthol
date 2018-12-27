@@ -1,14 +1,17 @@
-import "MIo";
-def callback:$i
-{	
-	MIo.Out($i);
-}
-
-def func:$fun,$i
+import "console";
+use Console;
+module test
 {
-	$fun($i);
+	def callback:$i
+	{	
+		Console.Out($i);
+	}
+	def func:$fun,$i
+	{
+		$fun($i);
+	}
 }
 _mmain:$a,$c
 {	
-	func(callback,1000);
+	test.func(test.callback,1000);
 }

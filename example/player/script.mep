@@ -1,35 +1,41 @@
-import "MIo";
-import "MSystem";
-def banner:
-{
-	MIo.Out(" __  __                  _     _               _ ");
-	MSystem.Sleep(200); 
-	MIo.Out("|  \/  |   ___   _ __   | |_  | |__     ___   | |");
-	MSystem.Sleep(200); 
-	MIo.Out("| |\/| |  / _ \ | '_ \  | __| | '_ \   / _ \  | |"); 
-	MSystem.Sleep(200);
-	MIo.Out("| |  | | |  __/ | | | | | |_  | | | | | (_) | | |"); 
-	MSystem.Sleep(200);
-	MIo.Out("|_|  |_|  \___| |_| |_|  \__| |_| |_|  \___/  |_|"); 
-}
+import "console";
+import "Environment";
+use Console,Environment;
 
-def processbar:
+module scriptmodule
 {
-	MIo.Oute("\r\n");
-	var $i = 0;
-	while($i<100){
-		MIo.Oute("*");
-		$i = $i+1;
+	def banner:
+	{
+		Console.Out(" __  __                  _     _               _ ");
+		Environment.Sleep(200); 
+		Console.Out("|  \/  |   ___   _ __   | |_  | |__     ___   | |");
+		Environment.Sleep(200); 
+		Console.Out("| |\/| |  / _ \ | '_ \  | __| | '_ \   / _ \  | |"); 
+		Environment.Sleep(200);
+		Console.Out("| |  | | |  __/ | | | | | |_  | | | | | (_) | | |"); 
+		Environment.Sleep(200);
+		Console.Out("|_|  |_|  \___| |_| |_|  \__| |_| |_|  \___/  |_|"); 
 	}
-	$i = 0;
-	while($i<100){
-		MIo.Oute("\b");
-		$i = $i+1;
+
+	def processbar:
+	{
+		Console.Oute("\r\n");
+		var $i = 0;
+		while($i<100){
+			Console.Oute("*");
+			$i = $i+1;
+		}
+		Console.Out("");
+		$i = 0;
+		while($i<100){
+			Console.Oute("\b");
+			$i = $i+1;
+		}
 	}
-}
 
 
-def openfilecallback:$msg
-{
-	MIo.Out($msg);
+	def openfilecallback:$msg
+	{
+		Console.Out($msg);
+	}
 }

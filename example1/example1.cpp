@@ -261,19 +261,27 @@ StackState HideCursor()
 	st.v=M_NULL;
 	return st;
 }
-MentholPackMethod void MP_Init()
+
+
+UserFunctionAtter example1list[] = {
+	{ "HideCursor", HideCursor, 0 },
+	{ "test", test, 0 },
+	{ "CallBack", CallBack, 1 },
+	{ "CreatePlay", CreatePlay, 0 },
+	{ "OpenFile", OpenFile, 3 },
+	{ "Release", Release, 1 },
+	{ "GetStreamInfo", GetStreamInfo, 1 },
+	{ "Play", Play, 2 },
+	{ "Play2", Play2, 1 },
+	{ "GetPosition", GetPosition, 1 },
+	{ "GetStatus", GetStatus, 1 },
+	{ "HttpGet", HttpGet, 1 },
+	{NULL,NULL,0}
+};
+
+MentholModuleMethod void MP_Init()
 {
-	RegisterPackAgeFunciton("HideCursor",HideCursor,0);	
-	RegisterPackAgeFunciton("test",test,0);	
-	RegisterPackAgeFunciton("CallBack",CallBack,1);	
-	RegisterPackAgeFunciton("CreatePlay",CreatePlay,0);	
-	RegisterPackAgeFunciton("OpenFile",OpenFile,2);	
-	RegisterPackAgeFunciton("Release",Release,1);	
-	RegisterPackAgeFunciton("GetStreamInfo",GetStreamInfo,1);	
-	RegisterPackAgeFunciton("Play",Play,2);	
-	RegisterPackAgeFunciton("Play2",Play2,1);	
-	RegisterPackAgeFunciton("GetPosition",GetPosition,1);
-	RegisterPackAgeFunciton("GetStatus",GetStatus,1);
-	RegisterPackAgeFunciton("HttpGet",HttpGet,1);
+	RunTimeState* prt = CreateModuleRunTime("example1");
+	RegisterModuleFunciton(prt, example1list);
 }
 

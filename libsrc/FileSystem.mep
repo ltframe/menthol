@@ -1,0 +1,126 @@
+import "mio";
+use CDirectory,CFile,CDrives;
+module File
+{
+	def Readfile:$arg1
+	{
+		return CFile.FileReadfile($arg1);	
+	}
+
+	def Writefile:$arg1,$arg2
+	{
+	   return CFile.Writefile($arg1,$arg2);
+
+	}
+
+	def Copy:$arg1,$arg2,$arg3
+	{
+	   return CFile.Copy($arg1,$arg2,$arg3);
+	}
+
+	def Create:$arg1
+	{
+	   return CFile.Create($arg1);
+	}
+
+	def Delete:$arg1
+	{
+	   return CFile.Delete($arg1);
+	}
+
+	def Exists:$arg1
+	{
+	   return CFile.Exists($arg1);
+	}
+
+	def Move:$arg1,$arg2
+	{
+	   return CFile.Move($arg1,$arg2);
+	}
+
+	def GetCreationTime:$arg1
+	{
+	   return CFile.GetCreationTime($arg1);
+	}
+
+	def GetLastAccessTime:$arg1
+	{
+	   return CFile.GetLastAccessTime($arg1);
+	}
+
+	def GetLastWriteTime:$arg1
+	{
+	   return CFile.GetLastWriteTime($arg1);
+	}
+}
+
+module Directory
+{
+	def Getcwd:
+	{
+		return CDirectory.Getcwd();
+	}
+
+	def Chdir:$arg1
+	{
+		return CDirectory.Chdir($arg1);
+	}
+
+	def Getenv:$arg1
+	{
+		return CDirectory.Getenv($arg1);
+	}
+
+	def Remove:$arg1
+	{
+		return CDirectory.Remove($arg1);
+	}
+
+	def Rmdir:$arg1
+	{
+		return CDirectory.Rmdir($arg1);
+	}
+
+	def Mkdir:$arg1
+	{
+		return CDirectory.Mkdir($arg1);
+	}
+
+	def Rename:$arg1,$arg2
+	{
+		return CDirectory.Rename($arg1,$arg2);
+	}
+
+	def Exists:$arg1
+	{
+		return CDirectory.Exists($arg1);
+	}
+}
+
+module Drive
+{
+	def GetDrives:
+	{
+		return CDrives.GetDrives();
+	}
+
+	def AvailableFreeSpace:$arg1
+	{
+		return CDrives.AvailableFreeSpace($arg1);
+	}
+
+	def DriveType:$arg1
+	{
+		return CDrives.DriveType($arg1);
+	}
+
+	def TotalFreeSpace:$arg1
+	{
+		return CDrives.TotalFreeSpace($arg1);
+	}
+
+	def TotalSize:$arg1
+	{
+		return CDrives.TotalSize($arg1);
+	}
+}

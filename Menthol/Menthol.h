@@ -16,7 +16,7 @@
 #include <map>
 using namespace std;
 
-#define  MentholPackMethod  extern "C"  __declspec(dllexport)
+#define  MentholModuleMethod  extern "C"  __declspec(dllexport)
 
 
 enum ValueType{
@@ -34,7 +34,7 @@ enum ValueType{
 	M_NULL,
 	M_TRYMARK,
 	M_FORMARK,
-	M_PACKAGE,
+	M_MODULE,
 	M_HASH,
 	M_UNKONWN,
 	M_OBJECT
@@ -42,7 +42,7 @@ enum ValueType{
 
 struct StackState;
 struct StackMark;
-struct PackageState;
+struct ModuleState;
 struct RunTimeState;
 typedef unsigned int hashValue,Instruction,M_UInt;
 struct Garbage{
@@ -94,50 +94,63 @@ struct StackState
 		pString str;
 		StackMark m;
 		bool b;
-		PackageState* ps;
+		ModuleState* ms;
 	};
 	pInst p;
 	char* name;
 	hashValue namehash;//name µÄhashÖµ
 	ValueType v;
 };
-
 typedef StackState (*funcallback)();
+struct UserFunctionAtter
+{
+	char* name;
+	funcallback postion; 
+	int paramcount;
+};
 typedef int (*PrintErrorFunc)(char* str,char* cf,int line);
 //global:
-MentholPackMethod void SetPrintCompileErrorFunc(PrintErrorFunc _pef);
-MentholPackMethod void SetPrintRunTimeErrorFunc(PrintErrorFunc _pef);
-MentholPackMethod int Compile(char* cfile,bool isdebug);
-MentholPackMethod int Run(char* files,char* arg1,char* arg2);
-MentholPackMethod void RegisterPackAgeFunciton(char* name,funcallback fun,int pcount);
-MentholPackMethod StackState GetParam(int index);
-
+MentholModuleMethod void SetPrintCompileErrorFunc(PrintErrorFunc _pef);
+MentholModuleMethod void SetPrintRunTimeErrorFunc(PrintErrorFunc _pef);
+MentholModuleMethod int Compile(char* cfile);
+MentholModuleMethod int Run(char* files,char* arg1,char* arg2);
+MentholModuleMethod void RegisterModuleFunciton(RunTimeState* moduleinst,UserFunctionAtter* functionlist);			  
+MentholModuleMethod StackState GetParam(int index);
+MentholModuleMethod RunTimeState* CreateModuleRunTime(char* modulename);
 
  //array
-MentholPackMethod StackState Array_CreateArray();
-MentholPackMethod StackState Array_Get(pArray sk1,int index);
-MentholPackMethod void Array_Set(pArray sk1,StackState sk2,int index);
-MentholPackMethod int Array_Length(pArray p);
-MentholPackMethod void Array_Push(pArray sk1,StackState sk2);
-MentholPackMethod pString Array_Join(pArray a1,char* link);
-MentholPackMethod pArray Array_Reverse(pArray a1);
+MentholModuleMethod StackState Array_CreateArray();
+MentholModuleMethod StackState Array_Get(pArray sk1,int index);
+MentholModuleMethod void Array_Set(pArray sk1,StackState sk2,int index);
+MentholModuleMethod int Array_Length(pArray p);
+MentholModuleMethod void Array_Push(pArray sk1,StackState sk2);
+MentholModuleMethod pString Array_Join(pArray a1,char* link);
+MentholModuleMethod pArray Array_Reverse(pArray a1);
  //dict
-MentholPackMethod StackState Dict_CreateDict();
-MentholPackMethod void Dict_Push(char* key,pDict sk1,StackState sk2);
-MentholPackMethod int Dict_Length(pDict);
-MentholPackMethod StackState Dict_Get(pDict sk1,hashValue key);
-MentholPackMethod void Dict_Set(char* key,pDict sk1,StackState sk2);
-MentholPackMethod pString Dict_Key(pDict pdict,hashValue sk2);
+MentholModuleMethod StackState Dict_CreateDict();
+MentholModuleMethod void Dict_Push(char* key,pDict sk1,StackState sk2);
+MentholModuleMethod int Dict_Length(pDict);
+MentholModuleMethod StackState Dict_Get(pDict sk1,hashValue key);
+MentholModuleMethod void Dict_Set(char* key,pDict sk1,StackState sk2);
+MentholModuleMethod pString Dict_Key(pDict pdict,hashValue sk2);
  //string
-MentholPackMethod StackState String_CreateString(char* str);
+MentholModuleMethod StackState String_CreateString(char* str);
 
 
 //function
-MentholPackMethod void CreateFunctionCall(int pc);
-MentholPackMethod void PushNumber(double d);
-MentholPackMethod void PushString(pString str);
-MentholPackMethod void PushArray(pArray arr);
-MentholPackMethod void PushDict(pDict arr);
-MentholPackMethod StackState CallFunction(StackState fu);
+MentholModuleMethod void CreateFunctionCall(int pc);
+MentholModuleMethod void PushNumber(double d);
+MentholModuleMethod void PushString(pString str);
+MentholModuleMethod void PushArray(pArray arr);
+MentholModuleMethod void PushDict(pDict arr);
+MentholModuleMethod StackState CallFunction(StackState fu);
 
+//number
+MentholModuleMethod StackState Number_CreateNumber(double d);
+
+//null
+MentholModuleMethod StackState Null_CreateNull();
+
+//bool
+MentholModuleMethod StackState Bool_CreateBool(bool b);
 #endif

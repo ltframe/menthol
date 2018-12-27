@@ -1,4 +1,5 @@
-import "MIo";
+import "console";
+use Console;
 _mmain:$a,$c
 {	
 	var $str = "this is a string";
@@ -8,12 +9,12 @@ _mmain:$a,$c
 	var $hexvalue = 0xFF;
 	var $arr = [$str,"","22"];
 	var $dict = (key1::-111,key2::$str);
-	MIo.Out($str);
-	MIo.Out($str1);
-	MIo.Out($intvalue);
-	MIo.Out($octvalue);
-	MIo.Out($hexvalue);
-	MIo.Out($arr[2]);
-	MIo.Out($dict::key2);
-	MIo.Out($dict::key1);
+	Console.Out($str);
+	Console.Out($str1);
+	Console.Out($intvalue);
+	Console.Out($octvalue);
+	Console.Out($hexvalue);
+	Console.Out($arr[2]);
+	Console.Out($dict::key2);
+	Console.Out($dict::key1);
 }

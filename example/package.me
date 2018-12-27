@@ -1,20 +1,25 @@
-import "MIo";
 import "packagetest";
-var @p = packagetest;
+use packagetest;
+import "console";
+use Console;
 
-def func:$i
-{	
-	MIo.Out("index-"+$i);
+module test
+{
+	var @p = packagetest;
+
+	def func:$i
+	{	
+		Console.Out("index-"+$i);
+	}
 }
-
 _mmain:$a,$c
 {	
-	@p.@g = "package caller";
-	@p.func();
+	test.@p.@g = "package caller";
+	test.@p.func();
 	packagetest.func1("ok");
 	packagetest.callback(packagetest.func1);
-	packagetest.callback(func);
+	packagetest.callback(test.func);
 	var $d = packagetest.func;
-	func(22);
+	test.func(22);
 	$d();
 }

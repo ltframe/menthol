@@ -1,0 +1,44 @@
+import "msystem";
+use CDict;
+module Dict
+{
+	def Length:$arg1
+	{
+	   return CDict.Length($arg1);
+	}
+
+	def Push:$key,$dict,$value
+	{
+	   return CDict.Push($key,$dict,$value);
+	}
+
+	def SetValue:$key,$dict,$value
+	{
+	   return CDict.SetValue($key,$dict,$value);
+	}
+
+	def GetKey:$arg1,$arg2
+	{
+	   return CDict.GetKey($arg1,$arg2);
+	}
+
+	def GetValue:$arg1,$arg2
+	{
+	   return CDict.GetValue($arg1,$arg2);
+	}
+	def Reomve:$dict,$key
+	{
+		var $_dict=();
+		if(typeof($dict)=="M_DICT" && typeof($key)=="M_STRING"){		
+			for(var $_key,$_value in $dict){
+				if($_key!=$key){
+					Push($_key,$_dict,$_value);
+				}
+			}
+			return $_dict;
+		}
+		return $_dict;
+	}
+}
+
+

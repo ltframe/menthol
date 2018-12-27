@@ -21,51 +21,7 @@ MFile::~MFile(void)
 
 
 
-void MFile::WReadImportFiles(const char* fp,stack<const char*> *filetree)
-{
-	std::ifstream t;  
-	int length;  
-	t.open(fp,std::ios::in | ofstream::binary);      // open input file  
-	t.seekg(0, std::ios::end);    // go to the end  
-	length = t.tellg();           // report location (this is the length)  
-	t.seekg(0, std::ios::beg);    // go back to the beginning  
-	char *bufferf = new char[length];    // allocate memory for a buffer of appropriate dimension  
-	t.read(bufferf, length);       // read the whole file into the buffer  
-	t.close();                    // close file handle  
-	
-	int i=0;
 
-	while(i<length){
-		char buffer[4];
-		buffer[0] = bufferf[i++];
-		buffer[1] = bufferf[i++];
-		buffer[2] = bufferf[i++];
-		buffer[3] = bufferf[i++];
-		int t = *(int*)buffer;
-
-		if(t==3){
-				buffer[0] = bufferf[i++];
-				buffer[1] = bufferf[i++];
-				buffer[2] = bufferf[i++];
-				buffer[3] = bufferf[i++];
-				int _lenght=*(int*)buffer;
-
-				char * str =new char[_lenght];
-				for(int s=0;s<_lenght;s++)
-				{
-					str[s] =bufferf[i++];
-				}
-
-				filetree->push(str);
-				delete [] bufferf;
-				WReadImportFiles(str,filetree);
-		}else
-		{
-			break;
-		}
-	}
-
-}
 
 string MFile::currentDateTime() {
     time_t     now = time(0);

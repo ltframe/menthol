@@ -15,136 +15,67 @@
 #include <sstream>
 #include <time.h>
 #include <functional>
+#include "Directory.h"
+#include "Console.h"
+#include "File.h"
+#include "Drives.h"
 using namespace std;
 
+UserFunctionAtter Directorylist[] = {
+	{"Getcwd",Directory::Getcwd,0},
+	{"Chdir",Directory::Chdir,1},
+	{"Getenv",Directory::Getenv,1},
+	{"Remove",Directory::Remove,1},
+	{"Rmdir",Directory::Rmdir,1},
+	{"Mkdir",Directory::Mkdir,1},
+	{"Rename",Directory::Rename,2},
+	{"Exists",Directory::Exists,1},
+	{NULL,NULL,0}
+}; 
 
-StackState Out()
-{
-	StackState value =GetParam(1);
-	StackState st;
-	st.v=M_NULL;
-	if(value.v==M_NUMBER){
-		if(value.d != (int)value.d){
-			printf("%.6lf\n",value.d);
-		}
-		else{
-			printf("%d\n",(int)value.d);
-		}	
-		return st;
-	}
-	if(value.v==M_STRING){	
-		//cout<<value.str->string<<endl;
-		printf("%s\n",value.str->string);
-		return st;
-	}
-	if(value.v==M_BOOL){
-		cout<<(value.b?"true":"false")<<endl;
-		return st;
-	}
-	if(value.v==M_NULL){
-		cout<<"NULL"<<endl;
-		return st;
-	}
-	if(value.v==M_ARRAY){
-		cout<<"{Array Object}"<<endl;
-		return st;
-	}
-	if(value.v==M_DICT){
-		cout<<"{Dictionary Object}"<<endl;
-		return st;
-	}
-	if(value.v==M_FUN){
-		cout<<"{Function Object}"<<endl;
-		return st;
-	}
-	cout<<"{Object}"<<endl;
-	return st;
-}
+UserFunctionAtter Consolelist[] = {
+	{"Oute",Console::Oute,1},	
+	{"Out",Console::Out,1},	
+	{"In",Console::In,0},
+	{"Clear",Console::Clear ,0},
+	{NULL,NULL,0}
+}; 
 
-StackState Oute()
-{
-	StackState value =GetParam(1);
-	StackState st;
-	st.v=M_NULL;
-	if(value.v==M_NUMBER){
-		if(value.d != (int)value.d){
-			printf("%.6lf",value.d);
-		}
-		else{
-			printf("%d",(int)value.d);
-		}	
-		return st;
-	}
-	if(value.v==M_STRING){	
-		//cout<<value.str->string<<endl;
-		printf("%s",value.str->string);
-		return st;
-	}
-	if(value.v==M_BOOL){
-		printf("%s",(value.b?"true":"false"));
-		return st;
-	}
-	if(value.v==M_NULL){
-		printf("NULL");
-		return st;
-	}
-	if(value.v==M_ARRAY){
-		printf("{Array Object}");
-		return st;
-	}
-	if(value.v==M_DICT)
-	{	printf("{Dictionary Object}");
-		return st;
-	}
-	if(value.v==M_FUN){
-		printf("{Function Object}");
-		return st;
-	}
-	printf("{Object}");
-	return st;
-}
+UserFunctionAtter Filelist[] = {
+	{"Readfile",File::Readfile,1},	
+	{"Writefile",File::Writefile,2},
+	{"Copy",File::Copy,3},
+	{"Create",File::Create,1},
+	{"Delete",File::Delete,1},
+	{"Exists",File::Exists,1},
+	{"Move",File::Move,2},
+	{"GetCreationTime",File::GetCreationTime,1},
+	{"GetLastAccessTime",File::GetLastAccessTime,1},
+	{"GetLastWriteTime",File::GetLastWriteTime,1},
+	{NULL,NULL,0}
+}; 
 
-
-StackState In()
-{
-	string str;
-	cin>>str;
-	StackState st= String_CreateString(const_cast<char*>(str.c_str()));
-	return st;
-}
-
-StackState Readfile()
-{
+UserFunctionAtter Driveslist[] = {
+	{"GetDrives",Drives::GetDrives,0},
+	{"AvailableFreeSpace",Drives::AvailableFreeSpace,1},
+	{"DriveType",Drives::DriveType,1},
+	{"TotalFreeSpace",Drives::TotalFreeSpace,1},
+	{"TotalSize",Drives::TotalSize,1},
+	{NULL,NULL,0}
+}; 
 	
-	StackState value =GetParam(1);
-	ifstream t(value.str->string);  
-	string str((istreambuf_iterator<char>(t)),istreambuf_iterator<char>()); 
-	StackState st=String_CreateString(const_cast<char*>(str.c_str()));
-	return st;
-}
 
-
-StackState Writefile()
+MentholModuleMethod void	MP_Init()
 {
-	StackState value1 =GetParam(1);
-	StackState value2 =GetParam(2);
-	ofstream OutFile(value1.str->string);
-	OutFile << value2.str << endl;
-    OutFile.close();
-	StackState st;
-	st.b=true;
-	st.v = M_BOOL;
-	return st;
-}
+	RunTimeState* Directoryprt = CreateModuleRunTime("CDirectory");
+	RegisterModuleFunciton(Directoryprt,Directorylist);
 
+	RunTimeState* Consoleprt = CreateModuleRunTime("CConsole");
+	RegisterModuleFunciton(Consoleprt,Consolelist);
 
+	RunTimeState* Fileprt = CreateModuleRunTime("CFile");
+	RegisterModuleFunciton(Fileprt,Filelist);
 
-
-MentholPackMethod void MP_Init()
-{
-	RegisterPackAgeFunciton("Oute",Oute,1);	
-	RegisterPackAgeFunciton("Out",Out,1);	
-	RegisterPackAgeFunciton("In",In,0);	
-	RegisterPackAgeFunciton("Readfile",Readfile,1);	
-	RegisterPackAgeFunciton("Writefile",Writefile,2);
+	RunTimeState* Drivesprt = CreateModuleRunTime("CDrives");
+	RegisterModuleFunciton(Drivesprt,Driveslist);
 }

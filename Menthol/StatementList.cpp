@@ -1,52 +1,25 @@
 #include "StdAfx.h"
 #include "StatementList.h"
 #include "MFile.h"
-
-
+#include "MBinary.h"
+#include <Windows.h>
+#include <algorithm>
 void StatementList::SetCompileStructTable(Statement* b)
 {
-   if(b->NType==MNT_FunctionDefinition && FindInCompileStructTable(b->name)!=-1)
-   {
-		MError::CreateInstance()->PrintError("function " + b->name + " already has a body");
-   }
-
-   if(b->NType==MNT_FunctionDefinition && IsHasPackAgeName(b->name)!=-1)
-   {
-	  MError::CreateInstance()->PrintError("The function name cannot be the same as the package name");
-   }
-   if(MCommon::CreateInstance()->StrCmpNoCase(MCommon::CreateInstance()->StringPathSplit(currentyyfile).extension,MENTHOLPACKAGEEXTENSION) && 
-	   b->NType==MNT_FunctionDefinition && b->name=="_mmain")
-   {
-		MError::CreateInstance()->PrintError("packages cannot contain the _mmain function");
-   }
    CompileStructTable->push_back(b);
 }
-
-int StatementList::FindInCompileStructTable(string b)
-{
-	//for (std::vector<Statement*>::iterator it =CompileStructTable->begin() ; it != CompileStructTable->end(); ++it)
-	//{	
-	VECTORFORSTART(Statement*,CompileStructTable,it)
-		if((*it)->NType==MNT_FunctionDefinition && (*it)->name==b){
-			return (*it)->wfileaddressline;
-		}
-	VECTORFOREND
-	//}
-	return -1;
-}
-
 
 void StatementList::AddCode(Instruction x,int line){	
 
 	if(line!=0){
-		if(!MentholDebugList->size())
+		if (!currentmodule.debuglist->size())
 		{
 			MentholDebug info = {debugipi++,line,strlen(currentyyfile),currentyyfile};
-			MentholDebugList->push_back(info);
+			currentmodule.debuglist->push_back(info);
 		}else
 		{
 			MentholDebug info = {debugipi++,line,0,""};
-			MentholDebugList->push_back(info);
+			currentmodule.debuglist->push_back(info);
 		}
 	}
 	CodeList->push_back(x);ipiadd;
@@ -61,9 +34,7 @@ void StatementList::AddCharCode(char x){
 }
 
 
-void StatementList::ResetIpi(){
-	ipi = 0;
-}
+
 
 int StatementList::GetIpi()
 {
@@ -75,29 +46,44 @@ int StatementList::GetIpi()
 StatementList* StatementList::_StatementList = 0;
 
 StatementList::StatementList():CompileStructTable(new vector <Statement*>())
-	,CodeList(new vector<Instruction>()),functionlist(new vector<string>()),
-   localcount(0),stringconstants(new vector <string>()),dictkeyconstants(new vector <string>()),GlobalMemory(new vector <GlobalVarAttr>()),ipi(0),StackID(0),LocalMemory(new vector<LocalVarAttr>()),
-   PackAgeList(new vector<PackageAttr>()),doubleconstants(new vector <double>()),debugipi(0)
+	,CodeList(new vector<Instruction>()),
+   localcount(0),ipi(0),StackID(0),LocalMemory(new vector<LocalVarAttr>()),
+   ModuleList(new vector<ModuleAndConstant>()), debugipi(0), includefiles(new vector<ImportFileAttr>()), UseModuleList(new vector<ModuleAndConstant>()),
+   ImportFileAllModuleList(new vector<ModuleAndConstant>())
 
 {
 	_StatementList =this;
 	debugipi = 0;
-	MentholDebugList = new vector<MentholDebug>();
-	
+	doublelist = new vector<double>();
+	stringlist = new vector<string>();
+	functionlist = new vector<string>();	
+	dictkeyconstants= new vector<string>();	
+	GlobalMemory = new vector<GlobalVarAttr>();
 }
 
 StatementList::~StatementList(void)
 {
 	delete CompileStructTable;
 	delete CodeList;
-	delete functionlist;
-	delete stringconstants;
-	delete dictkeyconstants;
+
 	delete GlobalMemory;
 	delete LocalMemory;
-	delete PackAgeList;
-	delete doubleconstants;
-	delete MentholDebugList;
+	delete doublelist;
+	delete functionlist;
+	delete stringlist;	
+	VECTORFORSTART(ModuleAndConstant, UseModuleList, it)
+		delete (*it).doublelist;
+		delete (*it).stringlist;
+		delete (*it).functionlist;
+		delete (*it).debuglist;
+		delete (*it).globalmemory;
+	VECTORFOREND
+	delete ModuleList;
+	delete includefiles;
+	delete dictkeyconstants;
+	delete UseModuleList;
+	delete ImportFileAllModuleList;
+	StatementList::_StatementList = 0;
 }
 
 
@@ -105,11 +91,6 @@ StatementList::~StatementList(void)
 
 bool StatementList::AddLocalMemory(string _name,int _lineno){
 
-	/*string classname = "";
-	if(_name.substr(0,2) =="$0"){
-		classname = _name.substr(3);
-		_name = "$0";
-	}*/
 	if(IsGlobalVar(_name)){
 		MError::CreateInstance()->PrintError("Do not allow global variables to be declared inside a function "+_name,_lineno);	
 
@@ -146,60 +127,128 @@ LocalVarAttr StatementList::FindLastLocalMemory()
 	return lva;
 }
 
-int StatementList::IsHasPackAgeName(string name)
+int StatementList::IsHasModuleName(string name)
 {
-	//for (std::vector<PackageAttr>::iterator it = PackAgeList->begin() ; it != PackAgeList->end(); ++it)
-	//{	
-	VECTORFORSTART(PackageAttr,PackAgeList,it)
-		if(name==(*it).pname){
-			return it-PackAgeList->begin();
+
+	VECTORFORSTART(ModuleAndConstant, UseModuleList, it)
+		if(name==(*it).modulename){
+			return it - UseModuleList->begin();
 		}
 	VECTORFOREND
-	//}
 	return -1;
 }
-void StatementList::AddPackAgeList(string s)
+
+
+bool StatementList::IsAddedImportFileAllPackAgeList(string modulename)
 {
+	VECTORFORSTART(ModuleAndConstant, ImportFileAllModuleList, it)
+		if (modulename == (*it).modulename){
+			return true;
+		}
+	VECTORFOREND
+	return false;
+}
 
-	if(IsHasPackAgeName(s)!=-1)return;
+void StatementList::AddExternalModuleList(string modulename)
+{
+	if (IsAddedImportFileAllPackAgeList(modulename)){
+		return;
+	}
+	ModuleAndConstant pac = { modulename, MCommon::CreateInstance()->ELFHash(string(modulename)), 0, 0, 0, 0, 0 };
+	ImportFileAllModuleList->push_back(pac);
+}
 
-	string pname = MCommon::CreateInstance()->StringPathSplit(s).name;
-	PackageAttr pa;
-	pa.ptype = MPA_UNKONWN;
-	string _pname = pname;
-	strcpy(pa.pname, _pname.c_str());
-	if(MFile::CreateInstance()->IsFileExist(s + ".dll"))
+void StatementList::AddToIncludeFile(string filename)
+{
+	
+	VECTORFORSTART(ImportFileAttr,includefiles,it)
+		transform(filename.begin(), filename.end(), filename.begin(),::tolower);
+		transform((*it).filename.begin(), (*it).filename.end(), (*it).filename.begin(),::tolower);
+		if(MCommon::CreateInstance()->StringPathSplit((*it).filename).name==filename)
+		{
+			return;
+		}
+	VECTORFOREND
+
+	ImportFileAttr ifa={"",MPA_UNKNOW};
+	ifa.filename = filename + MENTHOLPACKAGEDLLEXTENSION;	
+
+	string physicalpath = ifa.filename;
+
+	if(MFile::CreateInstance()->IsFileExist(physicalpath))
 	{
-		string str = s + ".dll";
-		strcpy(pa.fname,str.c_str());
-		pa.ptype = MPA_DLL;
-		PackAgeList->push_back(pa);
-		return;
+		if(MBinary::CreateInstance()->ReadPackageFormat(physicalpath)==MENTHOLPACKAGEDLLEXTENSION2)
+		{
+			ifa.ptype = MPA_USER_PACKAGE;	
+		}else
+		{
+			ifa.ptype = MPA_USER_EXTPACKAGE;	
+		}	
+		includefiles->push_back(ifa);
+	}else
+	{
+		string strpath = MCommon::CreateInstance()->GetRunPath()+ "\\lib\\";
+		physicalpath =strpath+ifa.filename;
+		if(MFile::CreateInstance()->IsFileExist(physicalpath)){				
+			if(MBinary::CreateInstance()->ReadPackageFormat(physicalpath)==MENTHOLPACKAGEDLLEXTENSION2)
+			{
+				ifa.ptype  = MPA_SYS_PACKAGE;
+			}else
+			{
+				ifa.ptype  = MPA_SYS_EXTPACKAGE;
+			}
+			includefiles->push_back(ifa);
+		}
 	}
-	if(MFile::CreateInstance()->IsFileExist(s + MENTHOLPACKAGEDLLEXTENSION)){
-		string str = s + MENTHOLPACKAGEDLLEXTENSION;
-		strcpy(pa.fname,str.c_str());
-		pa.ptype = MPA_PACKAGE;
-		PackAgeList->push_back(pa);
-		return;
-	}
-	string strpath = MCommon::CreateInstance()->GetRunPath()+ "\\lib\\";
 
-	if(MFile::CreateInstance()->IsFileExist(strpath+s + ".dll")){
-		string str = s + ".dll";
-		strcpy(pa.fname,str.c_str());
-		pa.ptype = MPA_SDLL;
-		PackAgeList->push_back(pa);
+
+	if(ifa.ptype!=MPA_UNKNOW){
+		if(IsPackage(ifa.ptype))
+		{
+			vector<string> *plist =new vector<string>();
+			MBinary::CreateInstance()->ReadMEPPackage(physicalpath,plist);
+
+			VECTORFORSTART(string,plist,it)
+				AddExternalModuleList(*it);
+			VECTORFOREND
+			delete plist;
+
+		}else
+		{
+			HMODULE h = ::LoadLibrary(physicalpath.c_str());
+			initfuncallback ProcAdd = (initfuncallback)GetProcAddress(h, "MP_Init");
+			ProcAdd();
+			FreeLibrary(h);
+		}
+	}
+	else
+	{
+		MError::CreateInstance()->PrintError(filename + " package not found");
+	}
+}
+
+void StatementList::AddMainModuleList(Statement* fd)
+{
+	string s = MCommon::CreateInstance()->CreateGuid();
+	ModuleStatementList * _p = new ModuleStatementList();
+	_p->AddChilder(fd);
+	SetCompileStructTable(new ModuleDefine(MAINMODULENAME, _p));
+}
+
+void StatementList::AddModuleList(string s)
+{
+	if (IsHasModuleName(s) != -1){
+		MError::CreateInstance()->PrintError(s+ " module redefinition");	
 		return;
 	}
-	if(MFile::CreateInstance()->IsFileExist(strpath+s + MENTHOLPACKAGEDLLEXTENSION)){
-		string str = s + MENTHOLPACKAGEDLLEXTENSION;
-		strcpy(pa.fname,str.c_str());
-		pa.ptype = MPA_SPACKAGE;
-		PackAgeList->push_back(pa);
-		return;
-	}
-	MError::CreateInstance()->PrintError("Can't find package "+pname);	
+	ModuleAndConstant pac = { s, MCommon::CreateInstance()->ELFHash(s), doublelist, stringlist, functionlist, new vector<MentholDebug>(), GlobalMemory };
+	ModuleList->push_back(pac);
+	ImportFileAllModuleList->push_back(pac);
+	UseModuleList->push_back(pac);
+	doublelist =new vector<double>();
+	stringlist=new vector<string>();
+	functionlist=new vector<string>();
+	GlobalMemory = new vector<GlobalVarAttr>();		
 }
 LocalVarAttr StatementList::FindLocalMemory(string _name){
 
@@ -228,16 +277,16 @@ bool StatementList::IsGlobalVar(string name)
 bool StatementList::AddGlobalMemory(string _name){
 	//for (std::vector<GlobalVarAttr>::iterator it = GlobalMemory->begin() ; it != GlobalMemory->end(); ++it)
 	//{
-	VECTORFORSTART(GlobalVarAttr,GlobalMemory,it)
+	VECTORFORSTART(GlobalVarAttr, currentmodule.globalmemory, it)
 		if(_name==(*it).name){
-			return false;
+		 return false;
 		}
 	VECTORFOREND
 	//}
 	GlobalVarAttr lv;
 	lv.name = _name;
 	lv.hash = MCommon::CreateInstance()->ELFHash(_name);
-    GlobalMemory->push_back(lv);
+	currentmodule.globalmemory->push_back(lv);
 	//AddStringConstants(_name);
 	return true;
 }
@@ -245,7 +294,7 @@ GlobalVarAttr StatementList::FindGlobalMemory(string str)
 {
 	//for (std::vector<GlobalVarAttr>::iterator it = GlobalMemory->begin() ; it != GlobalMemory->end(); ++it)
 	//{	
-	VECTORFORSTART(GlobalVarAttr,GlobalMemory,it)
+	VECTORFORSTART(GlobalVarAttr, currentmodule.globalmemory, it)
 		if(str==(*it).name)
 		{
 			return	(*it);
@@ -257,14 +306,8 @@ GlobalVarAttr StatementList::FindGlobalMemory(string str)
 }
 
 
-//void StatementList::ResetInitPackageList()
-//{
-//	AddPackAgeList("MSystem");
-//	AddPackAgeList("MIo");
-//}
-void StatementList::CreateCode(vector<Statement*>* _CompileStructTable,string extension,bool isdebug)
+void StatementList::CreateCode(vector<Statement*>* _CompileStructTable,string extension)
 {	
-
 	if(MCommon::CreateInstance()->StrCmpNoCase(extension,MENTHOLEXTENSION)){
 		string fileext = MENTHOLEXECUTEEXTENSION2;
 		for(int i=0;i<fileext.length();i++){
@@ -280,6 +323,13 @@ void StatementList::CreateCode(vector<Statement*>* _CompileStructTable,string ex
 
 	int importentry = GetIpi();
 	AddCode(0); //import files entry point
+
+	int moduleentry = GetIpi();
+	AddCode(0); //package entry point
+
+	int includemoduleentry = GetIpi();
+	AddCode(0);
+
 	int globalentry = GetIpi();
 	AddCode(0);//global codes  entry point
 	int functionentry = GetIpi();
@@ -288,11 +338,8 @@ void StatementList::CreateCode(vector<Statement*>* _CompileStructTable,string ex
 	AddCode(0);//string lsit  entry
 	int doubleentry = GetIpi();
 	AddCode(0);//double lsit  entry
-
 	int dictkeyentry = GetIpi();
 	AddCode(0);//dict key lsit  entry
-	
-
 	int montholdebugentry = GetIpi();
 	AddCode(0);//debug lsit  entry
 
@@ -301,80 +348,129 @@ void StatementList::CreateCode(vector<Statement*>* _CompileStructTable,string ex
 	SetCode(GetIpi(),importentry);
 	int allimportstart = GetIpi();
 	AddCode(0); ////set strings length
-/*	for (std::vector<PackageAttr>::iterator it = PackAgeList->begin() ; it != PackAgeList->end(); ++it)
-	{*/	
-	VECTORFORSTART(PackageAttr,PackAgeList,it)
-		AddCode((*it).ptype);	
-		int namepostion = GetIpi(); //name  postion;	
-		AddCode(0);
-		int slen = strlen((*it).pname);
-		for(int i = 0;i<strlen((*it).pname);i++){
-			AddCode((*it).pname[i]);
-		}
-		SetCode(slen,namepostion);
 
 
+	VECTORFORSTART(ImportFileAttr,includefiles,it)
+		AddCode((*it).ptype);
 		int filepathpostion = GetIpi(); //filepath  postion;	
 		AddCode(0);
-		slen = strlen((*it).fname);
+		int slen = (*it).filename.length();
 		for(int i = 0;i<slen;i++){
-			AddCode((*it).fname[i]);
+			AddCode((*it).filename[i]);
 		}
 		SetCode(slen,filepathpostion);
-	/*}	*/
 	VECTORFOREND
 	SetCode(GetIpi()-allimportstart,allimportstart);
 
 
-	///////////////////////////////////global start
 	
+
+
+
+
+	//////////////////////////////////package start
+	SetCode(GetIpi(),moduleentry);
+	int allmoduleentrystart =GetIpi();
+	AddCode(0); ////set functions length
+	VECTORFORSTART(ModuleAndConstant, ModuleList, it)
+			AddCode((*it).hash);
+			int namepostion = GetIpi(); //name  postion;	
+			AddCode(0);	
+			int slen = (*it).modulename.length();
+			for(int i = 0;i<slen;i++){
+				AddCode((*it).modulename[i]);
+			}
+			SetCode(slen,namepostion);
+	VECTORFOREND
+	SetCode(GetIpi()-allmoduleentrystart,allmoduleentrystart);
+	//////////////////////////////////package end
+
+
+	//////////////////////////////////use package start
+	SetCode(GetIpi(),includemoduleentry);
+	int allincludemoduleentrystart =GetIpi();
+	AddCode(0); ////set functions length
+	VECTORFORSTART(ModuleAndConstant, UseModuleList, it)
+		AddCode((*it).hash);
+		int namepostion = GetIpi(); //name  postion;	
+		AddCode(0);	
+		int slen = (*it).modulename.length();
+		for(int i = 0;i<slen;i++){
+			AddCode((*it).modulename[i]);
+		}
+		SetCode(slen,namepostion);
+	VECTORFOREND
+	SetCode(GetIpi()-allincludemoduleentrystart,allincludemoduleentrystart);
+	//////////////////////////////////use package end
+
+
+
+	///////////////////////////////////global start	
 	SetCode(GetIpi(),globalentry);
 	int allglobalstart =GetIpi();
 	AddCode(0); ////set functions length
 	/*for (std::vector<Statement*>::iterator it = _CompileStructTable->begin() ; it != _CompileStructTable->end(); ++it)
 	{*/
-	VECTORFORSTART(Statement*,_CompileStructTable,it)
-		if((*it)->NType==MNT_ExpressionList ||  (*it)->NType==MNT_InitializationList){			
-			int codelengthpostion = GetIpi();
-			AddCode(0); ////set strings length
-			int codestart = GetIpi();
-			(*it)->CreateCode();
-			SetCode(GetIpi()-codestart,codelengthpostion);
+	VECTORFORSTART(Statement*,_CompileStructTable,moduleelement)
+		if((*moduleelement)->NType==MNT_ModuleDefine){
+			debugipi = 0;
+			ModuleDefine* _moduledefine = STATICCAST(ModuleDefine,*moduleelement);
+			currentmodule = FindModuleByName(_moduledefine->modulename);
+			ModuleStatementList* _moduleStatementList = STATICCAST(ModuleStatementList,_moduledefine->modulestatementlist);
+			VECTORFORSTART(Statement*,_moduleStatementList->Member,it)
+				if((*it)->NType==MNT_ExpressionList ||  (*it)->NType==MNT_InitializationList){
+					AddCode(MCommon::CreateInstance()->ELFHash(_moduledefine->modulename));
+					int codelengthpostion = GetIpi();
+					AddCode(0); ////set strings length
+					int codestart = GetIpi();
+					(*it)->CreateCode();
+					SetCode(GetIpi()-codestart,codelengthpostion);
+				}
+			/*}*/
+			VECTORFOREND
 		}
-	/*}*/
 	VECTORFOREND
 	SetCode(GetIpi()-allglobalstart,allglobalstart);
 
 
-		////////////////////////////////////funciton start
+
+
+
+	////////////////////////////////////funciton start
 
 	int allfunctionstart =GetIpi();
 	SetCode(allfunctionstart,functionentry);
 	AddCode(0); ////set functions length
-	/*for (std::vector<Statement*>::iterator it =_CompileStructTable->begin() ; it != _CompileStructTable->end(); ++it)
-	{	*/	
-	VECTORFORSTART(Statement*,_CompileStructTable,it)
-		if((*it)->NType==MNT_FunctionDefinition){
 
-			FunctionDefinition* fd = STATICCAST(FunctionDefinition,*it);
-			int functionnamelengthpostion = GetIpi();
-			AddCode(0);
-			int functionnamestart = GetIpi();
-			for(int i=0;i<(*it)->name.length();i++){
-				AddCharCode((*it)->name[i]);
-			}
-			SetCode(GetIpi()-functionnamestart,functionnamelengthpostion);
-			AddCode(0);
-			AddCode(MCommon::CreateInstance()->ELFHash((*it)->name));
-			AddCode(fd->GetParamerCount());
-			int codelengthpostion = GetIpi();
-			AddCode(0); ////set strings length
-			int codestart = GetIpi();
-			(*it)->CreateCode();
-			SetCode(GetIpi()-codestart,codelengthpostion);			
-			fd->GetDefaultValueList();
+	VECTORFORSTART(Statement*,_CompileStructTable,moduleelement)
+		if((*moduleelement)->NType==MNT_ModuleDefine){
+				debugipi = 0;
+				ModuleDefine* _moduledefine = STATICCAST(ModuleDefine,*moduleelement);
+				currentmodule = FindModuleByName(_moduledefine->modulename);
+				ModuleStatementList* _ModuleStatementList = STATICCAST(ModuleStatementList,_moduledefine->modulestatementlist);
+				VECTORFORSTART(Statement*,_ModuleStatementList->Member,it)
+					if((*it)->NType==MNT_FunctionDefinition || (*it)->NType==MNT_MainFunction){
+						AddCode(MCommon::CreateInstance()->ELFHash(_moduledefine->modulename));
+						FunctionDefinition* fd = STATICCAST(FunctionDefinition,*it);
+						int functionnamelengthpostion = GetIpi();
+						AddCode(0);
+						int functionnamestart = GetIpi();
+						for(int i=0;i<(*it)->name.length();i++){
+							AddCharCode((*it)->name[i]);
+						}
+						SetCode(GetIpi()-functionnamestart,functionnamelengthpostion);
+						AddCode(0);
+						AddCode(MCommon::CreateInstance()->ELFHash((*it)->name));
+						AddCode(fd->GetParamerCount());
+						int codelengthpostion = GetIpi();
+						AddCode(0); ////set strings length
+						int codestart = GetIpi();
+						(*it)->CreateCode();
+						SetCode(GetIpi()-codestart,codelengthpostion);			
+						fd->GetDefaultValueList();
+					}
+				VECTORFOREND
 		}
-	//}
 	VECTORFOREND
 	SetCode(GetIpi()-allfunctionstart,allfunctionstart);
 
@@ -383,18 +479,18 @@ void StatementList::CreateCode(vector<Statement*>* _CompileStructTable,string ex
 	int allstringstart  = GetIpi();
 	SetCode(allstringstart,stringentry);
 	AddCode(0); ////set strings length
-	/*for (std::vector<string>::iterator it = stringconstants->begin() ; it != stringconstants->end(); ++it)
-	{	*/
-	VECTORFORSTART(string,stringconstants,it)
-		int singlestringpostion = GetIpi();
-		AddCode(0);
-		int singlestringstart = GetIpi();
-		for(int i=0;i<(*it).length();i++){
-			AddCharCode((*it)[i]);
-		}
-		SetCode(GetIpi()-singlestringstart,singlestringpostion);
-		//AddCode(MCommon::CreateInstance()->ELFHash((*it)));
-	//}
+
+	VECTORFORSTART(ModuleAndConstant, ModuleList, _modulelist)
+			VECTORFORSTART(string, (*_modulelist).stringlist, it)
+				AddCode((*_modulelist).hash);
+				int singlestringpostion = GetIpi();
+				AddCode(0);
+				int singlestringstart = GetIpi();
+				for(int i=0;i<(*it).length();i++){
+					AddCharCode((*it)[i]);
+				}
+				SetCode(GetIpi()-singlestringstart,singlestringpostion);
+			VECTORFOREND
 	VECTORFOREND
 	SetCode(GetIpi()-allstringstart,allstringstart);
 
@@ -402,23 +498,24 @@ void StatementList::CreateCode(vector<Statement*>* _CompileStructTable,string ex
 	int alldoublestart  = GetIpi();
 	SetCode(alldoublestart,doubleentry);
 	AddCode(0); ////set strings length
-	/*for (std::vector<double>::iterator it = doubleconstants->begin() ; it != doubleconstants->end(); ++it)
-	{*/	
-	VECTORFORSTART(double,doubleconstants,it)
-		CodeDouble cd;
-		cd.d = (*it);
-		CodeInst ci;
-		ci.m.c1 = cd.m.c1;
-		ci.m.c2 = cd.m.c2;
-		ci.m.c3 = cd.m.c3;
-		ci.m.c4 = cd.m.c4;
-		AddCode(ci.i);
-		ci.m.c1 = cd.m.c5;
-		ci.m.c2 = cd.m.c6;
-		ci.m.c3 = cd.m.c7;
-		ci.m.c4 = cd.m.c8;
-		AddCode(ci.i);
-	/*}*/
+
+	VECTORFORSTART(ModuleAndConstant, ModuleList, _modulelist)
+		VECTORFORSTART(double, (*_modulelist).doublelist, it)
+				AddCode((*_modulelist).hash);
+				CodeDouble cd;
+				cd.d = (*it);
+				CodeInst ci;
+				ci.m.c1 = cd.m.c1;
+				ci.m.c2 = cd.m.c2;
+				ci.m.c3 = cd.m.c3;
+				ci.m.c4 = cd.m.c4;
+				AddCode(ci.i);
+				ci.m.c1 = cd.m.c5;
+				ci.m.c2 = cd.m.c6;
+				ci.m.c3 = cd.m.c7;
+				ci.m.c4 = cd.m.c8;
+				AddCode(ci.i);
+			VECTORFOREND
 	VECTORFOREND
 	SetCode(GetIpi()-alldoublestart,alldoublestart);
 
@@ -449,16 +546,17 @@ void StatementList::CreateCode(vector<Statement*>* _CompileStructTable,string ex
 	int montholdebugstart  = GetIpi();
 	SetCode(montholdebugstart,montholdebugentry);
 	AddCode(0); ////set strings length
-	if(isdebug){
-		VECTORFORSTART(MentholDebug,MentholDebugList,it)
-				AddCode((*it).instno);
-				AddCode((*it).lineno);
-				AddCode((*it).filenamelenght);
-				for(int i=0;i<(*it).filenamelenght;i++){
-					AddCharCode((*it).filename[i]);
-				}
-		VECTORFOREND
-	}
+	VECTORFORSTART(ModuleAndConstant, ModuleList, _modulelist)
+		VECTORFORSTART(MentholDebug, (*_modulelist).debuglist, it)
+					AddCode((*_modulelist).hash);
+					AddCode((*it).instno);
+					AddCode((*it).lineno);
+					AddCode((*it).filenamelenght);
+					for(int i=0;i<(*it).filenamelenght;i++){
+						AddCharCode((*it).filename[i]);
+					}
+			VECTORFOREND
+	VECTORFOREND
 	SetCode(GetIpi()-montholdebugstart,montholdebugstart);
 }
 
@@ -469,9 +567,12 @@ void StatementList::CreateCode(vector<Statement*>* _CompileStructTable,string ex
 
 void StatementList::AddStringConstant(string s)
 {
-	if(FindStringConstant(s)==-1){
-		stringconstants->push_back(s);
+	VECTORFORSTART(string,stringlist,it)
+	if((*it)==s){
+		return;
 	}
+	VECTORFOREND
+	stringlist->push_back(s);
 }
 
 void StatementList::AddDictKeyConstant(string s)
@@ -485,20 +586,21 @@ void StatementList::AddDictKeyConstant(string s)
 
 void StatementList::AddDoubleConstant(double d)
 {
-	if(FindDoubleConstant(d)==-1){
-		doubleconstants->push_back(d);
-	}
+	VECTORFORSTART(double,doublelist,it)
+		if((*it)==d){
+			return;
+		}
+	VECTORFOREND
+	doublelist->push_back(d);
+
 }
 
 int StatementList::FindStringConstant(string d)
 {
-	//for (std::vector<string>::iterator it = stringconstants->begin() ; it != stringconstants->end(); ++it)
-	//{
-	VECTORFORSTART(string,stringconstants,it)
+	VECTORFORSTART(string, currentmodule.stringlist, it)
 		if((*it)==d){
-			return it-stringconstants->begin();
+			return it - currentmodule.stringlist->begin();
 		}
-	//}
 	VECTORFOREND
 	return -1;
 }
@@ -520,9 +622,9 @@ int StatementList::FindDoubleConstant(double d)
 {
 	//for (std::vector<double>::iterator it = doubleconstants->begin() ; it != doubleconstants->end(); ++it)
 	//{	
-	VECTORFORSTART(double,doubleconstants,it)
+	VECTORFORSTART(double, currentmodule.doublelist, it)
 		if((*it)==d){
-			return it-doubleconstants->begin();
+			return it - currentmodule.doublelist->begin();
 		}
 	//}
 	VECTORFOREND
@@ -533,8 +635,8 @@ int StatementList::FindFunction(string s)
 {
 	//for (std::vector<string>::iterator it = functionlist->begin() ; it != functionlist->end(); ++it)
 	//{	
-	VECTORFORSTART(string,functionlist,it)
-		if(s==(*it))return it-functionlist->begin();
+	VECTORFORSTART(string, currentmodule.functionlist, it)
+		if (s == (*it))return it - currentmodule.functionlist->begin();
 	//}
 	VECTORFOREND
 	return -1;
@@ -542,6 +644,12 @@ int StatementList::FindFunction(string s)
 
 void StatementList::AddFunction(string s)
 {
+	VECTORFORSTART(string,functionlist,it)
+		if(s==(*it)){
+			 MError::CreateInstance()->PrintError("The function name cannot be the same as the module");
+			 return;
+		}
+	VECTORFOREND
 	functionlist->push_back(s);
 }
 
@@ -554,31 +662,16 @@ void StatementList::SetLocalCountValue(int x)
 	localcount = x;
 }
 
+ModuleAndConstant StatementList::FindModuleByName(string name)
+{
+	VECTORFORSTART(ModuleAndConstant, ModuleList, it)
+		if (name == (*it).modulename)
+			return (*it);
+	VECTORFOREND
+	ModuleAndConstant ret = {};
+	return ret;
+}
 
-vector<double>* StatementList::GetDoubleConstants()
-{
-	return doubleconstants;
-}
-vector<string>* StatementList::GetImprotFiles()
-{
-	return ImprotFiles;
-}
-vector<PackageAttr>* StatementList::GetPackAgeList()
-{
-	return PackAgeList;
-}
-vector<string>* StatementList::GetFunctionList()
-{
-	return functionlist;
-}
-vector <string>* StatementList::GetStringConstants()
-{
-	return stringconstants;
-}
-vector <string>* StatementList::GetDictKeyConstants()
-{
-	return dictkeyconstants;
-}
 
 vector<GlobalVarAttr>* StatementList::GetGlobalMemory()
 {
@@ -589,12 +682,32 @@ vector<LocalVarAttr>* StatementList::GetLocalMemory()
 	return LocalMemory;
 }
 
-vector<MentholDebug>* StatementList::GetMentholDebug()
-{
-	return MentholDebugList;
-}	
-
 void StatementList::RestDebugIpi()
 {
 	debugipi = 0;
 }
+
+bool StatementList::FindUseModuleList(string modulename)
+{
+	VECTORFORSTART(ModuleAndConstant, UseModuleList, it)
+		if (modulename == (*it).modulename)
+			return true;
+	VECTORFOREND
+	return false;
+}
+void StatementList::AddUseModuleList(string modulename)
+{
+	if (FindUseModuleList(modulename))
+	{
+		return;
+	}
+	if (!IsAddedImportFileAllPackAgeList(modulename)){
+		MError::CreateInstance()->PrintError(modulename + " module not found");
+		return;
+	}
+	ModuleAndConstant pac = { modulename, MCommon::CreateInstance()->ELFHash(string(modulename)), 0, 0, 0, 0, 0 };
+	UseModuleList->push_back(pac);
+}
+
+
+

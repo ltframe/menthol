@@ -22,9 +22,15 @@ class Statement;
 #define IsBool(o) (o->v==M_BOOL)
 #define IsNULL(o) (o->v==M_NULL)
 #define IsObject(o) (o->v==M_OBJECT)
-#define IsPACKAGE(o)(o->v==M_PACKAGE)
+#define IsModule(o)(o->v==M_MODULE)
 #define IsFUN(o)(o->v==M_FUN)	
 #define IsPFUN(o)(o->v==M_PFUN)	
+
+#define IsPackage(o)(o==MPA_USER_PACKAGE || o==MPA_SYS_PACKAGE)	
+#define IsEXTPackage(o)(o==MPA_USER_EXTPACKAGE || o==MPA_SYS_EXTPACKAGE)	
+
+#define IsSYSPackage(o)(o==MPA_SYS_PACKAGE || o==MPA_SYS_EXTPACKAGE)	
+
 
 #define STACKSTATESTRING(o,s)\
 	if(IsNumber(o)){s = "number";}\
@@ -34,9 +40,9 @@ class Statement;
 	if(IsBool(o)){s = "bool";}\
 	if(IsNULL(o)){s = "Null";}\
 	if(IsObject(o)){s = "object";}\
-	if(IsPACKAGE(o)){s = "package";}\
+	if(IsModule(o)){s = "module";}\
 	if(IsFUN(o)){s = "function";}\
-	if(IsPFUN(o)){s = "package function";}\
+	if(IsPFUN(o)){s = "module function";}\
 
 #define VECTORFORSTART(t,v,it) for (std::vector<t>::iterator it = v->begin() ; it != v->end(); ++it){
 
@@ -126,9 +132,9 @@ enum NodeType{
 	MNT_TryStatement,
 	MNT_ThrowExpression,
 	MNT_CodeBlockStatement,
-	MNT_ImportFileExpression,
-	MNT_PackAgeExpresson,
-	MNT_PackAgeFunCall,
+	MNT_ImportPackageExpression,
+	MNT_ModuleExpresson,
+	MNT_ModuleFunCall,
 	MNT_TernaryExpression,
 	MNT_DictExpression,
 	MNT_FunctionCall,
@@ -138,7 +144,10 @@ enum NodeType{
 	MNT_PlusExpression,
 	MNT_Release,
 	MNT_InverterExpression,
-	MNT_TypeOfExpression
+	MNT_TypeOfExpression,
+	MNT_ModuleStatementList,
+	MNT_ModuleDefine,
+	MNT_MainFunction
 };
 
 
@@ -180,7 +189,7 @@ enum OperateCode{
 	OP_STORES,
 	OP_LOADP,
 	OP_SETS,
-	OP_LOADG,//载入运行记录,
+	//OP_LOADG,//载入运行记录,
 	OP_ADJUSTBP,
 	OP_ADJUSTSP,
 	OP_PUSHRS,
@@ -201,11 +210,11 @@ enum OperateCode{
 	OP_INITS,
 	OP_INITM,
 	OP_PUSHFUN,
-	OP_PUSHPACKAGE,
+	OP_PUSHMODULE,
 	OP_BREAK,
-	OP_PUSHPACKAGEFUNC,
-	OP_SETPACKAGEATTER,
-	OP_GETPACKAGEATTER,
+	OP_PUSHMODULEFUNC,
+	OP_SETMODULEATTER,
+	OP_GETMODULEATTER,
 	OP_MINUS,
 	OP_PUSHHASH,
 	OP_POP,
@@ -216,19 +225,25 @@ enum OperateCode{
 	};
 
 enum PackAgeType{
-	MPA_PACKAGE,
-	MPA_DLL,
-	MPA_SPACKAGE,
-	MPA_SDLL,
-	/*MPA_SO,*/
-	MPA_UNKONWN
+	MPA_UNKNOW,
+	MPA_USER_PACKAGE,
+	MPA_SYS_PACKAGE,
+	MPA_USER_EXTPACKAGE,
+	MPA_SYS_EXTPACKAGE
 };
+
+struct ImportFileAttr
+{
+	string filename;
+	PackAgeType ptype;
+};
+
 
 struct PackageAttr{
 	char pname[_MAX_PATH];//pacakage name
-	char fname[_MAX_PATH];//file name
+	char fname[_MAX_PATH];//pacakage name
 	PackAgeType ptype;
-	//void* packagepointer;
+
 };
 
 
@@ -236,7 +251,6 @@ enum DataType{
 	DATA,
 	LOADDATA
 };
-
 
 
 
@@ -265,6 +279,10 @@ struct FunctionAtter
 	vector <int> *defaultvaluelengthlist;
 };
 
+
+
+
+
 struct MentholDebug
 {
 	int instno;
@@ -292,19 +310,19 @@ struct CompileStruct
 };
 struct RunTimeState;
 
-struct PackageState{
+struct ModuleState{
 	hashValue hash;
 	RunTimeState* rts;
 };
 
 struct RunTimeState
 {
-	string pname;
+	string modulename;
 	hashValue hash;
 	vector<string> *strings;
 	vector<double>* doubles;
 	vector<FunctionAtter>* functionlist;
-	vector<PackageState*>* includepackages;
+	vector<ModuleState*>* includemodule;
 	VECOTRSTACKSTATEPOINTER globalvalues;
 	vector<MentholDebug> *debuglist;
 	PackAgeType ptype;
@@ -312,7 +330,12 @@ struct RunTimeState
 
 };
 
-
+struct GlobalCodeRuntimeAtter
+{
+	vector<Instruction> *globalcodelist;
+	RunTimeState* belongtoruntimestate; 
+	int lenght;
+};
 
 
 

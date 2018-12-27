@@ -1,12 +1,17 @@
-import "MIo";
+import "console";
 import "example1";
-def test:$i
-{	
-	MIo.Out($i[0]);
+use Console,example1;
+
+module test
+{
+	def test:$i
+	{	
+		Console.Out($i[0]);
+	}
 }
 _mmain:$a,$c
 {	
 	while(true){
-		example1.CallBack(test);
+		example1.CallBack(test.test);
 	}
 }

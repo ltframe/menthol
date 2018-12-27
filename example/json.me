@@ -1,14 +1,15 @@
-import "lib/CJson";
-import "MIo";
+import "console";
+import "string";
+use Console,Json;
 _mmain:$a,$c
 {	
 		
 		var $s ="{\"name\":\"fengxin\",\"passwd\":\"123\",\"num\":[{\"rrr\":\"ffffffffff\"}]}";
-		var $j = CJson.JsonParse($s);
-		MIo.Out(CJson.GetObjectItem($j,"name"));MIo.Out(CJson.GetObjectItem($j,"passwd"));
-		var $m = CJson.GetObjectItem($j,"num");
-		var $count = CJson.GetArraySize($m);
-		var $ar = CJson.GetArrayItem($m,0);	
-		MIo.Out(CJson.Type($m));
-		MIo.Out(CJson.GetObjectItem($ar,"rrr"));
+		var $j = Json.JsonParse($s);
+		Console.Out(Json.GetObjectItem($j,"name"));Console.Out(Json.GetObjectItem($j,"passwd"));
+		var $m = Json.GetObjectItem($j,"num");
+		var $count = Json.GetArraySize($m);
+		var $ar = Json.GetArrayItem($m,0);	
+		Console.Out(Json.Type($m));
+		Console.Out(Json.GetObjectItem($ar,"rrr"));
 }

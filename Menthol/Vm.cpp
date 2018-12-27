@@ -19,11 +19,13 @@ namespace Vm
 	static STACKSTATEPOINTER stackbase;
 	static vector<StringValue> *dictkeys;
 	static VECOTRSTACKSTATE stacklist;
-	static vector<PackageAttr> *filetree;
+	static vector<ImportFileAttr> *filetree;
 	static int calltype = 0;
 	static STACKSTATEPOINTER callbp=0;
 	static int garbagescount;
-	char* mtypes[] = {"M_NUMBER","M_LONG","M_DOUBLE","M_STRING","M_STRING","M_FUN","M_PFUN","","M_BOOL","M_ARRAY","M_DICT","M_NULL","","","M_PACKAGE","M_HASH","M_UNKONWN","M_OBJECT"};
+	static PackAgeType loadextpackagetype;
+	//static vector<string> *loadedlibrarys;
+	char* mtypes[] = {"M_NUMBER","M_LONG","M_DOUBLE","M_STRING","M_STRING","M_FUN","M_PFUN","","M_BOOL","M_ARRAY","M_DICT","M_NULL","","","M_MODULE","M_HASH","M_UNKONWN","M_OBJECT"};
 
 
 
@@ -130,8 +132,9 @@ namespace Vm
 	{
 		
 		runtimestatelist = new vector<RunTimeState*>();
-		filetree =new vector<PackageAttr>();
+		filetree =new vector<ImportFileAttr>();
 		dictkeys =new vector<StringValue>();
+		//loadedlibrarys = new vector<string>();
 		stacklist.resize(1024);
 		stackbase = &stacklist[0];
 		sp=stackbase;
@@ -147,28 +150,22 @@ namespace Vm
 	}
 	void AddRunTimeStateList(RunTimeState* rst)
 	{
-
-		//VECTORFORSTART(RunTimeState*,runtimestatelist,itx88)
-		//	if((*itx88)->pname==rst->pname){
-		//		return;
-		//	}	
-		//VECTORFOREND
 		runtimestatelist->push_back(rst);
 	}
-	static bool IsPackageInRunTimeStateList(string pname,int ptype)
+	static bool IsModuleInRunTimeStateList(string pname)
 	{
 		VECTORFORSTART(RunTimeState*,runtimestatelist,it)
-			if((*it)->pname==pname && (*it)->ptype==ptype)
+			if ((*it)->modulename == pname)
 			{
 				return 1;
 			}
 		VECTORFOREND
-			return 0;
+		return 0;
 	}
 
 StackState FindGlobalMemory(hashValue hash,RunTimeState* _curentruntimestate,RunTimeState* _callruntimestate)
 {
-	if(_curentruntimestate->ptype==MPA_DLL || _curentruntimestate->ptype==MPA_SDLL)
+	if(IsEXTPackage(_curentruntimestate->ptype))
 	{
 		currentruntimestate = _callruntimestate;
 		MError::CreateInstance()->PrintRunTimeError(GetStringConstantsByHash(hash,_callruntimestate)+string(" is not defined"));
@@ -180,7 +177,7 @@ StackState FindGlobalMemory(hashValue hash,RunTimeState* _curentruntimestate,Run
 		}
 	VECTORFOREND
 
-    if(_curentruntimestate->ptype==MPA_PACKAGE || _curentruntimestate->ptype==MPA_SPACKAGE){
+    if(IsPackage(_curentruntimestate->ptype)){
 		
 		currentruntimestate = _callruntimestate;
 		MError::CreateInstance()->PrintRunTimeError(GetStringConstantsByHash(hash,_callruntimestate)+string(" is not defined"));
@@ -270,11 +267,34 @@ FunctionAtter GetRunTimeFunctionAtterByIndex(int index)
 }
 
 
-void CreateFunctionRecoredList(FunctionAtter fa)
+void CreateFunctionRecoredList(RunTimeState* packageinst,FunctionAtter fa)
 {
-
 	fa.hash =  MCommon::CreateInstance()->ELFHash(fa.name);
-	currentruntimestate->functionlist->push_back(fa);
+	packageinst->functionlist->push_back(fa);
+}
+
+
+RunTimeState* CreateModuleRunTime(char* modulename)
+{
+	if(IsModuleInRunTimeStateList(modulename))
+	{
+		return 0;
+	}
+
+	currentruntimestate =new RunTimeState();
+	currentruntimestate->doubles = new vector<double>();
+	currentruntimestate->functionlist = new vector <FunctionAtter>();
+	currentruntimestate->strings = new vector<string>();
+	currentruntimestate->includemodule = new vector<ModuleState*>();
+	currentruntimestate->globalvalues =new VECOTRSTACKSTATE();
+	currentruntimestate->debuglist =new vector<MentholDebug>();
+		
+	currentruntimestate->hash = MCommon::CreateInstance()->ELFHash(modulename);
+	currentruntimestate->modulename = modulename;
+	currentruntimestate->ptype = loadextpackagetype;
+
+	AddRunTimeStateList(currentruntimestate);
+	return currentruntimestate;
 }
 
 void CreateStringConstants(char* s)
@@ -332,12 +352,12 @@ void CreateDictKeyString(char* s)
 
 
 
-PackageState* GetPackageAttr(int i)
+ModuleState* GetModuleAttr(int i)
 {
-	if(i<0 || i>=currentruntimestate->includepackages->size()){
-		MError::CreateInstance()->PrintRunTimeError("Package Not Found");
+	if (i<0 || i >= currentruntimestate->includemodule->size()){
+		MError::CreateInstance()->PrintRunTimeError("module Not found");
 	}
-	return currentruntimestate->includepackages->at(i);
+	return currentruntimestate->includemodule->at(i);
 }
 
 void Vm::InitCode(Instruction x,int &codep,vector<Instruction>& codealllist){	    
@@ -475,7 +495,7 @@ void PintCode(int c){
 }
 
 Instruction* GetCurrentCodeList(){
-	return codelist-1;
+	return codelist;
 }
 
 Instruction* GetCodeListStart(){
@@ -488,8 +508,35 @@ vector<MentholDebug> *GetDebugList(){
 
 	return currentruntimestate->debuglist;
 }
+/*
+static bool IsLoadedLibrary(string filename)
+{
+	VECTORFORSTART(string,loadedlibrarys,it)		
+		if((*it)==filename){
+			return true;	
+		}
+	VECTORFOREND
+	return false;
+}*/
 
-void EntryPoint(PackageAttr pa,char* workdir)
+void ExecuteCallBack(vector<Instruction> *globalcodelist,RunTimeState *_currentruntimestate)
+{
+	currentruntimestate = _currentruntimestate;
+	char c;
+	codelist =new Instruction[globalcodelist->size()];
+	for (int i = 0; i < globalcodelist->size(); i++)
+	{
+		codelist[i]=(globalcodelist->at(i));
+	}
+	Instruction* _codelist = codelist; 
+	if(!Execute()){			
+		codelist  =_codelist;
+		delete[] codelist;
+		codelist = 0;
+	}
+}
+
+void EntryPoint(ImportFileAttr pa,char* workdir)
 {
 	strcpy(ModulePath,MCommon::CreateInstance()->GetRunPath().c_str());
 	int postion=0;
@@ -500,7 +547,7 @@ void EntryPoint(PackageAttr pa,char* workdir)
 	MBinary *wb =new  MBinary();
 	//AutoLoadPackAge(filetree,ModulePath);
 	filetree->push_back(pa);//压入启动文件，启动文件最后执行
-	wb->MReadImportFiles(pa.fname,filetree,ModulePath,workdir);	
+	wb->MReadImportFiles(pa.filename.c_str(),filetree,ModulePath,workdir);	
 	//AutoLoadPackAge(filetree,ModulePath);
 
 	reverse(filetree->begin(),filetree->end());
@@ -513,75 +560,51 @@ void EntryPoint(PackageAttr pa,char* workdir)
 	MainFuncitonCode(codespostion,codealllist);
 
 
-	
+	vector<GlobalCodeRuntimeAtter>* globallist =new vector<GlobalCodeRuntimeAtter>(0);
 
 
 	for(int f=0;f<filetree->size();f++){
 
-		PackageAttr pa = filetree->at(f);
-
-		if(IsPackageInRunTimeStateList(pa.pname,pa.ptype))
-		{
-			continue;
-		}
-
+		ImportFileAttr pa = filetree->at(f);
 		vector<Instruction> globalcodelist;
 
-		currentruntimestate =new RunTimeState();
-		currentruntimestate->doubles = new vector<double>();
-		currentruntimestate->functionlist = new vector <FunctionAtter>();
-		currentruntimestate->strings = new vector<string>();
-		currentruntimestate->includepackages = new vector<PackageState*>();
-		currentruntimestate->globalvalues =new VECOTRSTACKSTATE();
-		currentruntimestate->debuglist =new vector<MentholDebug>();
-		
-		currentruntimestate->hash = MCommon::CreateInstance()->ELFHash(pa.pname);
-		currentruntimestate->pname = pa.pname;
-		currentruntimestate->ptype = pa.ptype;
-		if(pa.ptype==MPA_PACKAGE || pa.ptype==MPA_SPACKAGE){
-			const char* filename = pa.fname;
-			wb->ReadBinary(filename,currentruntimestate->functionlist,currentruntimestate->strings,&codealllist,globalcodelist,currentruntimestate->doubles,currentruntimestate->includepackages,runtimestatelist,dictkeys,currentruntimestate->debuglist);
-			
-			///CreateVmState(FunctionRecoredList,stringconstants,doubleconstants,packagelist,f);
-			AddRunTimeStateList(currentruntimestate);
-			char c;
-			codelist =new Instruction[globalcodelist.size()];
-			for (int i = 0; i < globalcodelist.size(); i++)
-			{
-				codelist[i]=(globalcodelist[i]);
-			}
-			//garbagescope = GLOBAL;
-			Instruction* _codelist = codelist; 
-			if(!Execute()){
-				//ip = 0;
-				
-				//free(codelist);
-				codelist  =_codelist;
-				delete[] codelist;
-				codelist = 0;
-				continue;
-			}
+		if(IsPackage(pa.ptype))
+		{
+			wb->ReadBinary(pa,&codealllist,runtimestatelist,dictkeys,AddRunTimeStateList,globallist);			
 		}
-		if(pa.ptype==MPA_DLL || pa.ptype==MPA_SDLL)
-		{		
-			HMODULE h = ::LoadLibraryA(pa.fname);	
-			/*int c = strlen(pa.pname)+7;
-			char* _initname =new char[c];
-			memset(_initname,0,c);
-			strcat(_initname,pa.pname);
-			strcat(_initname,"_Init");
-			_initname[c] = '\0';*/
+		if(IsEXTPackage(pa.ptype))
+		{					
+			loadextpackagetype = pa.ptype;
+			HMODULE h = ::LoadLibraryA(pa.filename.c_str());	
 			initfuncallback ProcAdd = (initfuncallback) GetProcAddress(h,"MP_Init"); 
 			ProcAdd();
-			AddRunTimeStateList(currentruntimestate);
-
 		}
-		currentruntimestate = 0;
 	}
-	
-	//free(codelist);
+
+	VECTORFORSTART(GlobalCodeRuntimeAtter,globallist,it)
+			currentruntimestate = (*it).belongtoruntimestate;
+			currentruntimestate->codeoffset = 0;
+			codelist =new Instruction[(*it).lenght];
+			codeliststart = codelist;
+			for (int i = 0; i < (*it).lenght; i++)
+			{
+				codelist[i]=((*it).globalcodelist->at(i));
+			}
+			Instruction* _codelist = codelist; 
+			if(!Execute()){			
+				codelist  =_codelist;
+				delete[] codelist;
+			}
+			codelist = 0;
+			delete (*it).globalcodelist;
+			currentruntimestate->codeoffset = -1;
+	VECTORFOREND
+	delete globallist;
+	codeliststart = 0;
+
+
+
 	codelist = 0;
-	//garbagescope = LOCAL;
 	codelist =new Instruction[codealllist.size()];
 	codeliststart = codelist;
 	memset(codelist,0,codealllist.size()+1);
@@ -590,17 +613,16 @@ void EntryPoint(PackageAttr pa,char* workdir)
 		codelist[i]=(codealllist[i]);
 	}
 
-
-	//for (std::vector<RunTimeState*>::iterator it1 = runtimestatelist->begin() ; it1 != runtimestatelist->end(); ++it1){	
 	VECTORFORSTART(RunTimeState*,runtimestatelist,it1)		
-		if((*it1)->ptype==MPA_DLL || (*it1)->ptype==MPA_SDLL)
+		if(IsEXTPackage((*it1)->ptype))
 		{
 			continue;
 		}
 		(*it1)->codeoffset=codespostion;
+		if ((*it1)->hash == MAINMODULENAMEHASH){
+			currentruntimestate = (*it1);
+		}
 		VECTORFORSTART(FunctionAtter,(*it1)->functionlist,it)		
-		//for (std::vector<FunctionAtter>::iterator it = (*it1)->functionlist->begin() ; it != (*it1)->functionlist->end(); ++it)
-		//{
 			if((*it).lenght!=-1){
 				(*it).postion = codelist+codespostion;
 				codespostion+=(*it).lenght;
@@ -609,7 +631,7 @@ void EntryPoint(PackageAttr pa,char* workdir)
 	VECTORFOREND
 
 #ifndef NDEBUG
-	//PintCode(codealllist.size());
+	PintCode(codealllist.size());
 #endif	
 	filetree->clear();
 	//clock_t start = clock();
@@ -686,6 +708,7 @@ int Execute()
 			SWITCHCASEEND
 
 			SWITCHCASESTART(OP_THROWSTART)
+					sp--;
 					while (sp->v != M_TRYMARK) sp--;
 					sp++;
 			SWITCHCASEEND
@@ -931,7 +954,7 @@ int Execute()
 		    SWITCHCASESTART(OP_LOADS)
 					int kkkk = *codelist++;
 					*sp++=*(bp+kkkk);
-		    SWITCHCASEEND
+;		    SWITCHCASEEND
 
 		    SWITCHCASESTART(OP_NOP)
 		    SWITCHCASEEND
@@ -1476,18 +1499,18 @@ int Execute()
 				(sp-1)->d++;
 			SWITCHCASEEND
 
-			SWITCHCASESTART(OP_PUSHPACKAGE)
-				(*sp).v = M_PACKAGE;
-			    (*sp++).ps = GetPackageAttr(*codelist++);
+			SWITCHCASESTART(OP_PUSHMODULE)
+				(*sp).v = M_MODULE;
+				(*sp++).ms = GetModuleAttr(*codelist++);
 			SWITCHCASEEND
 
-			SWITCHCASESTART(OP_PUSHPACKAGEFUNC)
+			SWITCHCASESTART(OP_PUSHMODULEFUNC)
 				STACKSTATEPOINTER b = sp-1;
-				if (b->v != M_PACKAGE){
-					MError::CreateInstance()->PrintRunTimeError("expression is not package");
+				if (b->v != M_MODULE){
+					MError::CreateInstance()->PrintRunTimeError("expression is not module");
 					return 1;
 				}
-				PackageState* pa =b->ps;
+				ModuleState* pa =b->ms;
 				b->v = M_PFUN;
 				b->hash = *codelist++; //function's hash value
 				b->p = pa->rts;
@@ -1499,13 +1522,13 @@ int Execute()
 				}
 			SWITCHCASEEND
 
-			SWITCHCASESTART(OP_GETPACKAGEATTER)
+			SWITCHCASESTART(OP_GETMODULEATTER)
 					STACKSTATEPOINTER b = sp-1;
-					if (b->v != M_PACKAGE){
-						MError::CreateInstance()->PrintRunTimeError("expression is not package");
+					if (b->v != M_MODULE){
+						MError::CreateInstance()->PrintRunTimeError("expression is not module");
 						return 1;
 					}
-					PackageState* pa = b->ps;
+					ModuleState* pa = b->ms;
 					RunTimeState* _rts = currentruntimestate;
 					currentruntimestate = pa->rts;
 
@@ -1513,14 +1536,14 @@ int Execute()
 					currentruntimestate = _rts;
 			SWITCHCASEEND
 
-			SWITCHCASESTART(OP_SETPACKAGEATTER)
+			SWITCHCASESTART(OP_SETMODULEATTER)
 					STACKSTATEPOINTER attr  = --sp;
-					if (attr->v != M_PACKAGE){
-						MError::CreateInstance()->PrintRunTimeError("expression is not package");
+					if (attr->v != M_MODULE){
+						MError::CreateInstance()->PrintRunTimeError("expression is not module");
 						return 1;
 					}
 					STACKSTATEPOINTER value = sp-1;
-					PackageState* pa = attr->ps;
+					ModuleState* pa = attr->ms;
 					RunTimeState* _rts = currentruntimestate;
 					currentruntimestate = pa->rts;
 					*attr = *value;

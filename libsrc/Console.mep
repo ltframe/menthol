@@ -1,0 +1,24 @@
+import "mio";
+use CConsole;
+module Console{
+
+	def Out:$arg1
+	{
+		return CConsole.Out($arg1);
+	}
+
+	def Oute:$arg1
+	{
+		return CConsole.Oute($arg1);
+	}
+
+	def In:
+	{
+		return CConsole.In();
+	}
+
+	def Clear:
+	{
+		return CConsole.Clear();
+	}
+}

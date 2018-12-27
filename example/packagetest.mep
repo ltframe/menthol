@@ -1,20 +1,25 @@
-import "MIo";
-var @g;
+import "console";
+use Console;
 
-def func:
-{	
-	MIo.Out("package function called");
-}
-
-def func1:$i
+module packagetest
 {
-	func();
-	MIo.Out($i);
-}
+	var @g;
 
-def callback:$func
-{
-	MIo.Out(@g);
-	func();
-	$func();
+	def func:
+	{	
+		Console.Out("package function called");
+	}
+
+	def func1:$i
+	{
+		func();
+		Console.Out($i);
+	}
+
+	def callback:$func
+	{
+		Console.Out(@g);
+		func();
+		$func();
+	}
 }

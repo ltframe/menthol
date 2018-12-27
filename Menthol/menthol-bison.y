@@ -33,7 +33,7 @@ struct StackState;
 %token <vDOUBLE>DOUBLE
 %token <vINTEGER>TRUE_KEYWORD
 %token <vINTEGER>FALSE_KEYWORD
-%token IF ELSE FOR BREAK  TRY EXCEPT THROW IMPORT
+%token IF ELSE FOR BREAK  TRY EXCEPT THROW IMPORT MODULE USE
 %token CONTINUE RETURN  WHILE   NULL_KEYWORD
 %token POWER_OP NEQ_OP OR_OP AND_OP GE_OP LE_OP EQ_OP
 %token ADD_ASSIGN SUB_ASSIGN DIV_ASSIGN MUL_ASSIGN ASSIGN_ASSIGN
@@ -92,6 +92,9 @@ struct StackState;
 %type <vStatement> prefix_expression
 
 %type <vStatement> function_parameter_list
+%type <vStatement> modulestatementlist
+%type <vStatement> modulestatement
+%type <vStatement> global_initialization
 %left '='
 %left '-' '+'
 %left '*' '/'
@@ -103,20 +106,22 @@ start:run_statement
 	  ;
 	  
 
-run_statement:wmain_definition
-			 |functiondefinition
-			 |global_initialization
-			 |import_expresson
+run_statement:import_expresson
+			 |moduledefine
+			 |USE use_expression_list ';'	
+			 |wmain_definition
      		 ;
+
+
 
 wmain_definition:WMAIN ':'function_parameter funciton_codeblock_statement	
 				{
 					StatementList *ls = (StatementList*)parm;
-         			$$= new FunctionDefinition("_mmain",MNT_FunctionDefinition);
-					$$->AddChilder($3);
-					$$->AddChilder($4);
+         			FunctionDefinition* fd= new FunctionDefinition("_mmain",MNT_MainFunction);
+					fd->AddChilder($3);
+					fd->AddChilder($4);
 					ls->AddFunction("_mmain");
-					ls->SetCompileStructTable($$);
+					ls->AddMainModuleList(fd);
 				} 			
 			    ;
 
@@ -129,7 +134,6 @@ functiondefinition:DEF IDENTIFIER ':' function_parameter funciton_codeblock_stat
 						$$->AddChilder($4);
 						$$->AddChilder($5);
 						ls->AddFunction($2);
-						ls->SetCompileStructTable($$);
 				  }
 				  |DEF IDENTIFIER ':'  funciton_codeblock_statement
 				  {
@@ -139,7 +143,6 @@ functiondefinition:DEF IDENTIFIER ':' function_parameter funciton_codeblock_stat
 						$$->AddChilder(0);
 						$$->AddChilder($4);
 						ls->AddFunction($2);
-						ls->SetCompileStructTable($$);
 				  }
 				  ;
 
@@ -147,14 +150,11 @@ functiondefinition:DEF IDENTIFIER ':' function_parameter funciton_codeblock_stat
 
 global_initialization:initialization_expression ';'
 					 { 
-						StatementList *ls = (StatementList*)parm;
 						InitializationList* list = static_cast<InitializationList*>($1);
 						list->ModfiyMemberScope(GLOBAL);
-						ls->SetCompileStructTable($1);					
 				     }
 				     |expression_definition';'{
-							StatementList *ls = (StatementList*)parm;
-							ls->SetCompileStructTable($1);	
+							$$ = $1;
 				     }
 				     ;
 
@@ -259,17 +259,17 @@ list_element:	primary_expression{$$ = $1;}
 				
 				|list_element '.' IDENTIFIER '(' function_arguments ')'
 				{
-				PackAgeExpresson* pae =new PackAgeExpresson($1,$3,$5,1);
+				ModuleExpresson* pae =new ModuleExpresson($1,$3,$5,1);
 				StatementList *ls = (StatementList*)parm;		
 				ls->AddStringConstant(string($3));	
 				$$ = pae;
 				}
 				|list_element '.' IDENTIFIER '(' ')'
 				{
-				PackAgeExpresson* pae =new PackAgeExpresson($1,$3,0,1);
+				ModuleExpresson* pae =new ModuleExpresson($1,$3,0,1);
 				StatementList *ls = (StatementList*)parm;		
 				ls->AddStringConstant(string($3));	
-				pae->SetNType(MNT_PackAgeFunCall);
+				pae->SetNType(MNT_ModuleFunCall);
 				$$ = pae;
 				}
 				|list_element '(' function_arguments ')'
@@ -285,14 +285,14 @@ list_element:	primary_expression{$$ = $1;}
 				} 
 				|list_element '.' GLOBALVARIDENTIFIER
 				{
-					PackAgeExpresson* pae =new PackAgeExpresson($1,$3,0,2);
+					ModuleExpresson* pae =new ModuleExpresson($1,$3,0,2);
 					StatementList *ls = (StatementList*)parm;		
 					ls->AddStringConstant(string($3));	
 					$$ = pae;
 				}
 				|list_element '.' IDENTIFIER 
 				{
-					PackAgeExpresson* pae =new PackAgeExpresson($1,$3,0,3);
+					ModuleExpresson* pae =new ModuleExpresson($1,$3,0,3);
 					StatementList *ls = (StatementList*)parm;		
 					ls->AddStringConstant(string($3));	
 					$$ = pae;
@@ -652,7 +652,7 @@ built-intype_declare:NUMBER
 						StatementList *ls = (StatementList*)parm;
 						ls->AddStringConstant(string($1));
 						BuiltinTypeDeclare* btd =new BuiltinTypeDeclare();
-						btd->SetFunctionPointerOrPack($1,1);
+						btd->SetFunctionPointerOrModule($1,1);
 						$$= btd;
 					 } 
 					 ;
@@ -731,11 +731,53 @@ try_statement:TRY funciton_codeblock_statement EXCEPT ':' try_parameter  funcito
 
 
 import_expresson:IMPORT STRING';'{
-						StatementList *ls = (StatementList*)parm;			
-				
-						ls->SetCompileStructTable(new ImportFileExpression($2));			
+						StatementList *ls = (StatementList*)parm;	
+						ls->SetCompileStructTable(new ImportPackageExpression($2));			
 				 }
 				 ;
 
+use_expression_list:IDENTIFIER
+				   {
+						StatementList *ls = (StatementList*)parm;	
+						ls->AddUseModuleList($1);
+				   } 
+				   |use_expression_list ',' IDENTIFIER
+				   {
+						StatementList *ls = (StatementList*)parm;	
+						ls->AddUseModuleList($3);				   
+				   }
+				   ;
+
+moduledefine:MODULE IDENTIFIER '{' modulestatementlist '}'
+			  {
+					StatementList *ls = (StatementList*)parm;	
+											
+					ls->SetCompileStructTable(new ModuleDefine(string($2),$4));		
+			  }
+			  |MODULE IDENTIFIER '{'  '}'
+			  {
+					StatementList *ls = (StatementList*)parm;	
+					ls->SetCompileStructTable(new ModuleDefine(string($2),new ModuleStatementList()));		
+			  }
+			 ;
+
+modulestatementlist:modulestatement
+					{
+						$$ =new ModuleStatementList();
+						if($1!=0){
+							$$->AddChilder($1);
+						}
+					}
+					|modulestatementlist  modulestatement
+					{
+						if($2!=0){
+							$1->AddChilder($2);
+						}
+					}
+					;
+
+modulestatement:functiondefinition {$$ = $1;}
+				|global_initialization{$$ = $1;}
+				;
 %%
  

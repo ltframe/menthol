@@ -1,0 +1,189 @@
+import "msystem";
+use CMath;
+module Math
+{
+	var @PI = 3.14159265358979323846,@E=2.7182818284590452354;
+	def Abs:$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+		return CMath.Abs($n);
+	}
+
+	def Acos:$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+	    return CMath.Acos($n);
+	}
+
+	def Asin:$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+	    return CMath.Asin($n);
+	}
+
+	def Atan:$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+		return CMath.Atan($n);
+	}
+
+	def Atan2:$n,$n2
+	{
+		if(typeof($n)!="M_NUMBER" || typeof($n2)!="M_NUMBER"){
+			return null;
+		}
+		return CMath.Atan2($n,$n2);
+	}
+
+	def Ceil:$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+		return CMath.Ceil($n);
+	}
+
+	def Cos:$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+	    return CMath.Cos($n);
+	}
+
+	def Cosh:$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+		return CMath.Cosh($n);
+	}
+
+	def Exp:$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+	    return CMath.Exp($n);
+	}
+
+	def Fabs:$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+	    return CMath.Fabs($n);
+	}
+
+	def Floor:$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+	    return CMath.Floor($n);
+	}
+
+	def Fmod:$n,$n2
+	{
+		if(typeof($n)!="M_NUMBER" || typeof($n2)!="M_NUMBER"){
+			return null;
+		}
+	    return CMath.Fmod($n,$n2);
+	}
+
+	def Log:$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+	   return CMath.Log($n);
+	}
+
+	def Log10:$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+		return CMath.Log10($n);
+	}
+
+	def Pow:$n,$n2
+	{
+		if(typeof($n)!="M_NUMBER" || typeof($n2)!="M_NUMBER"){
+			return null;
+		}
+		return CMath.Pow($n,$n2);
+	}
+
+	def Sin:$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+	   return CMath.Sin($n);
+	}
+
+	def Sinh:$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+		return CMath.Sinh($n);
+	}
+
+	def Sqrt:$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+		return CMath.Sqrt($n);
+	}
+
+	def Tan:$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+		return CMath.Tan($n);
+	}
+
+	def Tanh:$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+	   return CMath.Tanh($n);
+	}
+
+	def Random:$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+		return CMath.Tanh($n);
+	}
+
+	def Cbrt:$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+		return CMath.Cbrt($n);
+	}
+
+	def Truncate :$n
+	{
+		if(typeof($n)!="M_NUMBER"){
+			return null;
+		}
+		return CMath.Truncate($n);
+	}
+}

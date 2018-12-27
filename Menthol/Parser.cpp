@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "Parser.h"
+#include <algorithm>
 
 
 FunctionDefinition::FunctionDefinition(string n):btd(0),re(0){
@@ -470,12 +471,12 @@ void InitializationList::ModfiyMemberScope(Scope _scope)
 		if(!sl->IsGlobalVar(initdef->name)){
 			MError::CreateInstance()->PrintError("Local variables are not allowed to be declared externally "+initdef->name);	
 		}
-		/*else
+		else
 		{
-			if (initdef->GetRightNodeType() == MNT_FunctionCall || initdef->GetRightNodeType() == MNT_PackAgeFunCall){
+			if (initdef->GetRightNodeType() == MNT_FunctionCall || initdef->GetRightNodeType() == MNT_ModuleFunCall){
 				MError::CreateInstance()->PrintError("Global variables " + string(name) + " cannot be initialized to functions call");
 			}
-		}*/
+		}
 		initdef->ModfiyScope(_scope);
 	//}
 	VECTORFOREND
@@ -502,8 +503,8 @@ AssignmentDefinition::AssignmentDefinition(Statement * _s,string _oper,Statement
 		DictElemenet* ae = STATICCAST(DictElemenet,_s);
 		ae->SetOpt(2);
 	}
-	if(_s->NType==MNT_PackAgeExpresson){
-		PackAgeExpresson* ae = STATICCAST(PackAgeExpresson,_s);
+	if(_s->NType==MNT_ModuleExpresson){
+		ModuleExpresson* ae = STATICCAST(ModuleExpresson,_s);
 		ae->SetOpt(2);
 	}
 	
@@ -581,7 +582,7 @@ void AssignmentDefinition:: CreateCode()
 		RESTORESTACKID	
 		sl->StackID++;
 	}	
-	if(s->NType==MNT_PackAgeExpresson)
+	if(s->NType==MNT_ModuleExpresson)
 	{
 		SAVESTACKID
 		e->CreateCode();
@@ -707,13 +708,13 @@ void BuiltinTypeDeclare::SetString(string str)
 	v.str = str;
 }
 
-void BuiltinTypeDeclare::SetFunctionPointerOrPack(string str,int type)
+void BuiltinTypeDeclare::SetFunctionPointerOrModule(string str, int type)
 {
 	StatementList* sl = StatementList::GetInstance();
-	if(sl->IsHasPackAgeName(str)!=-1)
+	if (sl->IsHasModuleName(str) != -1)
 	{
-		v.v = M_PACKAGE;	
-		v.i = sl->IsHasPackAgeName(str);
+		v.v = M_MODULE;
+		v.i = sl->IsHasModuleName(str);
 	}else{
 		v.v = M_FUN;
 		functionname =str;
@@ -761,15 +762,15 @@ void BuiltinTypeDeclare::CreateCode()
 	}
 	if(v.v==M_FUN ){
 		if((v.i =sl->FindFunction(functionname))==-1){
-			MError::CreateInstance()->PrintError(functionname+" is not defined");
+			MError::CreateInstance()->PrintError(functionname + " is not defined", wfileaddressline);
 		}
 
 		sl->AddCode(OP_PUSHFUN,wfileaddressline);
 		sl->AddCode(v.i,wfileaddressline);
 	}
 
-	if(v.v==M_PACKAGE){
-		sl->AddCode(OP_PUSHPACKAGE,wfileaddressline);
+	if (v.v == M_MODULE){
+		sl->AddCode(OP_PUSHMODULE, wfileaddressline);
 		sl->AddCode(v.i,wfileaddressline);
 	}
 	sl->StackID++;
@@ -1714,6 +1715,7 @@ TryStatement::~TryStatement()
 void TryStatement::CreateCode()
 {
 	StatementList* sl = StatementList::GetInstance();
+	int trymarkid = sl->StackID;
 	sl->AddCode(OP_PUSHTRYMARK,wfileaddressline);
 	sl->StackID++;
 	int i1 = sl->GetIpi(); //记录except的代码地址
@@ -1728,8 +1730,8 @@ void TryStatement::CreateCode()
 	RESTORESTACKID
 	sl->SetLocalCountValue(sopcelocalvars);
 	sl->GetLocalMemory()->resize(sopcelocalvars);
-	sl->AddCode(OP_ADJUSTSP,wfileaddressline);
-	sl->AddCode(_tempstackid,wfileaddressline);
+	//sl->AddCode(OP_ADJUSTSP,wfileaddressline);
+	//sl->AddCode(_tempstackid,wfileaddressline);
 
 
 	sl->AddCode(OP_UJMP,wfileaddressline);
@@ -1748,12 +1750,13 @@ void TryStatement::CreateCode()
 		RESTORESTACKID
 		sl->SetLocalCountValue(sopcelocalvars);
 		sl->GetLocalMemory()->resize(sopcelocalvars);
-		sl->AddCode(OP_ADJUSTSP,wfileaddressline);
-		sl->AddCode(_tempstackid,wfileaddressline);
-
-
+		//sl->AddCode(OP_ADJUSTSP,wfileaddressline);
+		//sl->AddCode(_tempstackid,wfileaddressline);
 	}
-	sl->SetCode(sl->GetIpi()-i3,i3);//更新try except后的第一句的代码地址	
+	sl->SetCode(sl->GetIpi()-i3,i3);//更新try except后的第一句的代码地址
+	sl->AddCode(OP_ADJUSTSP,wfileaddressline);
+	sl->AddCode(trymarkid,wfileaddressline);
+	sl->StackID = trymarkid;	
 }
 
 void TryStatement::Release()
@@ -1851,29 +1854,31 @@ void TryParameterStatement::Release()
 }
 
 
-ImportFileExpression::ImportFileExpression(string _s)
+
+
+ImportPackageExpression::ImportPackageExpression(string _s)
 {
 	StatementList* sl = StatementList::GetInstance();
-	NType = MNT_ImportFileExpression;
+	NType = MNT_ImportPackageExpression;
 	wfileaddressline = lineno;
-	s=_s;
-	sl->AddPackAgeList(s);
+	filename = _s;
+	sl->AddToIncludeFile(filename);
 }
 
-void ImportFileExpression::Release()
+void ImportPackageExpression::Release()
 {
 	DELETETHIS
 }
 
 
-PackAgeExpresson::PackAgeExpresson(Statement* _exprssion,string _key,Statement* _arguments,int _type,int _opt)
+ModuleExpresson::ModuleExpresson(Statement* _exprssion,string _key,Statement* _arguments,int _type,int _opt)
 {
 	wfileaddressline = lineno;
 	exprssion = _exprssion;
 	key = _key;
     arguments = _arguments;
 	type = _type;
-	NType =MNT_PackAgeExpresson;
+	NType =MNT_ModuleExpresson;
 	opt = _opt;
 	if(_exprssion)
 	_exprssion->ParentNode = this;
@@ -1883,7 +1888,7 @@ PackAgeExpresson::PackAgeExpresson(Statement* _exprssion,string _key,Statement* 
 
 
 }
-PackAgeExpresson::~PackAgeExpresson()
+ModuleExpresson::~ModuleExpresson()
 {
 	if(exprssion)
 	exprssion->Release();
@@ -1892,16 +1897,16 @@ PackAgeExpresson::~PackAgeExpresson()
 	arguments->Release();
 }
 
-void PackAgeExpresson::SetOpt(int i)
+void ModuleExpresson::SetOpt(int i)
 {
 	opt = i;
 }
 
-void PackAgeExpresson::SetNType(NodeType i)
+void ModuleExpresson::SetNType(NodeType i)
 {
 	NType = i;
 }
-void PackAgeExpresson::CreateCode()
+void ModuleExpresson::CreateCode()
 {
 	StatementList* sl = StatementList::GetInstance();
 	if(type==1){
@@ -1923,7 +1928,7 @@ void PackAgeExpresson::CreateCode()
 		
 		exprssion->CreateCode();
 	
-		sl->AddCode(OP_PUSHPACKAGEFUNC,wfileaddressline);
+		sl->AddCode(OP_PUSHMODULEFUNC, wfileaddressline);
 		sl->AddCode(MCommon::CreateInstance()->ELFHash(key),wfileaddressline);
 		sl->AddCode(OP_CALLFUNC,wfileaddressline);
 		RESTORESTACKID
@@ -1931,23 +1936,23 @@ void PackAgeExpresson::CreateCode()
 	if(type==2){
 		exprssion->CreateCode();
 		if(opt==1){
-			sl->AddCode(OP_GETPACKAGEATTER,wfileaddressline);
+			sl->AddCode(OP_GETMODULEATTER, wfileaddressline);
 			sl->AddCode(MCommon::CreateInstance()->ELFHash(key),wfileaddressline);
 		}
 		if(opt==2){
-			sl->AddCode(OP_SETPACKAGEATTER,wfileaddressline);
+			sl->AddCode(OP_SETMODULEATTER, wfileaddressline);
 			sl->AddCode(MCommon::CreateInstance()->ELFHash(key),wfileaddressline);
 		}
 	}
 	if(type==3){
 		exprssion->CreateCode();
-		sl->AddCode(OP_PUSHPACKAGEFUNC,wfileaddressline);
+		sl->AddCode(OP_PUSHMODULEFUNC, wfileaddressline);
 		sl->AddCode(MCommon::CreateInstance()->ELFHash(key),wfileaddressline);
 	}
 	
 
 }
-void PackAgeExpresson::Release()
+void ModuleExpresson::Release()
 {	
 	DELETETHIS
 }
@@ -2058,4 +2063,62 @@ void TypeOfExpression::CreateCode()
 	StatementList* sl = StatementList::GetInstance();
 	exprssion->CreateCode();
 	sl->AddCode(OP_TYPEOF,wfileaddressline);
+}
+
+
+
+ModuleStatementList::ModuleStatementList()
+{
+	Member = new vector <Statement*>();
+	wfileaddressline = lineno;	
+	NType = MNT_ModuleStatementList;
+}
+ModuleStatementList::~ModuleStatementList()
+{
+	DESTRUCTORRELEASE
+	delete Member;
+}
+void ModuleStatementList::Release()
+{
+	DELETETHIS
+}
+void ModuleStatementList::CreateCode()
+{
+	VECTORFORSTART(Statement*, Member, it)
+		(*it)->CreateCode();
+	VECTORFOREND
+}
+void ModuleStatementList::AddChilder(Statement* s)
+{
+	if (s)
+	{
+		s->ParentNode = this;
+	}
+	Member->push_back(s);
+}
+
+
+
+ModuleDefine::ModuleDefine(string _modulename,Statement* _modulestatementlist)
+{
+	wfileaddressline = lineno;
+	modulestatementlist = _modulestatementlist;
+	_modulestatementlist->ParentNode = this;
+	modulename = _modulename;
+	NType = MNT_ModuleDefine;
+	StatementList* sl = StatementList::GetInstance();
+	sl->AddModuleList(modulename);
+}
+
+ModuleDefine::~ModuleDefine()
+{
+	modulestatementlist->Release();
+}
+void ModuleDefine::Release()
+{
+	DELETETHIS
+}
+void ModuleDefine::CreateCode()
+{
+	modulestatementlist->CreateCode();
 }

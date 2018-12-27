@@ -12,11 +12,14 @@ extern int yyerror(char*);
 %}
 
 %%
-"/*"			          { comment_block(); }
-"//"                      { comment_line(); }
-0[0-7]+                   {yylval.vINTEGER =(strtol(yytext, NULL, 8));  return NUMBER; }
-[0-9]+	                  {yylval.vINTEGER =atoi(yytext);  return NUMBER; }
-[0-9]+"."[0-9]+	          {yylval.vDOUBLE =atof(yytext); return DOUBLE; }
+"/*"			                          { comment_block(); }
+"//"                                      { comment_line(); }
+0[0-7]+                                   {yylval.vINTEGER =(strtol(yytext, NULL, 8));  return NUMBER; }
+[0-9]+	                                  {yylval.vINTEGER =atoi(yytext);  return NUMBER; }
+[0-9]+[Ee][+-]?([0-9]+)?	              {yylval.vINTEGER =atoi(yytext);  return NUMBER; }
+[0-9]+"."[0-9]+	                          {yylval.vDOUBLE =atof(yytext); return DOUBLE; }
+[0-9]+"."[0-9]+[Ee][+-]?([0-9]+)?	      {yylval.vDOUBLE =atof(yytext); return DOUBLE; }
+
 0[xX][0-9a-fA-F]+         {yylval.vINTEGER =(strtol(yytext, NULL, 16));  return NUMBER; }
 
 "if"   			{return IF;}
@@ -81,6 +84,8 @@ extern int yyerror(char*);
 "<<"			{return SHIFT_LEFT_OP;}
 ">>"			{return SHIFT_RIGHT_OP;}
 "**"			{return POWER_OP;}
+"module"        {return MODULE;}
+"use"           {return USE;}
 
 "$"[a-zA-Z_][a-zA-Z_0-9]*	{
 							
@@ -96,7 +101,7 @@ extern int yyerror(char*);
 							yylval.vSTRING=string(yytext);return IDENTIFIER;
 						}
 
-[ \t]			/* ignore white space */
+[ \t]+			/* ignore white space */
 .							return yytext[0];
 
 \n                    { lineno++; }

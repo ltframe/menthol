@@ -23,6 +23,7 @@ public:
 	PathInfo StringPathSplit(string _path);
 	string GetRunPath(); 
 	bool StrCmpNoCase(string str1,string str2);
+	string CreateGuid();
 private:
 	static MCommon* _inst;
 };

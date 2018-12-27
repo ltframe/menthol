@@ -1,0 +1,19 @@
+import "msystem";
+use CDateTime;
+module DateTime
+{
+	def CurrentDate:
+	{
+		return CDateTime.CurrentDate();
+	}
+	def CurrentTime:
+	{
+		return CDateTime.CurrentTime();
+	}
+	def TimeZone:
+	{
+		return CDateTime.TimeZone();
+	}
+}
+
+

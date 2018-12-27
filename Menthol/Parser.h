@@ -92,7 +92,7 @@ public:
 	void SetString(string str);
 	void SetBool(bool b);
 	void SetNull();
-	void SetFunctionPointerOrPack(string str,int type);
+	void SetFunctionPointerOrModule(string str,int type);
 	void Release();
 	BuiltinTypeValue GetBuiltinTypeValue();
 private:
@@ -522,21 +522,20 @@ private:
 	int sopcelocalvars;
 };
 
-class ImportFileExpression:public Statement{
+class ImportPackageExpression:public Statement{
 public:
-	ImportFileExpression(string _s);
+	ImportPackageExpression(string _s);
 	void CreateCode(){};
 	void Release();
 private:
-	string s;
-	string pname;
+	string filename;
 };
 
 
-class PackAgeExpresson:public Statement{
+class ModuleExpresson:public Statement{
 public:
-	PackAgeExpresson(Statement* _exprssion,string _key,Statement* _arguments,int _type,int _opt = 1);
-	~PackAgeExpresson();
+	ModuleExpresson(Statement* _exprssion,string _key,Statement* _arguments,int _type,int _opt = 1);
+	~ModuleExpresson();
 	void CreateCode();
 	void SetOpt(int i);
 	void SetNType(NodeType i);
@@ -605,4 +604,25 @@ private:
 	Statement* exprssion;
 };
 
+class ModuleStatementList :public Statement
+{
+public:
+	ModuleStatementList();
+	~ModuleStatementList();
+	void Release();
+	void CreateCode();
+	void AddChilder(Statement* s);
+	vector <Statement*> *Member;
+
+};
+
+class ModuleDefine :public Statement{
+public:
+	ModuleDefine(string _modulename, Statement* _modulestatementlist);
+	~ModuleDefine();
+	void Release();
+	void CreateCode();	
+	string modulename;
+	Statement* modulestatementlist;
+};
 #endif

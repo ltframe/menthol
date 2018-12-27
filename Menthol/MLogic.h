@@ -71,10 +71,10 @@ inline bool EqEq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 	}
 
 
-	if(IsPACKAGE(value1) && IsPACKAGE(value2))
+	if (IsModule(value1) && IsModule(value2))
 	{
 		value1->v = M_BOOL;
-		value1->b=value1->ps==value2->ps;
+		value1->b=value1->ms==value2->ms;
 		return true;
 	}
 	
@@ -219,10 +219,10 @@ inline bool Neq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		value1->b=value1->pdict!=value2->pdict;
 		return true;
 	}
-	if(IsPACKAGE(value1) && IsPACKAGE(value2))
+	if (IsModule(value1) && IsModule(value2))
 	{
 		value1->v = M_BOOL;
-		value1->b=value1->ps!=value2->ps;
+		value1->b=value1->ms!=value2->ms;
 		return true;
 	}
 

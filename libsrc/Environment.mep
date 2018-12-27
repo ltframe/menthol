@@ -1,0 +1,71 @@
+import "msystem";
+use CEnvironment;
+module Environment{
+	def Version:
+	{
+	   return CEnvironment.Version();
+	}
+
+	def Sleep:$arg1
+	{
+	  return CEnvironment.Sleep($arg1);
+	}
+
+	def SystemInfo:
+	{
+	   return CEnvironment.SystemInfo();
+	}
+
+	def CpuInfo:
+	{
+		return CEnvironment.CpuInfo();
+	}
+	def SystemMemory:
+	{
+	   return CEnvironment.SystemMemory();
+	}
+
+	def OsInfo:
+	{
+	   return CEnvironment.OsInfo();
+	}
+
+	def Getpid:
+	{
+	 return CEnvironment.Getpid(); 
+	}
+
+	def Exit:$arg1
+	{
+	   return CEnvironment.Exit($arg1);
+	}
+
+	def System:$arg1
+	{
+	   return CEnvironment.System($arg1);
+	}
+
+	def MachineName:
+	{
+	   return CEnvironment.MachineName();
+	}
+	def UserName:
+	{
+	   return CEnvironment.UserName();
+	}
+
+	def TickCount:
+	{
+	   return CEnvironment.TickCount();
+	}
+
+	def NewGuid:
+	{
+	  return CEnvironment.NewGuid();
+	}
+}
+
+
+
+
+

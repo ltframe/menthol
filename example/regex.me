@@ -1,12 +1,13 @@
-import "lib/Deelx";
+import "string";
 import "example1";
-import "MIo";
+import "console";
+use Console,example1,Regex;
 _mmain:$a,$c
 {	
 
 	var $str = example1.HttpGet("http://www.ltplayer.com/");
-	$a = Deelx.Exec($str,"<img.*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>");	
+	$a = Regex.Exec($str,"<img.*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>");	
 	for(var $s in $a){		
-		MIo.Out($s[1]);		
+		Console.Out($s[1]);		
 	}	
 }

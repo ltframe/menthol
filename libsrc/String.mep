@@ -1,0 +1,147 @@
+import "msystem";
+use CString,CRegex,CJson;
+
+module String{
+
+	def StoN:$arg1
+	{
+		return CString.StoN($arg1);
+	}
+
+	def Length:$arg1
+	{
+		return CString.Length($arg1);
+	}
+
+	def IndexOf:$arg1,$arg2
+	{
+		return CString.IndexOf($arg1,$arg2);
+	}
+
+	def Replace:$arg1,$arg2,$arg3
+	{
+		return CString.Replace($arg1,$arg2,$arg3);
+	}
+
+	def Toupper:$arg1
+	{
+		return CString.Toupper($arg1);
+	}
+
+	def Tolower:$arg1
+	{
+		return CString.Tolower($arg1);
+	}
+
+	def Isdigit:$arg1
+	{
+		if(typeof("$arg1")=="M_NUMBER"){
+			return true;
+		}
+		if(typeof("$arg1")=="M_STRING"){
+			return false;
+		}
+		return CString.Isdigit($arg1);
+	}
+
+	def Isalpha:$arg1
+	{
+		if(typeof("$arg1")=="M_NUMBER"){
+			return false;
+		}
+		if(typeof("$arg1")!="M_STRING"){
+			return false;
+		}
+		return CString.Isalpha($arg1);
+	}
+	def Chr:$i
+	{
+		if(typeof($i)!="M_NUMBER"){
+			return null;
+		}
+		return CString.Toascii($i);
+	}
+	def SubString:$str,$pos1,$pos2
+	{
+		var $ret="";
+		while($pos1<$pos2)
+		{
+			$ret+=$str[$pos1];
+			$pos1+=1;
+		}
+		return $ret;
+	}
+	def Split:$str,$s
+	{
+		var $_arr=[],$i=0,$len =Length($str),$startpos=0,$slen = Length($s);
+		while($i<$len)
+		{ 
+			var $temppos=$i+$slen;
+			if($temppos>=$len){
+				$temppos=$len-1;
+				$_arr+= SubString($str,$startpos,$len);
+				break;
+			}
+			var $_s = SubString($str,$i,$temppos);
+			if($_s==$s)
+			{
+				$_arr+= SubString($str,$startpos,$i);			
+				$i=$startpos=$temppos;
+				continue;
+			}
+			$i+=1;
+		}
+		return $_arr;
+	}
+}
+
+module Regex
+{
+	def Exec:$arg1,$arg2,$arg3
+	{
+		return CRegex.Exec($arg1,$arg2,$arg3);
+	}
+
+	def Test:$arg1,$arg2,$arg3
+	{
+		return CRegex.Test($arg1,$arg2,$arg3);
+	}
+
+	def Replace:$arg1,$arg2,$arg3,$arg4
+	{
+		return CRegex.Replace($arg1,$arg2,$arg3,$arg4);
+	}
+}
+
+module Json
+{
+	def JsonParse:$arg1
+	{
+	   return CJson.JsonParse($arg1);
+	}
+
+	def GetObjectItem:$arg1,$arg2
+	{
+	   return CJson.GetObjectItem($arg1,$arg2);
+	}
+
+	def GetArrayItem:$arg1,$arg2
+	{
+	   return CJson.GetArrayItem($arg1,$arg2);
+	}
+
+	def GetArraySize:$arg1
+	{
+	   return CJson.GetArraySize($arg1);
+	}
+
+	def Delete:$arg1
+	{
+	   return CJson.Delete($arg1);
+	}
+
+	def Type:$arg1
+	{
+	   return CJson.Type($arg1);
+	}
+}

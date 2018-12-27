@@ -7,7 +7,7 @@
 int error(char* str,char* cf,int line)
 {
 	printf("\r\n");
-	printf("runtime error: %s, in %s,at line %d",str,cf,line);
+	printf("runtime llerror: %s, in %s,at line %d",str,cf,line);
 	printf("\r\n");
 	return 1;
 }
@@ -15,7 +15,6 @@ int error(char* str,char* cf,int line)
 int _tmain(int argc, char* argv[])
 {
 	if(argc<2)return 0;
-
 	SetPrintRunTimeErrorFunc(error);
 	char* p1=0,*p2=0;
 	if(argc>2){

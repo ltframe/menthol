@@ -20,6 +20,13 @@
 #define MENTHOLPACKAGEDLLEXTENSION2 "MED"
 #define MENTHOLEXECUTEEXTENSION2 "MEE"
 
+#define MAINMODULENAME "53A25398-E89C-439d-9F93-011EA71D6872"
+#define MAINMODULENAMEHASH 4022255038
+
+
+
+typedef void (*initfuncallback)();
+
 struct LocalVarAttr
 {
    string name;
@@ -30,6 +37,21 @@ struct GlobalVarAttr
    string name;
    hashValue hash;
 };
+
+
+
+
+struct ModuleAndConstant
+{	
+	string modulename;
+	hashValue hash;
+	vector<double> *doublelist;
+	vector<string> *stringlist;
+	vector<string> *functionlist;	
+	vector<MentholDebug> *debuglist;
+	vector<GlobalVarAttr>* globalmemory;
+};
+
 
 
 
@@ -56,13 +78,11 @@ public:
 	bool AddLocalMemory(string _name,int _lineno);
 	LocalVarAttr FindLocalMemory(string _name);
 	void ClearLocalMemory();
-	void CreateCode(vector<Statement*>* _CompileStructTable,string extension,bool isdebug);
-	int  FindInCompileStructTable(string b);
+	void CreateCode(vector<Statement*>* _CompileStructTable,string extension);
 	bool IsGlobalVar(string name);
 	LocalVarAttr FindLastLocalMemory();
-	void ResetIpi();
-	int IsHasPackAgeName(string name);
-	void AddPackAgeList(string name);
+	int IsHasModuleName(string name);
+	void AddModuleList(string name);
 	//void ResetInitPackageList();
 	int FindDoubleConstant(double s);
 	int FindStringConstant(string d);
@@ -71,34 +91,37 @@ public:
 	void AddFunction(string s);
 	int GetLocalCountValue();
 	void SetLocalCountValue(int x);
-	vector <double>* GetDoubleConstants();
-	vector<string>* GetImprotFiles();
-	vector<PackageAttr>* GetPackAgeList();
-	vector<string>* GetFunctionList();	
-	vector <string>* GetStringConstants();
-	vector <string>* GetDictKeyConstants();
 	vector<GlobalVarAttr>* GetGlobalMemory();
 	vector<LocalVarAttr>* GetLocalMemory();
-	vector<MentholDebug>* GetMentholDebug();
+	void AddExternalModuleList(string modulename);
 	void RestDebugIpi();
+	void AddToIncludeFile(string modulename);
+	void AddMainModuleList(Statement* fd);
+	void AddUseModuleList(string modulename);
+	bool FindUseModuleList(string modulename);
 public:
 	vector<Instruction> *CodeList;
 	vector <Statement*> *CompileStructTable;
 	int StackID;
-	string currentpackagename;
+	vector<ImportFileAttr> *includefiles;	
+
 private:
 	int ipi;
 	int debugipi;
 	static StatementList* _StatementList;
 	int localcount;
-	vector <double> *doubleconstants;
-	vector<string> *ImprotFiles;
-	vector<PackageAttr> *PackAgeList;
+	vector<string> *dictkeyconstants;
+	vector<double> *doublelist;
+	vector<string> *stringlist;
 	vector<string> *functionlist;	
-	vector <string> *stringconstants;
-	vector <string> *dictkeyconstants;	
+	ModuleAndConstant currentmodule;
+	vector<ModuleAndConstant> *ModuleList;
+	vector<ModuleAndConstant> *UseModuleList;
+	vector<ModuleAndConstant> *ImportFileAllModuleList;
 	vector<GlobalVarAttr>* GlobalMemory;
 	vector<LocalVarAttr>* LocalMemory;
-	vector<MentholDebug> *MentholDebugList;
+	ModuleAndConstant FindModuleByName(string);
+private:
+	bool IsAddedImportFileAllPackAgeList(string packagename);
 };
 #endif

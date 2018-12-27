@@ -14,7 +14,7 @@
                    
 
 
-typedef void (*initfuncallback)();
+
 
 
 #define FINDGARBAGE(T,S)\
@@ -34,17 +34,17 @@ namespace Vm
 	int Execute();
 	StackState GetParam(int x);
 	void AdjustStack();	
-	void CreateFunctionRecoredList(FunctionAtter fa);
+	void CreateFunctionRecoredList(RunTimeState* packageinst,FunctionAtter fa);
 	void CreateStringConstants(char* s);
 	Garbage* GetStringConstants(int i);
 	void InitStack(StackState v1,StackState  v2);
 	int GetRunTimeRecored(string name);
 	FunctionAtter GetRunTimeFunctionAtter(hashValue hash,RunTimeState* _currentruntimestate);
 	StackState FindGlobalMemory(hashValue hash,RunTimeState* _curentruntimestate,RunTimeState* _callruntimestate);
-	void EntryPoint(PackageAttr pa,char*);
+	void EntryPoint(ImportFileAttr pa,char*);
 	void InitCode(Instruction x,int &codep,vector<Instruction>& codealllist);
 	void RestoreGlobalMemory(StackState s);
-	PackageState* GetPackageAttr(int i);
+	ModuleState* GetPackageAttr(int i);
 	void PintCode(int c);
 	Garbage* CreateArray();
 	Garbage* CreateDict();
@@ -62,5 +62,6 @@ namespace Vm
 	Instruction* GetCurrentCodeList();
 	Instruction* GetCodeListStart();
 	vector<MentholDebug> *GetDebugList();
+	RunTimeState* CreateModuleRunTime(char* modulename);
 };
 #endif

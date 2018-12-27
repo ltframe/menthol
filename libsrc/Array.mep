@@ -1,0 +1,84 @@
+import "msystem";
+use CArray;
+module Array
+{
+	def Length:$arg1
+	{
+		if(typeof($arg1)!="M_ARRAY"){
+			return -1;
+		}
+		return CArray.Length($arg1);
+	}
+	def Join:$arg1,$arg2
+	{
+		return CArray.Join($arg1,$arg2);
+	}
+	def Reverse:$arg1
+	{
+		return CArray.Reverse($arg1);
+	}
+	def Push:$arg1,$arg2
+	{
+		return CArray.Push($arg1,$arg2);
+	}
+	def Range:$arg1,$arg2,$arg3=1
+	{
+		var $t,$arr=[];
+		if(typeof($arg1)=="M_NUMBER"){$t=1;}
+		if(typeof($arg2)=="M_NUMBER"){$t=2;}
+		if($t==null){return $arr;}
+		var $i=0;
+		if($t==1){
+			while($i<$arg1)
+			{
+				$arr+=$i;
+				$i+=1;
+			}
+			return $arr;
+		}
+		if($t==2){
+			$i = $arg1;
+			if($arg3<=0)
+			{
+				return $arr;
+			}
+			while($i<$arg2)
+			{
+				$arr+=$i;
+				$i+=$arg3;
+			}
+			return $arr;
+		}
+	}
+	def Reomve:$arr,$i
+	{
+		var $_arr=[];
+		if(typeof($arr)=="M_ARRAY" && typeof($i)=="M_NUMBER"){
+			var $_i = 0;
+			var $len = Length($arr);
+			while($_i<$len)	{
+				if($i==$_i){
+					$_i+=1;
+					continue;	
+				}
+				$_arr+=$arr[$_i];
+				$_i+=1;
+			}		
+			return $_arr;
+		}
+		return $arr;
+	}
+	def IsInArray:$arr,$element
+	{
+		for(var $e in $arr){
+			if(typeof($e)!=typeof($element)){continue;}
+			if($e==$element){
+				return true;
+			}
+		}
+		return false;
+	}
+
+}
+
+

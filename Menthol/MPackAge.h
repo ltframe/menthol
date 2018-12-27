@@ -21,7 +21,6 @@ public:
 	MPackAge(void);
 	~MPackAge(void);
 	static  MPackAge* CreateInstance();	
-	PackAgeType GetPackAgeType(char*);
 private:	
 	static MPackAge* _inst;
 };

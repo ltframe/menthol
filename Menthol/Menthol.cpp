@@ -10,7 +10,7 @@ char* currentyyfile;
 
 static PrintErrorFunc _PrintCompileErrorFunc = 0;
 static PrintErrorFunc _PrintRunTimerrorFunc = 0;
-
+static bool iscompile = false;
 
 void SetPrintCompileErrorFunc(PrintErrorFunc _pef)
 {
@@ -22,10 +22,9 @@ void SetPrintRunTimeErrorFunc(PrintErrorFunc _pef)
 }
 
 
-int Compile(char* cfile,bool isdebug)
+int Compile(char* cfile)
 {
 	StatementList *als =new StatementList();
-	MCommon* _WCommon  = new MCommon();
 	MError* _MError = new MError();
 	MError::CreateInstance()->SetCompilePrintErrorFunc(_PrintCompileErrorFunc);
 	FILE* file;
@@ -33,55 +32,56 @@ int Compile(char* cfile,bool isdebug)
 	currentyyfile = cfile;
 	if (!file) {
 		char str[256]={0};
-		sprintf(str,"could not open %s",cfile);
+		sprintf(str,"could not open %s",cfile);		
 		MError::CreateInstance()->PrintError(str,-1);
+		delete _MError;
+		delete als;
+		fclose(file);
 		return 1;
 	}
-	
+
+	MCommon* _WCommon  = new MCommon();
+	MBinary *wb =new  MBinary();
+	iscompile = true;
 	yyin = file;
+
 	yyrestart(yyin);
-	als->currentpackagename = _WCommon->StringPathSplit(string(cfile)).name;
-	//als->ResetInitPackageList();
 	yyparse(als);
 	PathInfo pinfo = MCommon::CreateInstance()->StringPathSplit(cfile);
 
 	if(!MCommon::CreateInstance()->StrCmpNoCase(pinfo.extension,MENTHOLEXTENSION) && !MCommon::CreateInstance()->StrCmpNoCase(pinfo.extension,MENTHOLPACKAGEEXTENSION))
 	{
 		delete als;
-		delete _WCommon;
-		delete _MError;
+		delete _WCommon;	
+		delete wb;
 		char str[256]={0};
 		sprintf(str,"%s is not menthol execute or package",cfile);
 		MError::CreateInstance()->PrintError(str,-1);
+		delete _MError;
+		iscompile = false;
+		fclose(file);
 		return 1;
 	}
-	als->CreateCode(als->CompileStructTable,pinfo.extension,isdebug);
+	als->CreateCode(als->CompileStructTable,pinfo.extension);
 	if(!yyerrorcount){
 		MFile::CreateInstance()->GenerateFileData(als->CodeList,0,0,0,pinfo.extension,pinfo.name);
 	}
-	/*for (std::vector<Statement*>::iterator it =als->CompileStructTable->begin() ; it != als->CompileStructTable->end(); ++it)
-	{*/
+
 	VECTORFORSTART(Statement*,als->CompileStructTable,it)
 		(*it)->Release();
 	VECTORFOREND
-	/*}*/
 	fclose(file);
 	
-	als->ResetIpi();
-	als->SetLocalCountValue(0);
 	als->CodeList->clear();
-	als->GetPackAgeList()->clear();	
 	als->GetGlobalMemory()->clear();
-	als->GetDoubleConstants()->clear();
-	als->GetFunctionList()->clear();
-	als->GetStringConstants()->clear();
-	als->GetDictKeyConstants()->clear();
-	als->GetMentholDebug()->clear();
+
 	als->CompileStructTable->clear();
 	lineno  = 1;
 	delete als;
 	delete _WCommon;
-	delete _MError;
+	delete _MError;	
+	delete wb;
+	iscompile = false;
 	if(yyerrorcount){
 		return yyerrorcount;
 	}
@@ -121,71 +121,45 @@ int Run(char* files,char* arg1,char* arg2)
 
 	PathInfo pinfo = MCommon::CreateInstance()->StringPathSplit(files);
 
-	PackageAttr pa;
-	strcpy(pa.pname,pinfo.name.c_str());
-	strcpy(pa.fname,files);
-	pa.ptype = MPA_PACKAGE;
-
-
-	std::ifstream t;  
-	int length;  
-	t.open(files,std::ios::in | ofstream::binary);      // open input file  
-	t.seekg(0, std::ios::end);    // go to the end  
-	length = t.tellg();           // report location (this is the length)  
-	t.seekg(0, std::ios::beg);    // go back to the beginning  
-	char *bufferf = new char[length];    // allocate memory for a buffer of appropriate dimension  
-	t.read(bufferf, length);       // read the whole file into the buffer  
-	t.close();                    // close file handle  
-
-
-	string flag;
-	int i=0;
-
-
-	CodeInst ci;
-	ci.m.c1 = bufferf[i++];
-	ci.m.c2 = bufferf[i++];
-	ci.m.c3 = bufferf[i++];
-	ci.m.c4 = bufferf[i++];
-	flag.push_back(ci.i);
-
-	ci.m.c1 = bufferf[i++];
-	ci.m.c2 = bufferf[i++];
-	ci.m.c3 = bufferf[i++];
-	ci.m.c4 = bufferf[i++];
-	flag.push_back(ci.i);
-
-	ci.m.c1 = bufferf[i++];
-	ci.m.c2 = bufferf[i++];
-	ci.m.c3 = bufferf[i++];
-	ci.m.c4 = bufferf[i++];
-	flag.push_back(ci.i);
-
-	if(flag == MENTHOLPACKAGEDLLEXTENSION2){
-		MError::CreateInstance()->PrintRunTimeError(files+string(" is menthol package"));
-		return 0;
-	}
+	string flag = MBinary::CreateInstance()->ReadPackageFormat(files);
 
 	if(flag != MENTHOLEXECUTEEXTENSION2){
 		MError::CreateInstance()->PrintRunTimeError(files+string(" is not menthol executable program"));
 		return 0;
 	}
 
-	delete[] bufferf;
-	Vm::EntryPoint(pa,CONSTCAST(char)((pinfo.drive+pinfo.dir).c_str()));
 	
+	ImportFileAttr ifa = {files,MPA_USER_PACKAGE};
+	Vm::EntryPoint(ifa,CONSTCAST(char)((pinfo.drive+pinfo.dir).c_str()));
 	return 0;
 }
 
-void RegisterPackAgeFunciton(char* name,funcallback fun,int paramcount)
+RunTimeState* CreateModuleRunTime(char* modulename)
 {
+	if(iscompile)
+	{
+		StatementList::GetInstance()->AddExternalModuleList(modulename);
+		return 0;
+	}
+	return Vm::CreateModuleRunTime(modulename);
+}
+
+void RegisterModuleFunciton(RunTimeState* moduleinst,UserFunctionAtter* functionlist)
+{
+
+	if(!moduleinst)return;
+
 	HMODULE hCallerModule = NULL;  
     char szModuleName[MAX_PATH];  
     void *callerAddress = _ReturnAddress();  
     if (GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (char*)callerAddress, &hCallerModule))  
     {  
-		FunctionAtter fa = {name,(Instruction*)fun,0,paramcount,-1};
-		Vm::CreateFunctionRecoredList(fa);	
+		while ((*functionlist).name!=0){
+			UserFunctionAtter _u = *functionlist;
+			FunctionAtter fa = {_u.name,(Instruction*)_u.postion,0,_u.paramcount,-1};
+			Vm::CreateFunctionRecoredList(moduleinst,fa);
+			functionlist++;
+		}
     }  
 }
 
@@ -211,7 +185,6 @@ int Array_Length(pArray p)
 
 StackState Array_Get(pArray sk1,int index){
 
-	//vector<StackState>* ar  = static_cast<vector<StackState>*>(sk1->array);
 	VECOTRSTACKSTATEPOINTER ar  = STATICCASTPARRAY(sk1);
 	return ar->at(index);;
 }
@@ -226,8 +199,6 @@ pString Array_Join(pArray a1,char* link)
 {
 	VECOTRSTACKSTATEPOINTER ar1  = STATICCASTPARRAY(a1);
 	string str;
-	//for (std::vector<StackState>::iterator it = ar1->begin() ; it != ar1->end(); ++it)
-	//{
 	VECTORFORSTART(StackState,ar1,it)
 		if((*it).v==M_ARRAY){
 			str+= "{Array}";
@@ -241,8 +212,8 @@ pString Array_Join(pArray a1,char* link)
 		if((*it).v==M_NULL){
 			str+= "NULL";
 		}
-		if((*it).v==M_PACKAGE){
-			str+="PACKAGE";
+		if ((*it).v == M_MODULE){
+			str+="Module";
 		}
 		if((*it).v==M_FUN){
 			str+="Function";
@@ -284,7 +255,6 @@ void Array_Push(pArray p,StackState st){
 
 StackState Dict_CreateDict()
 {
-	//StackState sk={Vm::CreateInstance()->CreateDict(),M_DICT};
 	StackState sk;
 	sk.pdict = Vm::CreateDict();
 	sk.v= M_DICT;	
@@ -341,7 +311,6 @@ pString Dict_Key(pDict pdict,hashValue sk2)
 
 StackState String_CreateString(char* str)
 {
-	//StackState sk={0,0,Vm::CreateInstance()->CreateString(str),M_STRING};
 	StackState sk;
 	sk.str = Vm::CreateString(str);
 	sk.v= M_STRING;	
@@ -381,4 +350,30 @@ StackState CallFunction(StackState fu)
 {
 	StackState func = Vm::CallFunction(fu);
 	return func;
+}
+
+
+StackState Number_CreateNumber(double d)
+{
+	StackState sk;
+	sk.d = d;
+	sk.v=M_NUMBER;	
+	return sk;
+}
+
+StackState Null_CreateNull()
+{
+	StackState sk;
+	sk.v=M_NULL;	
+	return sk;	
+
+}
+
+StackState Bool_CreateBool(bool b)
+{
+	StackState sk;
+	sk.b = b;
+	sk.v=M_BOOL;	
+	return sk;	
+
 }

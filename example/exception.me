@@ -1,18 +1,20 @@
-import "MIo";
-def test:
+import "console";
+use Console;
+module test
 {
-	
-	throw "msg1","msg2";
+	def test:
+	{
+		throw "msg1","msg2";
+	}
 }
-
 _mmain:$a,$c
 {	
 	try{
-		test();
+		test.test();
 	}
 	except:$g,$b
 	{
-		MIo.Out($g);
-		MIo.Out($b);
+		Console.Out($g);
+		Console.Out($b);
 	}
 }
