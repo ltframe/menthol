@@ -97,8 +97,8 @@ _mmain:$a,$c
 	var $arr = [1,2,3,4,5,6];
 	Console.Out($arr[1]);
 	Console.Out($arr[1..][1]);
-	Console.Out($arr[..3][1]);
-	Console.Out($arr[2..5][1]);
+	Console.Out($arr[..3][2]);
+	Console.Out($arr[2..5][3]);
 	$arr = "abcdefghi";
 	Console.Out($arr[1]);
 }
@@ -182,7 +182,7 @@ MentholPackMethod void example1_Init()
 }
 
 ```
-For more information on menthol, please visit [Menthol File] [1]
+For more information on menthol, please visit [menthol document][4]
 
 ----------
 
@@ -278,9 +278,9 @@ _mmain:$a,$c
 {    
 	var $arr = [1,2,3,4,5,6];
 	Console.Out($arr[1]);
-	Console.Out($arr[1..][1]);
-	Console.Out($arr[..3][1]);
-	Console.Out($arr[2..5][1]);
+	Console.Out($arr[1..][5]);
+	Console.Out($arr[..3][6]);
+	Console.Out($arr[2..5][7]);
 	$arr = "abcdefghi";
 	Console.Out($arr[1]);
 }
@@ -364,7 +364,14 @@ MentholPackMethod void example1_Init()
 }
 
 ```
-关于更多的menthol的相关文档，请浏览[menthol文档][1]
+关于更多的menthol的相关文档，请浏览[menthol文档][8]
 
 
   [1]: http://www.ltplayer.com/doc/menthol/mentholhtml.html
+  [2]: http://www.ltplayer.com/doc/menthol/mentholhtml.html
+  [3]: http://www.ltplayer.com/doc/menthol/mentholhtml.html
+  [4]: http://www.ltplayer.com/doc/menthol/mentholhtml.html
+  [5]: http://www.ltplayer.com/doc/menthol/mentholhtml.html
+  [6]: http://www.ltplayer.com/doc/menthol/mentholhtml.html
+  [7]: http://www.ltplayer.com/doc/menthol/mentholhtml.html
+  [8]: http://www.ltplayer.com/doc/menthol/mentholhtml.html
