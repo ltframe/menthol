@@ -367,11 +367,11 @@ MentholPackMethod void example1_Init()
 关于更多的menthol的相关文档，请浏览[menthol文档][8]
 
 
-  [1]: http://www.ltplayer.com/doc/menthol/mentholhtml.html
-  [2]: http://www.ltplayer.com/doc/menthol/mentholhtml.html
-  [3]: http://www.ltplayer.com/doc/menthol/mentholhtml.html
-  [4]: http://www.ltplayer.com/doc/menthol/mentholhtml.html
-  [5]: http://www.ltplayer.com/doc/menthol/mentholhtml.html
-  [6]: http://www.ltplayer.com/doc/menthol/mentholhtml.html
-  [7]: http://www.ltplayer.com/doc/menthol/mentholhtml.html
-  [8]: http://www.ltplayer.com/doc/menthol/mentholhtml.html
+  [1]: http://www.ltplayer.com/doc/menthol/index.html
+  [2]: http://www.ltplayer.com/doc/menthol/index.html
+  [3]: http://www.ltplayer.com/doc/menthol/index.html
+  [4]: http://www.ltplayer.com/doc/menthol/index.html
+  [5]: http://www.ltplayer.com/doc/menthol/index.html
+  [6]: http://www.ltplayer.com/doc/menthol/index.html
+  [7]: http://www.ltplayer.com/doc/menthol/index.html
+  [8]: http://www.ltplayer.com/doc/menthol/index.html
