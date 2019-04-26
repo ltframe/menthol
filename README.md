@@ -214,9 +214,9 @@ example1.dll
 
 ```cpp
 #include "Menthol.h"
-StackState test()
+StackState test(VmState* vmstate)
 {
-    StackState value =GetParam(1);
+    StackState value =GetParam(1,vmstate);
 	StackState st;
 	st.v = M_STRING;
 	st = String_CreateString("this is a test string");
@@ -228,9 +228,9 @@ UserFunctionAtter example1list[] = {
 	{NULL,NULL,0}
 };
 
-MentholPackMethod void example1_Init()
+MentholPackMethod void example1_Init(VmState* vmstate)
 {
-    RunTimeState* prt = CreateModuleRunTime("example1");
+    RunTimeState* prt = CreateModuleRunTime("example1",vmstate);
 	RegisterModuleFunciton(prt, example1list);
 }
 
@@ -446,9 +446,9 @@ example1.dll
 
 ```cpp
 #include "Menthol.h"
-StackState test()
+StackState test(VmState* vmstate)
 {
-    StackState value =GetParam(1);
+    StackState value =GetParam(1,vmstate);
 	StackState st;
 	st.v = M_STRING;
 	st = String_CreateString("this is a test string");
@@ -460,9 +460,9 @@ UserFunctionAtter example1list[] = {
 	{NULL,NULL,0}
 };
 
-MentholPackMethod void example1_Init()
+MentholPackMethod void example1_Init(VmState* vmstate)
 {
-    RunTimeState* prt = CreateModuleRunTime("example1");
+    RunTimeState* prt = CreateModuleRunTime("example1",vmstate);
 	RegisterModuleFunciton(prt, example1list);
 }
 
