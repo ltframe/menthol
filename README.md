@@ -451,7 +451,7 @@ StackState test(VmState* vmstate)
     StackState value =GetParam(1,vmstate);
 	StackState st;
 	st.v = M_STRING;
-	st = String_CreateString("this is a test string");
+	st = String_CreateString("this is a test string",vmstate);
 	return st;
 }
 
