@@ -33,7 +33,7 @@ Menthol is a functional language, but it is a module-based language. In menthol,
 ###### Use package
 A package is a collection of modules written in Mint or C/C++ with a .med extension. If you want to use a module in a package, you need to import it using the import keyword.
 
-    Import "console"
+    Import console;
 
 The console is the system's own input and output package, which contains modules that control the inputs and outputs. There is no need to distinguish between file cases when importing.
 
@@ -41,8 +41,15 @@ The console is the system's own input and output package, which contains modules
 ###### use module
 After importing the package, you can use the modules inside the package. You need to use the use keyword before using it. Note that the module name is case sensitive. You can introduce multiple module names after use, separated by commas.
 
-    Import "console"
-    Use the console;
+    Import console;
+    Use the Console;
+
+
+If you want to import the package in the folder, you can use '.' instead of the '/' in the file path. To import the Iup's IupControlsStandard, use the button to use
+
+	Import iup.controlsstandard;
+	use IupControlsStandard;
+
 
 If you are using modules that are in the same package and defined before use, you do not need to reintroduce them using the use keyword.
 
@@ -63,7 +70,7 @@ _mmain:$a,$c
 ###### Error handling
 
 ```html
-import "console"
+Import console;
 use Console;
 module test
 {
@@ -90,7 +97,7 @@ _mmain:$a,$c
 ###### Array
 
 ```html
-import "console"
+Import console;
 use Console;
 _mmain:$a,$c
 {    
@@ -112,7 +119,7 @@ _mmain:$a,$c
 ###### Dictionary
 
 ```html
-import "console"
+Import console;
 use Console;
 _mmain:$a,$c
 {    
@@ -139,7 +146,7 @@ _mmain:$a,$c
 ###### Funciton
 
 ```html
-import "console"
+Import console;
 use Console;
 module test
 {
@@ -156,6 +163,52 @@ _mmain:$a,$c
 }
 
 ```
+
+###### threading
+
+```html
+import console;
+import Thread;
+use Console,Thread;
+
+module test
+{
+	def thread2:
+	{
+		while(true){
+			Console.Out("thread2");
+		}
+	}
+
+	def thread1:
+	{
+		while(true){
+			Console.Out("thread1");
+		}
+	}
+}
+_mmain:$a,$c
+{	
+	var $k1 = Thread.NewThread(test.thread1);
+	Thread.Join($k1);
+	var $k2 = Thread.NewThread(test.thread2);	
+	Thread.Join($k2);
+}
+
+```
+<div align=left>
+<img src="http://www.ltplayer.com/images/mentholhtmlimg/thread.png"/></div>
+
+
+
+###### Gui
+Menthol uses iup as a class library for implementing interfaces
+
+<div align=left>
+<img src="http://www.ltplayer.com/images/mentholhtmlimg/iup2.png"/></div>
+
+
+
 ###### Develop an external extension library (c / c ++)
 example1.dll
 
@@ -217,16 +270,20 @@ menthol是一个函数式语言，但它是基于模块操作的语言，在ment
 ###### 导入包
 包就是一个用menthol语言或者C/C++写成的模块集合，扩展名为.med,如果要使用包中的模块，需要用import关键字导入
 
-    import "console"
+    Import console;
 
-console是系统自带的输入输出包，里面包含了控制输入输出的模块，导入时不需要区分文件大小写
-
+console是系统自带的输入输出包，里面包含了控制输入输出的模块，导入时不需要区分文件大小写.
 
 ###### 使用模块
 导入包以后，就可以使用包内的模块了，使用前需要用use关键字来使用，注意，模块名是去区分大小写的,在一个use后面可以引入多个模块名，用逗号隔开
 
-    import "console"
+    Import console;
     use Console;
+
+如果要导入文件夹中的包，可以用'.'来代替文件路径中的'/',如要导入iup的IupControlsStandard,使用button,可以使用
+
+	Import iup.controlsstandard;
+	use IupControlsStandard;
 
 如果使用的模块在同一包内，并且在使用前已经定义，则不要用use在引入
 
@@ -245,7 +302,7 @@ _mmain:$a,$c
 ###### 错误处理
 
 ```html
-import "console"
+Import console;
 use Console;
 module test
 {
@@ -272,7 +329,7 @@ _mmain:$a,$c
 ###### 数组
 
 ```html
-import "console"
+Import console;
 use Console;
 _mmain:$a,$c
 {    
@@ -294,7 +351,7 @@ _mmain:$a,$c
 ###### 字典
 
 ```html
-import "console"
+Import console;
 use Console;
 _mmain:$a,$c
 {    
@@ -321,7 +378,7 @@ _mmain:$a,$c
 ###### 函数
 
 ```html
-import "console"
+Import console;
 use Console;
 module test
 {
@@ -338,6 +395,52 @@ _mmain:$a,$c
 }
 
 ```
+
+
+###### 多线程
+
+```html
+import console;
+import Thread;
+use Console,Thread;
+
+module test
+{
+	def thread2:
+	{
+		while(true){
+			Console.Out("thread2");
+		}
+	}
+
+	def thread1:
+	{
+		while(true){
+			Console.Out("thread1");
+		}
+	}
+}
+_mmain:$a,$c
+{	
+	var $k1 = Thread.NewThread(test.thread1);
+	Thread.Join($k1);
+	var $k2 = Thread.NewThread(test.thread2);	
+	Thread.Join($k2);
+}
+
+```
+<div align=left>
+<img src="http://www.ltplayer.com/images/mentholhtmlimg/thread.png"/></div>
+
+
+
+###### Gui
+Menthol使用iup作为实现界面的类库
+
+<div align=left>
+<img src="http://www.ltplayer.com/images/mentholhtmlimg/iup2.png"/></div>
+
+
 ###### 开发外部扩展库(c/c++)
 example1.dll
 
