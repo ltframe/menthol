@@ -1,0 +1,31 @@
+import miup;
+use CIup;
+module IupKeyboard
+{
+	def NextField:$arg1
+	{
+		return CIup.NextField($arg1);
+	}
+
+	def PreviousField:$arg1
+	{
+		return CIup.PreviousField($arg1);
+	}
+
+	def GetFocus:
+	{
+		return CIup.GetFocus();
+	}
+
+	def SetFocus:$arg1
+	{
+		return CIup.SetFocus($arg1);
+	}
+
+	def GetKeyCodeString:$arg1
+	{
+		return CIup.GetKeyCodeString($arg1);
+	}
+}
+
+

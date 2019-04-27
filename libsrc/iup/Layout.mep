@@ -1,0 +1,76 @@
+import miup;
+use CIup;
+module IupLayout
+{
+	def Append:$arg1,$arg2
+	{
+		return CIup.Append($arg1,$arg2);
+	}
+
+	def Detach:$arg1
+	{
+		return CIup.Detach($arg1);
+	}
+
+	def Insert:$arg1,$arg2,$arg3
+	{
+		return CIup.Insert($arg1,$arg2,$arg3);
+	}
+
+	def Reparent:$arg1,$arg2,$arg3
+	{
+		return CIup.Reparent($arg1,$arg2,$arg3);
+	}
+
+	def GetParent:$arg1
+	{
+		return CIup.GetParent($arg1);
+	}
+
+	def GetChild:$arg1,$arg2
+	{
+		return CIup.GetChild($arg1,$arg2);
+	}
+
+	def GetChildPos:$arg1,$arg2
+	{
+		return CIup.GetChildPos($arg1,$arg2);
+	}
+
+	def GetChildCount:$arg
+	{
+		return CIup.GetChildCount($arg);
+	}
+
+	def GetNextChild:$arg1,$arg2
+	{
+		return CIup.GetNextChild($arg1,$arg2);
+	}
+
+	def GetBrother:$arg
+	{
+		return CIup.GetBrother($arg);
+	}
+
+	def GetDialog:$arg
+	{
+		return CIup.GetDialog($arg);
+	}
+
+	def GetDialogChild:$arg1,$arg2
+	{
+		return CIup.GetDialogChild($arg1,$arg2);
+	}
+
+	def Refresh:$arg
+	{
+		return CIup.Refresh($arg);
+	}
+
+	def RefreshChildren:$arg
+	{
+		return CIup.RefreshChildren($arg);
+	}
+}
+
+

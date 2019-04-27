@@ -23,8 +23,8 @@ public:
 	void PrintError(string s,int _lineno = -1);
 	static MError* CreateInstance();
 	int ErrorCount();
-	void DataTypeOpertatError(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2,char* str);
-	void PrintRunTimeError(string s);
+	void DataTypeOpertatError(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2,char* str,VmState* vmstate);
+	void PrintRunTimeError(string s,VmState * vmstate);
 	void SetCompilePrintErrorFunc(PrintErrorFunc func);
 	void SetRunTimePrintErrorFunc(PrintErrorFunc func);
 private:

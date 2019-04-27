@@ -29,7 +29,7 @@ StackState ConvertToNumber(STACKSTATEPOINTER value)
 	ret.v = M_UNKONWN;
 	return ret;
 }
-inline bool Add(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
+inline bool Add(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2,VmState * vmstate)
 {
 	StackState ctn1 = ConvertToNumber(value1);
 	StackState ctn2 = ConvertToNumber(value2);
@@ -42,7 +42,7 @@ inline bool Add(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		int c = strlen(value2->str->string)+10;
 		char *dest = new char[c];
 		sprintf(dest,"%s%s",value1->b?"true":"false",value2->str->string);
-		value1->str= Vm::CreateString(dest);	
+		value1->str= Vm::CreateString(dest,vmstate);	
 		value1->v = M_STRING;
 		delete [] dest;
 		return true;
@@ -52,7 +52,7 @@ inline bool Add(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		int c = strlen(value1->str->string)+10;
 		char *dest = new char[c];
 		sprintf(dest,"%s%s",value1->str->string,value2->b?"true":"false");		
-		value1->str= Vm::CreateString(dest);
+		value1->str= Vm::CreateString(dest,vmstate);
 		value1->v = M_STRING;
 		delete [] dest;
 		return true;
@@ -68,7 +68,7 @@ inline bool Add(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		int c = strlen(value2->str->string)+256;
 		char *dest = new char[c];
 		sprintf(dest,"%s%s",str,value2->str->string);
-		value1->str= Vm::CreateString(dest);	
+		value1->str= Vm::CreateString(dest,vmstate);	
 		value1->v = M_STRING;
 		delete [] dest;
 		return true;
@@ -86,7 +86,7 @@ inline bool Add(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		int c = strlen(value1->str->string)+256;
 		char *dest = new char[c];
 		sprintf(dest,"%s%s",value1->str->string,str);		
-		value1->str= Vm::CreateString(dest);
+		value1->str= Vm::CreateString(dest,vmstate);
 		delete [] dest;
 		return true;
 	}
@@ -97,7 +97,7 @@ inline bool Add(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		char *dest = new char[c];
 		memset(dest,0,c);
 		sprintf(dest,"%s%s",value1->str->string,value2->str->string);		
-		value1->str= Vm::CreateString(dest);
+		value1->str= Vm::CreateString(dest,vmstate);
 		value1->v = M_STRING;
 		delete [] dest;
 		return true;
@@ -122,7 +122,7 @@ inline bool Add(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		char *dest = new char[c];
 		memset(dest,0,c);
 		sprintf(dest,"%s",value2->str->string);		
-		value1->str= Vm::CreateString(dest);
+		value1->str= Vm::CreateString(dest,vmstate);
 		value1->v = M_STRING;
 		delete [] dest;
 		return true;
@@ -133,17 +133,17 @@ inline bool Add(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		char *dest = new char[c];
 		memset(dest,0,c);
 		sprintf(dest,"%s",value1->str->string);		
-		value1->str= Vm::CreateString(dest);
+		value1->str= Vm::CreateString(dest,vmstate);
 		value1->v = M_STRING;
 		delete [] dest;
 		return true;
 	}
-	MError::CreateInstance()->DataTypeOpertatError(value1,value2,"Can't add");
+	MError::CreateInstance()->DataTypeOpertatError(value1,value2,"Can't add",vmstate);
 	return false;
 
 	
 }
-inline bool Power(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
+inline bool Power(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2,VmState * vmstate)
 {
 	StackState ctn1 = ConvertToNumber(value1);
 	StackState ctn2 = ConvertToNumber(value2);
@@ -152,10 +152,10 @@ inline bool Power(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		value1->d=pow(ctn1.d,ctn2.d);
 		return true;
 	}
-	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't exponent");
+	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't exponent",vmstate);
 	return false;
 }
-inline bool Sub(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
+inline bool Sub(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2,VmState * vmstate)
 {
 	StackState ctn1 = ConvertToNumber(value1);
 	StackState ctn2 = ConvertToNumber(value2);
@@ -164,11 +164,11 @@ inline bool Sub(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		value1->d=(ctn1.d-=ctn2.d);
 		return true;
 	}
-	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't subtraction");
+	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't subtraction",vmstate);
 	return false;
 	
 }
-inline bool Mul(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
+inline bool Mul(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2,VmState * vmstate)
 {
 	StackState ctn1 = ConvertToNumber(value1);
 	StackState ctn2 = ConvertToNumber(value2);
@@ -177,15 +177,15 @@ inline bool Mul(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 			value1->d=(ctn1.d*=ctn2.d);
 			return true;
 	}
-	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't multiply");
+	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't multiply",vmstate);
 	return false;
 }
 
-inline bool Div(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
+inline bool Div(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2,VmState * vmstate)
 {
 	if(value2->d==0)
 	{
-		MError::CreateInstance()->PrintRunTimeError("Divisor must not be zero!");
+		MError::CreateInstance()->PrintRunTimeError("Divisor must not be zero!",vmstate);
 		return false;
 	}
 	StackState ctn1 = ConvertToNumber(value1);
@@ -195,16 +195,16 @@ inline bool Div(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 			value1->d=(ctn1.d/=ctn2.d);
 			return true;
 	}
-	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't  Division");
+	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't  Division",vmstate);
 	return false;
 }
 
 
-inline bool Mod(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
+inline bool Mod(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2,VmState * vmstate)
 {
 	if(value2->d==0)
 	{
-		MError::CreateInstance()->PrintRunTimeError("do not divide by zero !");
+		MError::CreateInstance()->PrintRunTimeError("do not divide by zero !",vmstate);
 		return false;
 	}
 	StackState ctn1 = ConvertToNumber(value1);
@@ -217,7 +217,7 @@ inline bool Mod(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 			value1->d=c;
 			return true;
 	}
-	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't Modulo");
+	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't Modulo",vmstate);
 	return false;
 }
 };

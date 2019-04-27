@@ -18,19 +18,19 @@
 using namespace std;
 
 namespace String{
-	StackState StoN()
+	StackState StoN(VmState* vmstate)
 	{
-		StackState value =GetParam(1);
+		StackState value =GetParam(1,vmstate);
 		StackState st;
 		st.d = atof(value.str->string);
 		st.v=M_NUMBER;
 		return st;
 	}
 
-	StackState IndexOf()
+	StackState IndexOf(VmState* vmstate)
 	{
-		StackState value1 =GetParam(1);
-		StackState value2 =GetParam(2);
+		StackState value1 =GetParam(1,vmstate);
+		StackState value2 =GetParam(2,vmstate);
 		string s1(value1.str->string);
 		string::size_type pos = s1.find(value2.str->string);
 		int index = -1;
@@ -67,13 +67,13 @@ namespace String{
 		return str;
 	}
 
-	StackState Replace()
+	StackState Replace(VmState* vmstate)
 	{
 		StackState st;
-		StackState value1 =GetParam(1);
-		StackState value2 =GetParam(2);
-		StackState value3 =GetParam(3);
-		st = String_CreateString(const_cast<char*>(replace(string(value1.str->string),value2.str->string,value3.str->string).c_str()));
+		StackState value1 =GetParam(1,vmstate);
+		StackState value2 =GetParam(2,vmstate);
+		StackState value3 =GetParam(3,vmstate);
+		st = String_CreateString(const_cast<char*>(replace(string(value1.str->string),value2.str->string,value3.str->string).c_str()),vmstate);
 		return st;
 	}
 
@@ -81,10 +81,10 @@ namespace String{
 
 
 
-	StackState Toupper()
+	StackState Toupper(VmState* vmstate)
 	{
 		StackState st;
-		StackState value =GetParam(1);
+		StackState value =GetParam(1,vmstate);
 		int len = strlen(value.str->string);
 		int i;
 		char*dest = (char*)malloc(len + 1);
@@ -94,15 +94,15 @@ namespace String{
 		}
 			dest[len] = 0;
 
-		st = String_CreateString(dest);
+		st = String_CreateString(dest,vmstate);
 		free(dest);
 		return st;
 	}
 
-	StackState Tolower()
+	StackState Tolower(VmState* vmstate)
 	{
 		StackState st;
-		StackState value =GetParam(1);
+		StackState value =GetParam(1,vmstate);
 		int len = strlen(value.str->string);
 		int i;
 		char*dest = (char*)malloc(len + 1);
@@ -111,23 +111,23 @@ namespace String{
 			dest[i] = tolower(value.str->string[i]);
 		}
 		dest[len] = 0;
-		st = String_CreateString(dest);
+		st = String_CreateString(dest,vmstate);
 		free(dest);
 		return st;
 	}
 
-	StackState Length()
+	StackState Length(VmState* vmstate)
 	{
-		StackState value =GetParam(1);
+		StackState value =GetParam(1,vmstate);
 		StackState st;
 		st.d = strlen(value.str->string);
 		st.v  = M_NUMBER;	
 		return st;
 	}
 
-	StackState Isdigit()
+	StackState Isdigit(VmState* vmstate)
 	{
-		StackState value = GetParam(1);	
+		StackState value = GetParam(1,vmstate);	
 		StackState st;
 		st.v = M_BOOL;
 		char * str = value.str->string;
@@ -143,9 +143,9 @@ namespace String{
 		return st;
 	}
  
-	StackState Isalpha()
+	StackState Isalpha(VmState* vmstate)
 	{
-		StackState value = GetParam(1);
+		StackState value = GetParam(1,vmstate);
 		StackState st;
 		st.v = M_BOOL;
 		char * str = value.str->string;
@@ -162,11 +162,46 @@ namespace String{
 	}
 
 
-	StackState Toascii()
+	StackState UTF8ToGBK(VmState* vmstate)  
+	{  
+		char* utf8str = GetParam(1,vmstate).str->string;
+		int len = MultiByteToWideChar(CP_UTF8, 0,utf8str , -1, NULL, 0);  
+		WCHAR* wszGBK = new WCHAR[len+1];
+		memset(wszGBK, 0, len * 2 + 2);  
+		MultiByteToWideChar(CP_UTF8, 0, (LPCSTR)(LPCTSTR)utf8str, -1, wszGBK, len);  
+ 
+		len = WideCharToMultiByte(CP_ACP, 0, wszGBK, -1, NULL, 0, NULL, NULL);  
+		char *szGBK = new char[len + 1];  
+		memset(szGBK, 0, len + 1);  
+		WideCharToMultiByte(CP_ACP,0, wszGBK, -1, szGBK, len, NULL, NULL);   
+		StackState str = String_CreateString(szGBK,vmstate);  
+		delete[]szGBK;  
+		delete[]wszGBK;  
+		return str;  
+	} 
+	StackState GBKToUTF8(VmState* vmstate)  
+	{  
+		char * strGBK = GetParam(1,vmstate).str->string;
+		WCHAR * str1;  
+		int n = MultiByteToWideChar(CP_ACP, 0, strGBK, -1, NULL, 0);  
+		str1 = new WCHAR[n];  
+		MultiByteToWideChar(CP_ACP, 0, strGBK, -1, str1, n);  
+		n = WideCharToMultiByte(CP_UTF8, 0, str1, -1, NULL, 0, NULL, NULL);  
+		char * str2 = new char[n];  
+		WideCharToMultiByte(CP_UTF8, 0, str1, -1, str2, n, NULL, NULL);  
+		StackState str = String_CreateString(str2,vmstate);  
+		delete[]str1;  
+		delete[]str2;  
+		return str;  
+	} 
+
+
+
+	StackState Toascii(VmState* vmstate)
 	{
-		StackState value =GetParam(1);
+		StackState value =GetParam(1,vmstate);
 		char str[2]={toascii((int)value.d),'\0'};
-		return String_CreateString(str);
+		return String_CreateString(str,vmstate);
 	}
 
 }

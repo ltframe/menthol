@@ -531,6 +531,18 @@ private:
 	string filename;
 };
 
+class ImportPackagePath:public Statement
+{
+public:
+	ImportPackagePath(string _s);
+	void AddPathString(string _s);
+	string GetPath();
+	void CreateCode(){};
+	void Release();
+private:
+	string filename;	
+};
+
 
 class ModuleExpresson:public Statement{
 public:

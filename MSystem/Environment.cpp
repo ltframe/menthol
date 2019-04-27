@@ -6,24 +6,24 @@
 #include <time.h>
 namespace Environment
 {
-	StackState Version()
+	StackState Version(VmState* vmstate)
 	{
-		return String_CreateString("Menthol 1.0.0,2018/3/14,@2018 ltplayer.com");
+		return String_CreateString("Menthol 1.2,2018/12/20,@2018 ltplayer.com",vmstate);
 
 	}
-	StackState Sleep()
+	StackState Sleep(VmState* vmstate)
 	{
-		StackState inst =GetParam(1);
+		StackState inst =GetParam(1,vmstate);
 		::Sleep(inst.d);
 		return inst;
 	}
 
 
-	StackState SystemInfo()
+	StackState SystemInfo(VmState* vmstate)
 	{
 		SYSTEM_INFO systemInfo;
 		GetSystemInfo(&systemInfo);
-		StackState info = Dict_CreateDict();
+		StackState info = Dict_CreateDict(vmstate);
 		Dict_Push("ActiveProcessorMas",info.pdict,Number_CreateNumber(systemInfo.dwActiveProcessorMask));
 		Dict_Push("NumberOfPkrocessors",info.pdict,Number_CreateNumber(systemInfo.dwNumberOfProcessors));
 		Dict_Push("PageSize",info.pdict,Number_CreateNumber(systemInfo.dwPageSize));
@@ -32,7 +32,7 @@ namespace Environment
 		return info;
 	}
 
-	StackState CpuInfo()
+	StackState CpuInfo(VmState* vmstate)
 	{
 		int CPUInfo[4] = {-1};
 		unsigned   nExIds, i =  0;
@@ -51,11 +51,11 @@ namespace Environment
 			else if  (i == 0x80000004)
 				memcpy(CPUBrandString + 32, CPUInfo, sizeof(CPUInfo));
 		}
-		return String_CreateString(CPUBrandString);
+		return String_CreateString(CPUBrandString,vmstate);
 	}
 
 
-	StackState SystemMemory()
+	StackState SystemMemory(VmState* vmstate)
 	{
 		MEMORYSTATUSEX statex;
 		statex.dwLength = sizeof (statex);
@@ -64,7 +64,7 @@ namespace Environment
 	}
 
 
-	StackState OsInfo()
+	StackState OsInfo(VmState* vmstate)
 	{
 		// get os name according to version number
 		OSVERSIONINFO osver = { sizeof(OSVERSIONINFO) };
@@ -82,7 +82,7 @@ namespace Environment
 			os_name = "windows 7";
 		else if (osver.dwMajorVersion == 6 && osver.dwMinorVersion == 2)
 			os_name = "windows 10";
-		return String_CreateString(const_cast<char*>(os_name.c_str()));
+		return String_CreateString(const_cast<char*>(os_name.c_str()),vmstate);
 
 	}
 
@@ -92,7 +92,7 @@ namespace Environment
 
 
 
-	StackState Getpid()
+	StackState Getpid(VmState* vmstate)
 	{
 		return Number_CreateNumber(_getpid());
 	}
@@ -103,15 +103,15 @@ namespace Environment
 
 
 
-	StackState Exit()
+	StackState Exit(VmState* vmstate)
 	{
-		exit(GetParam(1).d);
+		exit(GetParam(1,vmstate).d);
 		return Null_CreateNull();
 	}
 
-	StackState System()
+	StackState System(VmState* vmstate)
 	{
-		 StackState inst =GetParam(1);
+		 StackState inst =GetParam(1,vmstate);
 		 if(!system(inst.str->string))
 		 {
 			 return Number_CreateNumber(0);
@@ -121,33 +121,33 @@ namespace Environment
 
 
 
-	StackState MachineName()
+	StackState MachineName(VmState* vmstate)
 	{
 		TCHAR  infoBuf[32767];
 		memset(infoBuf,0,32767);
 		if(GetComputerName(infoBuf,0)){
-			return String_CreateString(infoBuf);
+			return String_CreateString(infoBuf,vmstate);
 		}
 		return Null_CreateNull();
 	}
 
 
-	StackState UserName()
+	StackState UserName(VmState* vmstate)
 	{
 		TCHAR  infoBuf[32767];
 		if(GetUserName(infoBuf,0)){
-			return String_CreateString(infoBuf);
+			return String_CreateString(infoBuf,vmstate);
 		}
 		return Null_CreateNull();
 	}
 
-	StackState TickCount()
+	StackState TickCount(VmState* vmstate)
 	{
 		return   Number_CreateNumber(GetTickCount());
 	}
 
 
-	StackState NewGuid()
+	StackState NewGuid(VmState* vmstate)
 	{
 		GUID guid;
 		CoCreateGuid(&guid);
@@ -158,7 +158,7 @@ namespace Environment
 			guid.Data4[2], guid.Data4[3],
 			guid.Data4[4], guid.Data4[5],
 			guid.Data4[6], guid.Data4[7]);
-		return String_CreateString(buf);
+		return String_CreateString(buf,vmstate);
 	}
 
 };

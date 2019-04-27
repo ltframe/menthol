@@ -1,0 +1,38 @@
+module IupConst
+{
+	var @IUP_CENTER       = 65535;
+	var @IUP_LEFT         = 65534;
+	var @IUP_RIGHT        = 65534;        
+	var @IUP_MOUSEPOS     = 65532; 
+	var @IUP_CURRENT      = 65531;
+	var @IUP_CENTERPARENT = 65530; 
+	var @IUP_TOP          = 65534; 
+	var @IUP_BOTTOM       = 65534;    
+	var @IUP_IGNORE       = -1;
+	var @IUP_DEFAULT      =-2;
+	var @IUP_CLOSE        =-3;
+	var @IUP_CONTINUE     =-4; 
+	var @IUP_ERROR        =1;
+	var @IUP_NOERROR   	  =0;
+	var @IUP_OPENED       =-1; 
+	var @IUP_INVALID      =-1; 
+	var @IUP_INVALID_ID   =-10;
+	var @IUP_PRIMARY      =-1;
+	var @IUP_SECONDARY    =-2;
+	var @IUP_GETPARAM_BUTTON1  =-1;
+	var @IUP_GETPARAM_INIT     =-2;
+	var @IUP_GETPARAM_BUTTON2  =-3;
+	var @IUP_GETPARAM_BUTTON3  =-4;
+	var @IUP_GETPARAM_CLOSE    =-5;
+	var @IUP_GETPARAM_MAP      =-6;
+	var @IUP_GETPARAM_OK       =-1;
+	var @IUP_GETPARAM_CANCEL   =-3;
+	var @IUP_GETPARAM_HELP     =-4;
+	var @IUP_BUTTON1           ="1";
+	var @IUP_BUTTON2		   ="2";
+	var @IUP_BUTTON3           ="3";
+	var @IUP_BUTTON4           ="4";
+	var @IUP_BUTTON5           ="5";
+}
+
+

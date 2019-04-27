@@ -1,0 +1,25 @@
+import MCryptography;
+import String;
+use CAES,String;
+module Aesx
+{
+	def AESEncryp:$arg1,$arg2
+	{
+		if(String.Length($arg2)!=16)
+		{
+			return -1;
+		}
+		return CAES.AESEncryp($arg1,$arg2);
+	}
+	def AESDecryp:$arg1,$arg2
+	{
+		if(String.Length($arg2)!=16)
+		{
+			return -1;
+		}
+		return CAES.AESDecryp($arg1,$arg2);
+	}
+
+}
+
+

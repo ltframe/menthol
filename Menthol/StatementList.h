@@ -25,7 +25,7 @@
 
 
 
-typedef void (*initfuncallback)();
+typedef void (*initfuncallback)(VmState*);
 
 struct LocalVarAttr
 {

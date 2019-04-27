@@ -1,0 +1,24 @@
+import MCryptography;
+use CRIPEMD;
+module Ripemd
+{
+	def RIPEMD128:$arg1
+	{
+		return CRIPEMD.RIPEMD128($arg1);
+	}
+
+	def RIPEMD160:$arg1
+	{
+		return CRIPEMD.RIPEMD160($arg1);
+	}
+	def RIPEMD256:$arg1
+	{
+		return CRIPEMD.RIPEMD256($arg1);
+	}
+	def RIPEMD320:$arg1
+	{
+		return CRIPEMD.RIPEMD320($arg1);
+	}	
+}
+
+

@@ -1,4 +1,4 @@
-import "msystem";
+import msystem;
 use CString,CRegex,CJson;
 
 module String{
@@ -92,6 +92,16 @@ module String{
 			$i+=1;
 		}
 		return $_arr;
+	}
+
+	def UTF8ToGBK:$arg1
+	{
+		return CString.UTF8ToGBK($arg1);
+	}
+
+	def GBKToUTF8:$arg1
+	{
+		return CString.GBKToUTF8($arg1);
 	}
 }
 

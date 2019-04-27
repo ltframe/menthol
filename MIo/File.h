@@ -2,14 +2,18 @@
 #include "Menthol.h"
 namespace File
 {
-	StackState Readfile();
-	StackState Writefile();
-	StackState Copy();
-	StackState Create();
-	StackState Delete();
-	StackState Exists();
-	StackState Move();
-	StackState GetCreationTime();
-	StackState GetLastAccessTime();
-	StackState GetLastWriteTime();
+	StackState Open(VmState* vmstate);
+	StackState Readfile(VmState* vmstate);
+	StackState Close(VmState* vmstate);
+	StackState Writefile(VmState* vmstate);
+	StackState Copy(VmState* vmstate);
+	StackState Create(VmState* vmstate);
+	StackState Delete(VmState* vmstate);
+	StackState Exists(VmState* vmstate);
+	StackState Move(VmState* vmstate);
+	StackState GetCreationTime(VmState* vmstate);
+	StackState GetLastAccessTime(VmState* vmstate);
+	StackState GetLastWriteTime(VmState* vmstate);
+	StackState IsFile(VmState* vmstate);
+	StackState GetFileList(VmState* vmstate);
 }

@@ -1,0 +1,39 @@
+import console;
+import crypto.aesx;
+import crypto.basex;
+import crypto.desx;
+import crypto.mdx;
+import crypto.rcx;
+import crypto.ripemd;
+import crypto.shax;
+use Aesx,Basex,Desx,Mdx,Rcx,Ripemd,Shax;
+use Console;
+_mmain:$a,$c
+{	
+
+	var $key = "0123456789123456";
+	var $message = "menthol";
+	Console.Out("AESEncryp:"+Aesx.AESEncryp($message,$key));
+	Console.Out("AESDecryp:"+Aesx.AESDecryp(Aesx.AESEncryp($message,$key),$key));
+	Console.Out("Base64Encoder:"+Basex.Base64Encoder($message));
+	Console.Out("Base64Decoder:"+Basex.Base64Decoder(Basex.Base64Encoder($message)));
+	Console.Out("Base32Encoder:"+Basex.Base32Encoder($message));
+	Console.Out("Base32Decoder:"+Basex.Base32Decoder(Basex.Base32Encoder($message)));
+	Console.Out("DESEncryp:"+Desx.DESEncryp($message,$key));
+	Console.Out("DESDecryp:"+Desx.DESDecryp(Desx.DESEncryp($message,$key),$key));
+	Console.Out("MD5:"+Mdx.MD5($message));
+	Console.Out("MD4:"+Mdx.MD4($message));
+	Console.Out("MD2:"+Mdx.MD2($message));
+	Console.Out("RC2Encryp:"+Rcx.RC2Encryp($message,$key));
+	Console.Out("RC2Decryp:"+Rcx.RC2Decryp(Rcx.RC2Encryp($message,$key),$key));
+	Console.Out("RIPEMD128:"+Ripemd.RIPEMD128($message));
+	Console.Out("RIPEMD160:"+Ripemd.RIPEMD160($message));
+	Console.Out("RIPEMD256:"+Ripemd.RIPEMD256($message));
+	Console.Out("RIPEMD320:"+Ripemd.RIPEMD320($message));
+	Console.Out("SHA1:"+Shax.SHA1($message));
+	Console.Out("SHA224:"+Shax.SHA224($message));
+	Console.Out("SHA256:"+Shax.SHA256($message));
+	Console.Out("SHA384:"+Shax.SHA384($message));
+	Console.Out("RC4Encryp:"+Rcx.RC4Encryp($message,$key));
+	Console.Out("RC4Decryp:"+Rcx.RC4Decryp(Rcx.RC4Encryp($message,$key),$key));
+}

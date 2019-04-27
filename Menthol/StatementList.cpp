@@ -217,7 +217,7 @@ void StatementList::AddToIncludeFile(string filename)
 		{
 			HMODULE h = ::LoadLibrary(physicalpath.c_str());
 			initfuncallback ProcAdd = (initfuncallback)GetProcAddress(h, "MP_Init");
-			ProcAdd();
+			ProcAdd(0);
 			FreeLibrary(h);
 		}
 	}
@@ -424,6 +424,7 @@ void StatementList::CreateCode(vector<Statement*>* _CompileStructTable,string ex
 					AddCode(0); ////set strings length
 					int codestart = GetIpi();
 					(*it)->CreateCode();
+					AddCode(OP_HALT);//每一个条全局变量执行后，要返回
 					SetCode(GetIpi()-codestart,codelengthpostion);
 				}
 			/*}*/

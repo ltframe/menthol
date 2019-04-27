@@ -1854,6 +1854,24 @@ void TryParameterStatement::Release()
 }
 
 
+ImportPackagePath::ImportPackagePath(string _s)
+{
+	filename = _s;
+}
+void ImportPackagePath::AddPathString(string _s)
+{
+	filename +="/";
+	filename +=_s;
+}
+string ImportPackagePath::GetPath()
+{
+	return filename;
+}
+void ImportPackagePath::Release()
+{
+	DELETETHIS
+}
+
 
 
 ImportPackageExpression::ImportPackageExpression(string _s)

@@ -1,0 +1,7 @@
+module SystemConst
+{
+	var @systemtype = ["M_NUMBER","M_LONG","M_DOUBLE","M_STRING","M_FUN","M_PFUN","M_BOOL","M_ARRAY","M_DICT","M_NULL","M_MODULE","M_HASH","M_UNKONWN","M_OBJECT"];
+
+}
+
+

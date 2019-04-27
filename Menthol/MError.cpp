@@ -36,15 +36,15 @@ void MError::PrintError(string s,int _lineno)
 	_PrintCompileErrorFunc(CONSTCAST(char)(s.c_str()),currentyyfile,lineno);
 }
 
-void MError::PrintRunTimeError(string s)
+void MError::PrintRunTimeError(string s,VmState * vmstate)
 {
 
 	int line = -1;
 	string filename("");
-	vector<MentholDebug> * list = Vm::GetDebugList();
+	vector<MentholDebug> * list = Vm::GetDebugList(vmstate);
 	if(list){
 		int c = list->size();
-		Instruction* st = Vm::GetCodeListStart();
+		Instruction* st = Vm::GetCodeListStart(vmstate);
 		if(!st)
 		{
 			if(_PrintRunTimeErrorFunc)
@@ -53,7 +53,7 @@ void MError::PrintRunTimeError(string s)
 			exit(1);
 			return;
 		}
-		int x = Vm::GetCurrentCodeList()-st;
+		int x = Vm::GetCurrentCodeList(vmstate)-st;
 		MentholDebug dinfo;
 		VECTORFORSTART(MentholDebug,list,it)
 			if((*it).instno==x)
@@ -81,11 +81,11 @@ MError* MError::CreateInstance()
 {
 	return _inst;
 }
-void MError::DataTypeOpertatError(StackState* value1,StackState* value2,char* str)
+void MError::DataTypeOpertatError(StackState* value1,StackState* value2,char* str,VmState* vmstate)
 {
 	char* v1string;
 	STACKSTATESTRING(value1,v1string)
 	char* v2string;
 	STACKSTATESTRING(value2,v2string)
-	PrintRunTimeError(string(v1string)+ " and " + v2string + ","+ str);
+	PrintRunTimeError(string(v1string)+ " and " + v2string + ","+ str,vmstate);
 }

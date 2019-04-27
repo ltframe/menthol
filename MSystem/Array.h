@@ -2,9 +2,9 @@
 #include "Menthol.h"
 namespace Array
 {
-	StackState Length();	
-	StackState Join();	
-	StackState Reverse();	
-	StackState Push();	
+	StackState Length(VmState* vmstate);	
+	StackState Join(VmState* vmstate);	
+	StackState Reverse(VmState* vmstate);	
+	StackState Push(VmState* vmstate);	
 };
 

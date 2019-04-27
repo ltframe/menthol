@@ -7,13 +7,33 @@ MCommon* MCommon::_inst = 0;
 MCommon::MCommon(void)
 {
 	if(!_inst){
-	_inst =this;
+		_inst =this;
+		char szFilePath[MAX_PATH + 1]={0};  
+		GetModuleFileNameA(NULL, szFilePath, MAX_PATH);  
+		(strrchr(szFilePath, '\\'))[0] = 0; // 删除文件名，只获得路径字串  
+		runpath = szFilePath;  
+
+		SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
+		AddDllDirectory(AnsiToWideChar((runpath+"\\dll").c_str()));
+
+		char szFilePath_coef[MAX_PATH];
+		getcwd(szFilePath_coef, MAX_PATH);
+		AddDllDirectory(AnsiToWideChar(szFilePath_coef));
 	}
 }
 
 MCommon::~MCommon(void)
 {
 	_inst=0;
+}
+
+
+wchar_t * MCommon::AnsiToWideChar(const char* str)
+{
+	WCHAR *wstr =new WCHAR[MAX_PATH+1];
+	int nSize = MultiByteToWideChar(CP_UTF8 ,0,str,-1,NULL,0);
+	MultiByteToWideChar(CP_UTF8 ,0,str,-1,wstr,nSize);
+	return wstr;
 }
 
 MCommon* MCommon::CreateInstance()
@@ -44,12 +64,8 @@ M_UInt MCommon::ELFHash(string ss)
 }
 
 string MCommon::GetRunPath()  
-{  
-    char szFilePath[MAX_PATH + 1]={0};  
-    GetModuleFileNameA(NULL, szFilePath, MAX_PATH);  
-    (strrchr(szFilePath, '\\'))[0] = 0; // 删除文件名，只获得路径字串  
-    string path = szFilePath;    
-    return path;  
+{    
+    return runpath;  
 }  
 
 bool MCommon::StrCmpNoCase(string str1,string str2)

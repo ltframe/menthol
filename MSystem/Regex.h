@@ -3,8 +3,8 @@
 #include "deelx/deelx.h"
 namespace Regex
 {
-	StackState Exec();
-	StackState Test();
-	StackState Replace();
+	StackState Exec(VmState* vmstate);
+	StackState Test(VmState* vmstate);
+	StackState Replace(VmState* vmstate);
 };
 

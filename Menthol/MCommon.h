@@ -24,8 +24,10 @@ public:
 	string GetRunPath(); 
 	bool StrCmpNoCase(string str1,string str2);
 	string CreateGuid();
+	wchar_t* AnsiToWideChar(const char* str);
 private:
 	static MCommon* _inst;
+	string runpath;
 };
 #endif
 

@@ -3,8 +3,8 @@
 
 namespace DateTime
 {
-	StackState CurrentDate();
-	StackState CurrentTime();
-	StackState TimeZone();
+	StackState CurrentDate(VmState* vmstate);
+	StackState CurrentTime(VmState* vmstate);
+	StackState TimeZone(VmState* vmstate);
 };
 

@@ -1,4 +1,4 @@
-import "msystem";
+import msystem;
 use CMath;
 module Math
 {
@@ -163,12 +163,9 @@ module Math
 	   return CMath.Tanh($n);
 	}
 
-	def Random:$n
+	def Random:
 	{
-		if(typeof($n)!="M_NUMBER"){
-			return null;
-		}
-		return CMath.Tanh($n);
+		return CMath.Random();
 	}
 
 	def Cbrt:$n
@@ -177,13 +174,5 @@ module Math
 			return null;
 		}
 		return CMath.Cbrt($n);
-	}
-
-	def Truncate :$n
-	{
-		if(typeof($n)!="M_NUMBER"){
-			return null;
-		}
-		return CMath.Truncate($n);
 	}
 }

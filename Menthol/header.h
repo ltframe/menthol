@@ -50,9 +50,9 @@ class Statement;
 #define VECTORFOREND }
 
 
-#define STACKSTATEPOINTER StackState*
 
-#define VECOTRSTACKSTATE  vector<StackState>
+
+
 #define VECOTRSTACKSTATEPOINTER  VECOTRSTACKSTATE*
 #define STATICCAST(T,P) static_cast<T*>(P)
 #define CONSTCAST(T)  const_cast<T*>

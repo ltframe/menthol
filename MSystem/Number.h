@@ -2,7 +2,7 @@
 #include "Menthol.h"
 namespace Number
 {
-	StackState ToString();
-	StackState ToNumber();
+	StackState ToString(VmState* vmstate);
+	StackState ToNumber(VmState* vmstate);
 };
 

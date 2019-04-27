@@ -1,0 +1,49 @@
+import console;
+import sqlite;
+import array;
+use Sqlite,Array,Console;
+module test
+{
+
+}
+
+_mmain:$a,$c
+{	
+	var $conn = Sqlite.Connect("d:/test.db");
+	var $sql = "CREATE TABLE [t1] (
+				[id] integer NOT NULL, 
+				[name] nvarchar(50) NOT NULL)";
+
+    Sqlite.ExecuteNonQuery($conn, $sql);
+	$sql = "INSERT INTO t1 (ID,NAME)
+         VALUES (1, 'Paul');
+         INSERT INTO t1 (ID,NAME)
+         VALUES (2, 'Allen');
+         INSERT INTO t1 (ID,NAME)
+         VALUES (3, 'Teddy');
+         INSERT INTO t1 (ID,NAME)
+         VALUES (4, 'Mark');";
+    Sqlite.ExecuteNonQuery($conn, $sql);
+	$sql = "insert into t1(id,name) values(?,?)";
+	var $statment = Sqlite.Prepare($conn,$sql);
+	var $i=0;
+	while($i<100)
+	{
+		Sqlite.Reset($statment);
+		Sqlite.Bindnumber($statment,1,$i);
+		Sqlite.Bindtext($statment,2,"text-"+$i);
+		Sqlite.Execute($statment);
+		$i+=1;
+	}
+	$i=0;
+	$statment = Sqlite.Prepare($conn,"select * from t1");
+	var $ret = Sqlite.Execute($statment);
+	var $len = Array.Length($ret);
+	while($i<$len)
+	{
+		
+		Console.Out("id="+$ret[$i][0]+","+ "name:"+$ret[$i][1]);
+		$i+=1;
+	}
+	Sqlite.Close($conn);
+}

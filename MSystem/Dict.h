@@ -3,10 +3,10 @@
 
 namespace Dict
 {
-	StackState Length();
-	StackState Push();
-	StackState SetValue();
-	StackState GetKey();
-	StackState GetValue();
+	StackState Length(VmState* vmstate);
+	StackState Push(VmState* vmstate);
+	StackState SetValue(VmState* vmstate);
+	StackState GetKey(VmState* vmstate);
+	StackState GetValue(VmState* vmstate);
 };
 

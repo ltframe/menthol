@@ -1,0 +1,34 @@
+import mlibcurl;
+use CCurl_System;
+module CurlSystem
+{
+	def init:
+	{
+		return CCurl_System.init();
+	}
+
+	def cleanup:$arg1
+	{
+		return CCurl_System.cleanup($arg1);
+	}
+
+	def perform:$arg1
+	{
+		return CCurl_System.perform($arg1);
+	}
+
+	def version:
+	{
+		return CCurl_System.version();
+	}
+
+	def unescape:$arg1,$arg2
+	{
+		return CCurl_System.unescape($arg1,$arg2);
+	}
+
+	def escape:$arg1,$arg2
+	{
+		return CCurl_System.escape($arg1,$arg2);
+	}
+}

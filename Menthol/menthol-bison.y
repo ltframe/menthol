@@ -95,6 +95,7 @@ struct StackState;
 %type <vStatement> modulestatementlist
 %type <vStatement> modulestatement
 %type <vStatement> global_initialization
+%type <vStatement> import_expression_list
 %left '='
 %left '-' '+'
 %left '*' '/'
@@ -730,11 +731,25 @@ try_statement:TRY funciton_codeblock_statement EXCEPT ':' try_parameter  funcito
 			  ;
 
 
-import_expresson:IMPORT STRING';'{
+import_expresson:IMPORT import_expression_list ';'
+				 {
 						StatementList *ls = (StatementList*)parm;	
-						ls->SetCompileStructTable(new ImportPackageExpression($2));			
+						ImportPackagePath* ipp =static_cast<ImportPackagePath*>($2);
+						ls->SetCompileStructTable(new ImportPackageExpression(ipp->GetPath()));			
 				 }
 				 ;
+
+import_expression_list:IDENTIFIER
+					   {
+							$$ =new ImportPackagePath($1);
+					   } 
+					   |import_expression_list '.' IDENTIFIER
+					   {
+							ImportPackagePath* ipp =static_cast<ImportPackagePath*>($1);
+							ipp->AddPathString($3);
+					   }
+				       ;
+
 
 use_expression_list:IDENTIFIER
 				   {

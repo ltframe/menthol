@@ -1,0 +1,27 @@
+import console;
+import Thread;
+use Console,Thread;
+
+module test
+{
+	def thread2:
+	{
+		while(true){
+			Console.Out("thread2");
+		}
+	}
+
+	def thread1:
+	{
+		while(true){
+			Console.Out("thread1");
+		}
+	}
+}
+_mmain:$a,$c
+{	
+	var $k1 = Thread.NewThread(test.thread1);
+	Thread.Join($k1);
+	var $k2 = Thread.NewThread(test.thread2);	
+	Thread.Join($k2);
+}
