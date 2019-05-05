@@ -38,7 +38,7 @@ struct StackState;
 %token POWER_OP NEQ_OP OR_OP AND_OP GE_OP LE_OP EQ_OP
 %token ADD_ASSIGN SUB_ASSIGN DIV_ASSIGN MUL_ASSIGN ASSIGN_ASSIGN
 %token MOD_ASSIGN AND_ASSIGN OR_ASSIGN XOR_ASSIGN 
-%token SHIFT_LEFT_OP SHIFT_RIGHT_OP WMAIN  DEF  VAR  IN ARRAYSECTION DICT_OP TYPEOF
+%token SHIFT_LEFT_OP SHIFT_RIGHT_OP WMAIN  DEF  VAR  IN ARRAYSECTION DICT_OP TYPEOF CONST
  
 
 
@@ -92,6 +92,7 @@ struct StackState;
 %type <vStatement> prefix_expression
 
 %type <vStatement> function_parameter_list
+%type <vStatement> try_parameter_list
 %type <vStatement> modulestatementlist
 %type <vStatement> modulestatement
 %type <vStatement> global_initialization
@@ -159,10 +160,16 @@ global_initialization:initialization_expression ';'
 				     }
 				     ;
 
-function_parameter_list:VARIDENTIFIER{ $$ = new FunctionParameter($1);}
+function_parameter_list:VARIDENTIFIER{ $$ = new FunctionParameter($1,false);}
 					   |VARIDENTIFIER ASSIGN_ASSIGN assignment_expression_definition
 					   {
-							$$ = new FunctionParameter($1,$3);
+							$$ = new FunctionParameter($1,$3,false);
+					   }
+					   |
+					    CONST VARIDENTIFIER{ $$ = new FunctionParameter($2,true);}
+					   |CONST VARIDENTIFIER ASSIGN_ASSIGN assignment_expression_definition
+					   {
+							$$ = new FunctionParameter($2,$4,true);
 					   }
 					   ; 
 
@@ -296,6 +303,7 @@ list_element:	primary_expression{$$ = $1;}
 					ModuleExpresson* pae =new ModuleExpresson($1,$3,0,3);
 					StatementList *ls = (StatementList*)parm;		
 					ls->AddStringConstant(string($3));	
+					pae->SetNType(MNT_ModuleFunctionDefinition);
 					$$ = pae;
 				}
 				;
@@ -557,16 +565,28 @@ dict_declare:'(' dict_statement ')'{ $$ = $2;};
 		    
 
 Initialization_Definition:indentifier_expression {
-					     InitializationDefinition* ad = new InitializationDefinition($1,0);
-						 ad->ModfiyScope(LOCAL);
-						 $$ = ad;
-				}
-				|indentifier_expression ASSIGN_ASSIGN assignment_expression_definition{
-						InitializationDefinition* ad = new InitializationDefinition($1,$3);
-						ad->ModfiyScope(LOCAL);
-						$$ = ad;
-				}
-				;
+								 InitializationDefinition* ad = new InitializationDefinition($1,0,false);
+								 ad->ModfiyScope(LOCAL);
+								 $$ = ad;
+							}
+							|indentifier_expression ASSIGN_ASSIGN assignment_expression_definition{
+									InitializationDefinition* ad = new InitializationDefinition($1,$3,false);
+									ad->ModfiyScope(LOCAL);
+									$$ = ad;
+							}
+							|CONST indentifier_expression {
+									 InitializationDefinition* ad = new InitializationDefinition($2,0,true);
+									 ad->ModfiyScope(LOCAL);
+									 $$ = ad;
+							}
+							|CONST indentifier_expression ASSIGN_ASSIGN assignment_expression_definition{
+									InitializationDefinition* ad = new InitializationDefinition($2,$4,true);
+									ad->ModfiyScope(LOCAL);
+									$$ = ad;
+							}
+							;
+
+
 initialization_list:Initialization_Definition{
 						$$ = new InitializationList();
 						$$->AddChilder($1);
@@ -577,7 +597,7 @@ initialization_list:Initialization_Definition{
 					;
 
 initialization_expression:VAR initialization_list{						  
-						  $$ = $2;						  
+							$$ = $2;						  
 						  }
 						  ;
 
@@ -712,15 +732,19 @@ jump_statement:CONTINUE ';' {
 			  |RETURN expression_definition ';'{$$ =new ReturnExpression($2);}
 			  |THROW function_arguments';'{$$ =new ThrowExpression($2);}
 			  ;
+
+try_parameter_list :VARIDENTIFIER{ $$ = new TryParameter($1,false);}
+					|CONST VARIDENTIFIER{ $$ = new TryParameter($2,true);}
+				    ;	
 			  
-try_parameter:VARIDENTIFIER
+try_parameter:try_parameter_list
 			   {
 			   		$$ = new TryParameterStatement();
-			   		$$->AddChilder(new TryParameter($1));
+			   		$$->AddChilder($1);
 			   }
-			   |try_parameter ','  VARIDENTIFIER 
+			   |try_parameter ','  try_parameter_list 
 			   {
-					$1->AddChilder(new TryParameter($3));
+					$1->AddChilder($3);
 			   }
 			   ;
 

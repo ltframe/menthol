@@ -1,8 +1,8 @@
 #pragma once
-#include "arc4.h"
-#include "rc2.h"
-#include "base64.h"
-#include "base32.h"
+#include "../MCryptography/cryp/arc4.h"
+#include "../MCryptography/cryp/rc2.h"
+#include "../MCryptography/cryp/base64.h"
+#include "../MCryptography/cryp/base32.h"
 #include "crpyt.h"
 
 namespace rcx

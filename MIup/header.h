@@ -2,7 +2,7 @@
 #define HEADER
 #include "stdafx.h"
 #include "include\iup.h"
-#include "Menthol.h"
+#include "../Menthol/MentholHeader.h"
 #include "include\iup_scintilla.h"
 struct callbackstruct
 {

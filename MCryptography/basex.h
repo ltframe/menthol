@@ -1,6 +1,6 @@
 #pragma once
-#include "base64.h"
-#include "base32.h"
+#include "../MCryptography/cryp/base64.h"
+#include "../MCryptography/cryp/base32.h"
 #include "crpyt.h"
 
 namespace basex

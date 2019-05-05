@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include <Windows.h>
-#include "Menthol.h"
+#include "../Menthol/MentholHeader.h"
 #include <algorithm>
 #include <iostream>
 #include <fstream>
@@ -14,7 +14,7 @@
 #include <direct.h>
 #include <errno.h>
 #include <dbghelp.h>
-
+#pragma comment(lib,"Dbghelp.lib")
  
 inline void get_file_path(const char *path, const char *file_name, char *file_path)
 {

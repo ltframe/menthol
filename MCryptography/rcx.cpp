@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "rcx.h"
-#include "modes.h"
+#include "../MCryptography/cryp/modes.h"
 
 namespace rcx
 {	

@@ -135,6 +135,7 @@ enum NodeType{
 	MNT_ImportPackageExpression,
 	MNT_ModuleExpresson,
 	MNT_ModuleFunCall,
+	MNT_ModuleFunctionDefinition,
 	MNT_TernaryExpression,
 	MNT_DictExpression,
 	MNT_FunctionCall,
@@ -221,7 +222,8 @@ enum OperateCode{
 	OP_TJMP,
 	OP_ADD1,
 	OP_INVERTER,
-	OP_TYPEOF
+	OP_TYPEOF,
+	OP_CONST
 	};
 
 enum PackAgeType{

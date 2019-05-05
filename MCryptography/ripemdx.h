@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ripemd.h"
+#include "../MCryptography/cryp/ripemd.h"
 #include "crpyt.h"
 
 namespace ripemdx

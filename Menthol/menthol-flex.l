@@ -86,6 +86,7 @@ extern int yyerror(char*);
 "**"			{return POWER_OP;}
 "module"        {return MODULE;}
 "use"           {return USE;}
+"const"         {return CONST;}
 
 "$"[a-zA-Z_][a-zA-Z_0-9]*	{
 							
@@ -101,7 +102,7 @@ extern int yyerror(char*);
 							yylval.vSTRING=string(yytext);return IDENTIFIER;
 						}
 
-[ \t]+			/* ignore white space */
+[ \t]			/* ignore white space */
 .							return yytext[0];
 
 \n                    { lineno++; }

@@ -123,8 +123,8 @@ private:
 
 class FunctionParameter:public Statement{
 public:
-	FunctionParameter(string s);
-	FunctionParameter(string s,Statement* _defaultvalue);
+	FunctionParameter(string s,bool _isconst);
+	FunctionParameter(string s,Statement* _defaultvalue,bool _isconst);
 	void CreateCode();
 	void Release();
 	Statement* GetDefalutValue();
@@ -132,15 +132,18 @@ public:
 private:
 	Statement* defaultvalue;
 	string name;
+	bool isconst;
 
 };
 
 class TryParameter:public Statement{
 public:
 	string name;
-	TryParameter(string s);
+	TryParameter(string s,bool _isconst);
 	void CreateCode();
 	void Release();
+private:
+	bool isconst;
 };
 
 
@@ -254,12 +257,13 @@ private:
 
 class InitializationDefinition:public Statement{
 public:
-	InitializationDefinition(Statement * _name,Statement * _e);
+	InitializationDefinition(Statement * _name,Statement * _e,bool _isconst);
 	~InitializationDefinition();
 	void CreateCode();
 	void ModfiyScope(Scope _scope);
 	void Release();
-	NodeType GetRightNodeType();
+	NodeType GetRightNodeType();	
+	bool isconst;
 private:
 	Scope scope;
 	Statement* e;

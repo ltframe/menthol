@@ -7,9 +7,8 @@
 #include <string.h>
 #include <ctype.h>
 #include "sqlite3.h"
-#include "Menthol.h"
+#include "../Menthol/MentholHeader.h"
 #pragma comment(lib,"sqlite3.lib")
-#pragma comment(lib,"Menthol.lib")
 
 /*
 SQLITE3_INTEGER

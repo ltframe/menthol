@@ -6,14 +6,29 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Menthol", "Menthol\Menthol.vcxproj", "{3F14CCA9-94AE-4632-BE93-30D500186088}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Compile", "Compile\Compile.vcxproj", "{8EA68599-D1C8-4F32-9B58-9B66C21F3C3F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MIo", "MIo\MIo.vcxproj", "{05005929-D72D-442F-9067-95017DAD62C0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MSystem", "MSystem\MSystem.vcxproj", "{83D057BA-B1A9-4234-BB98-E13D4F42C427}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example1", "example1\example1.vcxproj", "{608F9210-D7A2-46F6-8DD1-E20BAD1625D3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Run", "Run\Run.vcxproj", "{436294B4-2077-4684-9988-5DF400D8CACF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MCryptography", "MCryptography\MCryptography.vcxproj", "{676144AF-6FE7-402A-80A7-8267FDEE72C9}"
 	ProjectSection(ProjectDependencies) = postProject

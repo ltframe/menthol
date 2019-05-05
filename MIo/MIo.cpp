@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "Menthol.h"
+#include "../Menthol/MentholHeader.h"
 #include <string>
 #include <iostream>
 #include <string>
@@ -19,6 +19,9 @@
 #include "Console.h"
 #include "File.h"
 #include "Drives.h"
+#pragma comment(lib,"Shlwapi.lib")
+
+
 using namespace std;
 
 UserFunctionAtter Directorylist[] = {

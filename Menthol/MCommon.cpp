@@ -76,6 +76,19 @@ bool MCommon::StrCmpNoCase(string str1,string str2)
 	else return false;
 }
 
+bool MCommon::IsInArray(ValueType* _array,ValueType str,int c)
+{
+	int t = sizeof(_array);
+	for (int i = 0; i < c; i++)
+	{
+		if(_array[i]==str)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 
 string MCommon::CreateGuid()
 {

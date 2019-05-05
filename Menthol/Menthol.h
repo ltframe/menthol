@@ -103,6 +103,7 @@ struct StackState
 	char* name;
 	hashValue namehash;//name 的hash值
 	ValueType v;
+	bool constvalue;//为全局变量使用，局部变量在编译期间就可以检查是否是const变量
 };
 
 

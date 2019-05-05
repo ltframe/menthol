@@ -120,6 +120,7 @@
     <ClInclude Include="MCommon.h" />
     <ClInclude Include="menthol-bison.tab.h" />
     <ClInclude Include="Menthol.h" />
+    <ClInclude Include="MentholHeader.h" />
     <ClInclude Include="MError.h" />
     <ClInclude Include="MFile.h" />
     <ClInclude Include="MGc.h" />

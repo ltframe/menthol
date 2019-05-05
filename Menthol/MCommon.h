@@ -25,6 +25,7 @@ public:
 	bool StrCmpNoCase(string str1,string str2);
 	string CreateGuid();
 	wchar_t* AnsiToWideChar(const char* str);
+	bool IsInArray(ValueType* _array,ValueType str,int c);
 private:
 	static MCommon* _inst;
 	string runpath;

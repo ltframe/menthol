@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "Menthol.h"
+#include "../Menthol/MentholHeader.h"
 #include <string>
 #include <iostream>
 #include <string>

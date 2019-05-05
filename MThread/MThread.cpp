@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #pragma comment(lib,"pthreadVC2.lib")
 #include "pthread.h"
-#include "Menthol.h"
+#include "../Menthol/MentholHeader.h"
 
 struct threadinfo
 {

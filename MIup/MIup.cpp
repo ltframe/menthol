@@ -13,6 +13,10 @@
 #include "String.h"
 #include "Images.h"
 #include "Handle.h"
+#pragma comment(lib,"iup.lib")
+#pragma comment(lib,"iup_scintilla.lib")
+#pragma comment(lib,"im.lib")
+#pragma comment(lib,"iupim.lib")
 extern vector<callbackstruct> *_tvalues;
 
 UserFunctionAtter iuplist[] = 

@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "Menthol.h"
+#include "../Menthol/MentholHeader.h"
 
 int error(char* str,char* cf,int line)
 {

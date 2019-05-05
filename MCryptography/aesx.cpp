@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "aesx.h"
-#include "modes.h"
+#include "../MCryptography/cryp/modes.h"
 
 namespace aesx
 {

@@ -206,6 +206,14 @@ void RestoreGlobalMemory(StackState s,VmState* vmstate)
 	VECTORFORSTART(StackState,VMSTATECURRENTRUNTIMESTATE(vmstate)->globalvalues,it)
 		if(s.namehash==(*it).namehash)
 		{
+			if((*it).constvalue){
+				VECTORFORSTART(string, VMSTATECURRENTRUNTIMESTATE(vmstate)->strings, its)
+					if ((*it).namehash == MCommon::CreateInstance()->ELFHash(*its)){
+						MError::CreateInstance()->PrintRunTimeError((*its) + " is a Constant variable, cannot be assigned", vmstate);
+					}
+				VECTORFOREND
+				return;
+			}
 			(*it)=s;
 			return;;
 		}
@@ -619,7 +627,6 @@ void EntryPoint(ImportFileAttr pa,char* workdir,VmState* vmstate)
 			ProcAdd(vmstate);
 		}
 	}
-
 	VECTORFORSTART(GlobalCodeRuntimeAtter,globallist,it)
 			VMSTATECURRENTRUNTIMESTATE(vmstate) = (*it).belongtoruntimestate;
 			VMSTATECURRENTRUNTIMESTATE(vmstate)->codeoffset = 0;
@@ -645,8 +652,6 @@ void EntryPoint(ImportFileAttr pa,char* workdir,VmState* vmstate)
 	VECTORFOREND
 	delete globallist;
 	codeliststart = 0;
-
-
 
 	VMSTATECODELIST(vmstate) = 0;
 	VMSTATECODELIST(vmstate) =new Instruction[codealllist.size()];
@@ -674,15 +679,13 @@ void EntryPoint(ImportFileAttr pa,char* workdir,VmState* vmstate)
 		VECTORFOREND
 	VECTORFOREND
 
-#ifndef NDEBUG
-	//PintCode(codealllist.size());
-#endif	
 	filetree->clear();
 	//clock_t start = clock();
 	runflag = 1;
+
   	Execute(vmstate);
 	//clock_t end = clock();
-	
+	//printf("the running time is :%f\n", (double)(end -start)); //秒
 }
 
 
@@ -719,7 +722,6 @@ int Execute(VmState* vmstate)
 
 			SWITCHCASESTART(OP_RET)
 					VMSTATECURRENTRUNTIMESTATE(vmstate) = VMSTATEBP(vmstate)->m.rts;
-     			 	
 					if(VMSTATEBP(vmstate)->m.calltype)
 					{
 						//VMSTATECALLTYPE(vmstate) = 0;
@@ -755,15 +757,59 @@ int Execute(VmState* vmstate)
 
 			SWITCHCASESTART(OP_THROWSTART)
 					VMSTATESP(vmstate)--;
-					while (VMSTATESP(vmstate)->v != M_TRYMARK) VMSTATESP(vmstate)--;
+					while (VMSTATESP(vmstate)->v != M_TRYMARK) 
+					{
+						if(VMSTATESP(vmstate)==VMSTATESTACKBASE(vmstate))	//如果指到了栈的第一个证明没有try
+						{
+							break;
+						}
+						VMSTATESP(vmstate)--;
+					}
 					VMSTATESP(vmstate)++;
 			SWITCHCASEEND
 
 			SWITCHCASESTART(OP_THROWEND)
 					STACKSTATEPOINTER b = VMSTATESP(vmstate)-1;
-					while (b->v != M_TRYMARK) b--;
+					ValueType valuetypepointer1[] = {M_FUN,M_PFUN,M_BOOL,M_ARRAY,M_DICT,M_NULL,M_MODULE,M_HASH,M_UNKONWN,M_OBJECT};
+					ValueType valuetypepointer2[] = {M_NUMBER,M_LONG};
+					ValueType valuetypepointer3[] = {M_STRING,M_SSTRING};
+					while (b->v != M_TRYMARK)
+					{ 
+						if(b==VMSTATESTACKBASE(vmstate))
+						{		
+							char throwstring[5000] = {""};
+							int stackargcount = VMSTATESP(vmstate)-b-1;
+							for(int i=0;i<stackargcount;i++)
+							{
+								VMSTATESP(vmstate)--;	
+								if(MCommon::CreateInstance()->IsInArray(valuetypepointer1,VMSTATESP(vmstate)->v,10))
+								{
+									strcat(throwstring,"object");
+								}
+								if(MCommon::CreateInstance()->IsInArray(valuetypepointer2,VMSTATESP(vmstate)->v,2))
+								{
+									char a[32];
+									if(VMSTATESP(vmstate)->d != (int)VMSTATESP(vmstate)->d){
+										sprintf(a,"%.6lf",VMSTATESP(vmstate)->d);
+									}
+									else{
+										sprintf(a,"%d",(int)VMSTATESP(vmstate)->d);
+									}	
+									strcat(throwstring,a);
+								}
+								if(MCommon::CreateInstance()->IsInArray(valuetypepointer3,VMSTATESP(vmstate)->v,2))
+								{
+									strcat(throwstring,VMSTATESP(vmstate)->str->string);			
+								}
+								strcat(throwstring,",");								
+							}
+							throwstring[strlen(throwstring)-1] = '\0';
+							MError::CreateInstance()->PrintRunTimeError(throwstring,vmstate);
+							return 1;
+						};
+						b--;
+					}
 					int stackargcount = VMSTATESP(vmstate)-b-1;
-
 					VMSTATECODELIST(vmstate) = b->m.address;
 					VMSTATECURRENTRUNTIMESTATE(vmstate) = b->m.rts;
 					VMSTATEBP(vmstate) = b->m.bp;
@@ -981,7 +1027,8 @@ int Execute(VmState* vmstate)
 
 			SWITCHCASESTART(OP_INITM)
 					STACKSTATEPOINTER value = --VMSTATESP(vmstate);
-					value->namehash = *VMSTATECODELIST(vmstate)++;//函数名称的HASH值					
+					value->namehash = *VMSTATECODELIST(vmstate)++;//函数名称的HASH值
+					value->constvalue = *VMSTATECODELIST(vmstate)++;//是否为const					
 					RestoreGlobalMemory(*value,vmstate);
 			SWITCHCASEEND
 
@@ -1593,7 +1640,8 @@ int Execute(VmState* vmstate)
 					VMSTATECURRENTRUNTIMESTATE(vmstate) = pa->rts;
 					*attr = *value;
 					attr->namehash = *VMSTATECODELIST(vmstate)++;
-					
+					attr->constvalue =  FindGlobalMemory(attr->namehash,VMSTATECURRENTRUNTIMESTATE(vmstate),_rts,vmstate).constvalue;
+			
 					RestoreGlobalMemory(*attr,vmstate);
 					VMSTATECURRENTRUNTIMESTATE(vmstate) = _rts;
 			SWITCHCASEEND
@@ -1656,6 +1704,8 @@ StackState GetParam(int x,VmState* vmstate)
 	if(x>v.m.paramercount){
 		return _v;
 	}*/
+
+
 	return  *(VMSTATEBP(vmstate)+x);
 }
 

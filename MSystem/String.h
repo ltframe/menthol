@@ -1,5 +1,5 @@
 #pragma once
-#include "Menthol.h"
+#include "../Menthol/MentholHeader.h"
 namespace String
 {
 	StackState StoN(VmState* vmstate);

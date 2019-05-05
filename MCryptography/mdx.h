@@ -1,8 +1,8 @@
 #pragma once
 
-#include "md5.h"
-#include "md2.h"
-#include "md4.h"
+#include "../MCryptography/cryp/md5.h"
+#include "../MCryptography/cryp/md2.h"
+#include "../MCryptography/cryp/md4.h"
 #include "crpyt.h"
 namespace mdx
 {

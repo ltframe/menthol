@@ -1,5 +1,5 @@
 #pragma once
-#include "Menthol.h"
+#include "../Menthol/MentholHeader.h"
 namespace Math
 {
 	StackState Abs(VmState* vmstate);

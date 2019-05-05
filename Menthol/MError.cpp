@@ -54,7 +54,7 @@ void MError::PrintRunTimeError(string s,VmState * vmstate)
 			return;
 		}
 		int x = Vm::GetCurrentCodeList(vmstate)-st;
-		MentholDebug dinfo;
+		MentholDebug dinfo = {-1,-1,-1,""};
 		VECTORFORSTART(MentholDebug,list,it)
 			if((*it).instno==x)
 			{

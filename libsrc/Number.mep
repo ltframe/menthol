@@ -2,7 +2,7 @@ import msystem;
 use CNumber;
 module Number
 {
-	var @MaxValue = 1.7976931348623157e+308,@MinValue = -1.7976931348623157e+308;
+	var const @MaxValue = 1.7976931348623157e+308,const @MinValue = -1.7976931348623157e+308;
 	def ToString:$n
 	{
 		return CNumber.ToString($n);

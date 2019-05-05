@@ -2,15 +2,12 @@
 //
 
 #include "stdafx.h"
-#include "Menthol.h"
+#include "../Menthol/MentholHeader.h"
 #include "CallBack.h"
 #include "GetInfo.h"
 #include "SetOpt.h"
 #include "System.h"
-
-
-
-
+#pragma comment(lib,"libcurl.dll.a")
 UserFunctionAtter SystemList[] = {
 	{ "init", System::init, 0 },
 	{ "cleanup", System::cleanup, 1 },

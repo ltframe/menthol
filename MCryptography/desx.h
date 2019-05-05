@@ -1,7 +1,7 @@
 #pragma once
-#include "des.h"
-#include "base64.h"
-#include "base32.h"
+#include "../MCryptography/cryp/des.h"
+#include "../MCryptography/cryp/base64.h"
+#include "../MCryptography/cryp/base32.h"
 #include "crpyt.h"
 namespace desx
 {

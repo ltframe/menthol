@@ -1,8 +1,8 @@
 #ifndef CRPYH
 #define CRPYH
 
-#include "Menthol.h"
-#include "hex.h"
+#include "../Menthol/MentholHeader.h"
+#include "../MCryptography/cryp/hex.h"
 template<class T> string Template_1(T & t, char* str)
 {
 	string digest;

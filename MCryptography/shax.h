@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sha.h"
+#include "../MCryptography/cryp/sha.h"
 #include "crpyt.h"
 
 namespace shax

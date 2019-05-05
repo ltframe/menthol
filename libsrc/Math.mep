@@ -2,7 +2,7 @@ import msystem;
 use CMath;
 module Math
 {
-	var @PI = 3.14159265358979323846,@E=2.7182818284590452354;
+	var const @PI = 3.14159265358979323846,const @E=2.7182818284590452354;
 	def Abs:$n
 	{
 		if(typeof($n)!="M_NUMBER"){
