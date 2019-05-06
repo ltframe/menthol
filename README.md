@@ -56,15 +56,17 @@ If you are using modules that are in the same package and defined before use, yo
 
 
 ###### Variable concept
-All menthol programs start with the system automatically executing _mmain, using the keyword var to declare variables, all global variables must start with @, and there should be a $ in front of the local variable.
+All menthol programs start with the system automatically executing _mmain, using the keyword var to declare variables, all global variables must start with @, and there should be a $ in front of the local variable.Variables that cannot be modified are preceded by const
 ```html
 module test
 {
 	var @global;// global variable
+	var const @global;// const global variable
 }
 _mmain:$a,$c
 {    
 	var $v = 0; //local variable
+	var const $v2 = 0; //const local variable
 }
 ```
 ###### Error handling
@@ -288,15 +290,17 @@ console是系统自带的输入输出包，里面包含了控制输入输出的�
 如果使用的模块在同一包内，并且在使用前已经定义，则不要用use在引入
 
 ###### 基本操作
-所有的menthol都由系统自动执行_mmain开始,声明变量使用关键字var,全部变量要在变量名前加@,局部变量要在变量名前加$
+所有的menthol都由系统自动执行_mmain开始,声明变量使用关键字var,全部变量要在变量名前加@,局部变量要在变量名前加$,不可以修改的变量前面要用const修饰
 ```html
 module test
 {
 	var @global;// 全局变量
+	var const @global2;// const 全局变量
 }
 _mmain:$a,$c
 {    
 	var $v = 0; //局部变量
+	var cosnt $v2 = 0; //const 局部变量
 }
 ```
 ###### 错误处理
