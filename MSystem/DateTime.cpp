@@ -5,14 +5,14 @@
 namespace DateTime
 {
 
-	StackState CurrentDate()
+	StackState CurrentDate(VmState* vmstate)
 	{
 		struct tm *local;  
 		time_t t;  
 		t=time(NULL);  
 		local=localtime(&t);  
 		StackState st;
-		st =Dict_CreateDict();
+		st =Dict_CreateDict(vmstate);
 		StackState _y;_y.d = local->tm_year+1900;_y.v = M_NUMBER;
 		StackState _m;_m.d = local->tm_mon+1;_m.v = M_NUMBER;
 		StackState _d;_d.d = local->tm_mday;_d.v = M_NUMBER;
@@ -22,7 +22,7 @@ namespace DateTime
 		return st;
 	}
 
-	StackState CurrentTime()
+	StackState CurrentTime(VmState* vmstate)
 	{
 
 		struct tm *local;  
@@ -30,7 +30,7 @@ namespace DateTime
 		t=time(NULL);  
 		local=localtime(&t);  
 		StackState st;
-		st =Dict_CreateDict();
+		st =Dict_CreateDict(vmstate);
 		StackState _s;_s.d = local->tm_sec;_s.v = M_NUMBER;
 		StackState _m;_m.d = local->tm_min;_m.v = M_NUMBER;
 		StackState _h; _h.d = local->tm_hour;_h.v = M_NUMBER;
@@ -41,7 +41,7 @@ namespace DateTime
 	}
 
 
-	StackState TimeZone()
+	StackState TimeZone(VmState* vmstate)
 	{
 		StackState st;
 		struct tm *local;  

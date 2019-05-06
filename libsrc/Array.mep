@@ -1,4 +1,4 @@
-import "msystem";
+import msystem;
 use CArray;
 module Array
 {
@@ -21,7 +21,7 @@ module Array
 	{
 		return CArray.Push($arg1,$arg2);
 	}
-	def Range:$arg1,$arg2,$arg3=1
+	def Rang:$arg1,$arg2,$arg3=1
 	{
 		var $t,$arr=[];
 		if(typeof($arg1)=="M_NUMBER"){$t=1;}

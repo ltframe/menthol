@@ -82,7 +82,7 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;MENTHOL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
@@ -120,6 +120,7 @@
     <ClInclude Include="MCommon.h" />
     <ClInclude Include="menthol-bison.tab.h" />
     <ClInclude Include="Menthol.h" />
+    <ClInclude Include="MentholHeader.h" />
     <ClInclude Include="MError.h" />
     <ClInclude Include="MFile.h" />
     <ClInclude Include="MGc.h" />

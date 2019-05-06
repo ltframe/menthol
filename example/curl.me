@@ -1,0 +1,32 @@
+import console;
+import array;
+import string;
+import network.curl.System;
+import network.curl.setopt;
+import network.curl.getinfo;
+import network.curl.code;
+import network.curl.callback;
+use Array,Console,String,CurlSystem,CurlSetOpt,CurlGetInfo,CurlCode,CurlCallback;
+
+module test
+{
+	def getsource:$str
+	{
+		Console.Out(String.UTF8ToGBK($str));
+	}
+}
+_mmain:$a,$c
+{	
+	  var $curl = CurlSystem.init();
+	  CurlSetOpt.url($curl, "http://www.baidu.com");
+	  CurlCallback.writefunction($curl,test.getsource);
+	  var $res = CurlSystem.perform($curl);
+	  if($res == CurlCode.@CURLE_OK)
+	  {
+		var $url = CurlGetInfo.effective_url($curl);
+		if($url){
+			Console.Out($url);
+		}
+	 }
+	 CurlSystem.cleanup($curl);
+}

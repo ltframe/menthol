@@ -1,0 +1,21 @@
+import array;
+import number;
+use Array,Number;
+
+module Type
+{
+	def TypeToString:$t
+	{
+		if(Array.IsInArray(["M_FUN","M_PFUN","M_BOOL","M_ARRAY","M_DICT","M_NULL","M_MODULE","M_HASH","M_UNKONWN","M_OBJECT"],typeof($t)))
+		{
+			return "Object";
+		}
+		if(Array.IsInArray(["M_NUMBER","M_LONG"],typeof($t)))
+		{
+			return Number.ToString($t);
+		}	
+		return $t;
+	}
+}
+
+

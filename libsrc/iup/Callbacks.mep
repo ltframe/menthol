@@ -1,0 +1,35 @@
+import miup;
+use CIup;
+module IupCallbacks
+{
+	def MainLoop:
+	{
+		return CIup.MainLoop();
+	}
+
+	def MainLoopLevel:
+	{
+		return CIup.MainLoopLevel();
+	}
+
+	def LoopStep:
+	{
+		return CIup.LoopStep();
+	}
+
+	def ExitLoop:
+	{
+		return CIup.ExitLoop();
+	}
+
+	def Flush:
+	{
+		return CIup.Flush();
+	}
+	def SetCallback:$arg1,$arg2,$arg3
+	{
+		return CIup.SetCallback($arg1,$arg2,$arg3);
+	}	
+}
+
+

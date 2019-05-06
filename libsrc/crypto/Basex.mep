@@ -1,0 +1,24 @@
+import MCryptography;
+use CBASE;
+module Basex
+{
+	def  Base64Encoder:$arg1
+	{
+		return CBASE.Base64Encoder($arg1);
+	}
+	def  Base64Decoder:$arg1
+	{
+		return CBASE.Base64Decoder($arg1);
+	}
+
+	def  Base32Encoder:$arg1
+	{
+		return CBASE.Base32Encoder($arg1);
+	}
+	def  Base32Decoder:$arg1
+	{
+		return CBASE.Base32Decoder($arg1);
+	}
+}
+
+

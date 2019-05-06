@@ -1,4 +1,4 @@
-import "mio";
+import mio;
 use CConsole;
 module Console{
 

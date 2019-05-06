@@ -1,0 +1,154 @@
+import mlibcurl;
+use CCurl_Getinfo;
+module CurlGetInfo
+{
+	def effective_url:$arg1
+	{
+		return CCurl_Getinfo.effective_url($arg1,1048577); 
+	}
+
+	def response_code:$arg1
+	{
+		return CCurl_Getinfo.response_code($arg1,2097154); 
+	}
+
+	def http_connectcode:$arg1
+	{
+		return CCurl_Getinfo.http_connectcode($arg1,2097174); 
+	}
+
+	def filetime:$arg1
+	{
+		return CCurl_Getinfo.filetime($arg1,2097166); 
+	}
+
+	def total_time:$arg1
+	{
+		return CCurl_Getinfo.total_time($arg1,3145731); 
+	}
+
+	def namelookup_time:$arg1
+	{
+		return CCurl_Getinfo.namelookup_time($arg1,3145732); 
+	}
+
+	def connect_time:$arg1
+	{
+		return CCurl_Getinfo.connect_time($arg1,3145733); 
+	}
+
+	def pretransfer:$arg1
+	{
+		return CCurl_Getinfo.pretransfer($arg1,3145734); 
+	}
+
+	def starttransfer_time:$arg1
+	{
+		return CCurl_Getinfo.starttransfer_time($arg1,3145745); 
+	}
+
+	def redirect_time:$arg1
+	{
+		return CCurl_Getinfo.redirect_time($arg1,3145747); 
+	}
+
+	def redirect_count:$arg1
+	{
+		return CCurl_Getinfo.redirect_count($arg1,2097172); 
+	}
+
+	def size_upload:$arg1
+	{
+		return CCurl_Getinfo.size_upload($arg1,3145735); 
+	}
+
+	def size_download:$arg1
+	{
+		return CCurl_Getinfo.size_download($arg1,3145736); 
+	}
+
+	def speed_download:$arg1
+	{
+		return CCurl_Getinfo.speed_download($arg1,3145737); 
+	}
+
+	def speed_upload:$arg1
+	{
+		return CCurl_Getinfo.speed_upload($arg1,3145738); 
+	}
+
+	def header_size:$arg1
+	{
+		return CCurl_Getinfo.header_size($arg1,2097163); 
+	}
+
+	def request_size:$arg1
+	{
+		return CCurl_Getinfo.request_size($arg1,2097164); 
+	}
+
+	def ssl_verifyresult:$arg1
+	{
+		return CCurl_Getinfo.ssl_verifyresult($arg1,2097165); 
+	}
+
+	def ssl_engines:$arg1
+	{
+		return CCurl_Getinfo.ssl_engines($arg1,4194331); 
+	}
+
+	def content_length_download:$arg1
+	{
+		return CCurl_Getinfo.content_length_download($arg1,3145743); 
+	}
+
+	def content_length_upload:$arg1
+	{
+		return CCurl_Getinfo.content_length_upload($arg1,3145744); 
+	}
+
+	def content_type:$arg1
+	{
+		return CCurl_Getinfo.content_type($arg1,1048594); 
+	}
+
+	def private:$arg1
+	{
+		return CCurl_Getinfo.private($arg1,1048597); 
+	}
+
+	def httpauth_avail:$arg1
+	{
+		return CCurl_Getinfo.httpauth_avail($arg1,2097175); 
+	}
+
+	def proxyauth_avail:$arg1
+	{
+		return CCurl_Getinfo.proxyauth_avail($arg1,2097176); 
+	}
+
+	def os_errno:$arg1
+	{
+		return CCurl_Getinfo.os_errno($arg1,2097177); 
+	}
+
+	def num_connects:$arg1
+	{
+		return CCurl_Getinfo.num_connects($arg1,2097178); 
+	}
+
+	def cookielist:$arg1
+	{
+		return CCurl_Getinfo.cookielist($arg1,4194332); 
+	}
+
+	def lastsocket:$arg1
+	{
+		return CCurl_Getinfo.lastsocket($arg1,2097181); 
+	}
+
+	def ftp_entry_path:$arg1
+	{
+		return CCurl_Getinfo.ftp_entry_path($arg1,1048606); 
+	}
+}

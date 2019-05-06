@@ -72,6 +72,8 @@ struct Garbage{
 
 typedef Garbage* pArray,*pDict,*pString;
 typedef void* pInst;
+struct StackState;
+#define STACKSTATEPOINTER StackState*
 
 typedef struct StackMark
 {
@@ -79,6 +81,7 @@ typedef struct StackMark
 	Instruction* address;
 	M_UInt paramercount;//参数的个数
 	RunTimeState* rts;
+	int calltype;
 
 }TryMark;
 
@@ -100,8 +103,30 @@ struct StackState
 	char* name;
 	hashValue namehash;//name 的hash值
 	ValueType v;
+	bool constvalue;//为全局变量使用，局部变量在编译期间就可以检查是否是const变量
 };
-typedef StackState (*funcallback)();
+
+
+struct GcState
+{
+	long garbagememorysize;
+	vector<Garbage*> *garbagecollect;
+};
+#define VECOTRSTACKSTATE  vector<StackState>
+static struct VmState
+{
+	Instruction* codelist;
+	RunTimeState* currentruntimestate;
+	STACKSTATEPOINTER sp;
+	STACKSTATEPOINTER bp;
+	STACKSTATEPOINTER stackbase;
+	VECOTRSTACKSTATE stacklist;
+	int garbagescount;
+	GcState* gc;
+};
+
+
+typedef StackState (*funcallback)(VmState*);
 struct UserFunctionAtter
 {
 	char* name;
@@ -115,35 +140,37 @@ MentholModuleMethod void SetPrintRunTimeErrorFunc(PrintErrorFunc _pef);
 MentholModuleMethod int Compile(char* cfile);
 MentholModuleMethod int Run(char* files,char* arg1,char* arg2);
 MentholModuleMethod void RegisterModuleFunciton(RunTimeState* moduleinst,UserFunctionAtter* functionlist);			  
-MentholModuleMethod StackState GetParam(int index);
-MentholModuleMethod RunTimeState* CreateModuleRunTime(char* modulename);
+MentholModuleMethod StackState GetParam(int index,VmState*);
+MentholModuleMethod RunTimeState* CreateModuleRunTime(char* modulename,VmState*);
 
  //array
-MentholModuleMethod StackState Array_CreateArray();
+MentholModuleMethod StackState Array_CreateArray(VmState*);
 MentholModuleMethod StackState Array_Get(pArray sk1,int index);
 MentholModuleMethod void Array_Set(pArray sk1,StackState sk2,int index);
 MentholModuleMethod int Array_Length(pArray p);
 MentholModuleMethod void Array_Push(pArray sk1,StackState sk2);
-MentholModuleMethod pString Array_Join(pArray a1,char* link);
+MentholModuleMethod pString Array_Join(pArray a1,char* link,VmState*);
 MentholModuleMethod pArray Array_Reverse(pArray a1);
  //dict
-MentholModuleMethod StackState Dict_CreateDict();
+MentholModuleMethod StackState Dict_CreateDict(VmState*);
 MentholModuleMethod void Dict_Push(char* key,pDict sk1,StackState sk2);
 MentholModuleMethod int Dict_Length(pDict);
 MentholModuleMethod StackState Dict_Get(pDict sk1,hashValue key);
 MentholModuleMethod void Dict_Set(char* key,pDict sk1,StackState sk2);
-MentholModuleMethod pString Dict_Key(pDict pdict,hashValue sk2);
+MentholModuleMethod pString Dict_Key(pDict pdict,hashValue sk2,VmState*);
  //string
-MentholModuleMethod StackState String_CreateString(char* str);
+MentholModuleMethod StackState String_CreateString(char* str,VmState*);
 
 
 //function
-MentholModuleMethod void CreateFunctionCall(int pc);
-MentholModuleMethod void PushNumber(double d);
-MentholModuleMethod void PushString(pString str);
-MentholModuleMethod void PushArray(pArray arr);
-MentholModuleMethod void PushDict(pDict arr);
-MentholModuleMethod StackState CallFunction(StackState fu);
+MentholModuleMethod void CreateFunctionCall(int pc,VmState*);
+MentholModuleMethod void PushNumber(double d,VmState*);
+MentholModuleMethod void PushString(pString str,VmState*);
+MentholModuleMethod void PushArray(pArray arr,VmState*);
+MentholModuleMethod void PushDict(pDict arr,VmState*);
+MentholModuleMethod void PushBool(bool arr,VmState*);
+MentholModuleMethod void PushObject(pInst arr,VmState*);
+MentholModuleMethod StackState CallFunction(StackState fu,VmState*);
 
 //number
 MentholModuleMethod StackState Number_CreateNumber(double d);
@@ -153,4 +180,12 @@ MentholModuleMethod StackState Null_CreateNull();
 
 //bool
 MentholModuleMethod StackState Bool_CreateBool(bool b);
+
+
+MentholModuleMethod StackState Object_CreateObject(pInst p);
+
+MentholModuleMethod  VmState* NewVmState();
+MentholModuleMethod  void NewVm(VmState* vmstate);
+MentholModuleMethod  void ClearVmState(VmState* vmstate);
 #endif
+

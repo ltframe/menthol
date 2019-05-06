@@ -3,9 +3,9 @@
 
 namespace Console
 {
-	StackState Out()
+	StackState Out(VmState* vmstate)
 	{
-		StackState value =GetParam(1);
+		StackState value =GetParam(1,vmstate);
 		StackState st;
 		st.v=M_NULL;
 		if(value.v==M_NUMBER){
@@ -46,9 +46,9 @@ namespace Console
 		return st;
 	}
 
-	StackState Oute()
+	StackState Oute(VmState* vmstate)
 	{
-		StackState value =GetParam(1);
+		StackState value =GetParam(1,vmstate);
 		StackState st;
 		st.v=M_NULL;
 		if(value.v==M_NUMBER){
@@ -90,16 +90,16 @@ namespace Console
 	}
 
 
-	StackState In()
+	StackState In(VmState* vmstate)
 	{
 		string str;
 		cin>>str;
-		StackState st= String_CreateString(const_cast<char*>(str.c_str()));
+		StackState st= String_CreateString(const_cast<char*>(str.c_str()),vmstate);
 		return st;
 	}
 
 
-	StackState Clear()
+	StackState Clear(VmState* vmstate)
 	{
 		system("cls");
 		StackState st;

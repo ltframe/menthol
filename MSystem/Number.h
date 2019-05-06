@@ -1,8 +1,8 @@
 #pragma once
-#include "Menthol.h"
+#include "../Menthol/MentholHeader.h"
 namespace Number
 {
-	StackState ToString();
-	StackState ToNumber();
+	StackState ToString(VmState* vmstate);
+	StackState ToNumber(VmState* vmstate);
 };
 

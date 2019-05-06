@@ -1,10 +1,18 @@
-import "mio";
+import mio;
 use CDirectory,CFile,CDrives;
 module File
 {
+	def Open:$arg1,$arg2
+	{
+		return CFile.Open($arg1,$arg2);	
+	}
 	def Readfile:$arg1
 	{
-		return CFile.FileReadfile($arg1);	
+		return CFile.Readfile($arg1);	
+	}
+	def Close:$arg1
+	{
+		return CFile.Close($arg1);	
 	}
 
 	def Writefile:$arg1,$arg2
@@ -13,9 +21,9 @@ module File
 
 	}
 
-	def Copy:$arg1,$arg2,$arg3
+	def Copy:$arg1,$arg2
 	{
-	   return CFile.Copy($arg1,$arg2,$arg3);
+	   return CFile.Copy($arg1,$arg2);
 	}
 
 	def Create:$arg1

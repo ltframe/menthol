@@ -92,7 +92,8 @@ extern int yydebug;
      IN = 301,
      ARRAYSECTION = 302,
      DICT_OP = 303,
-     TYPEOF = 304
+     TYPEOF = 304,
+     CONST = 305
    };
 #endif
 

@@ -1,4 +1,4 @@
-import "msystem";
+import msystem;
 use CDict;
 module Dict
 {

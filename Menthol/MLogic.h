@@ -47,9 +47,15 @@ inline bool Xor(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 	return true;
 }
 
-inline bool EqEq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
+inline bool EqEq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2,VmState* vmstate)
 {
 
+	if(value1->v!=value2->v)
+	{
+		value1->v = M_BOOL;
+		value1->b = false;
+		return true;
+	}
 
 	if(IsString(value1) && IsString(value2))
 	{
@@ -107,13 +113,20 @@ inline bool EqEq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		value1->b = (ctn1.d==ctn2.d);
 		return true;
 	}
-	MError::CreateInstance()->DataTypeOpertatError(value1, value2, " Can't compare");
+	if(ctn1.v!=ctn2.v)
+	{
+		value1->v = M_BOOL;
+		value1->b = false;
+		return true;
+	}
+
+	MError::CreateInstance()->DataTypeOpertatError(value1, value2, " Can't compare",vmstate);
 	return false;
 	
 }
 
 //ะกำฺ
-inline bool Lt(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
+inline bool Lt(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2,VmState* vmstate)
 {
 
 	StackState ctn1 = MMath::ConvertToNumber(value1);
@@ -130,11 +143,11 @@ inline bool Lt(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		value1->b=(k<0)?true:false;
 		return true;
 	}
-	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't compare");
+	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't compare",vmstate);
 	return false;
 }
 
-inline bool Le(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
+inline bool Le(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2,VmState* vmstate)
 {
 
 	StackState ctn1 = MMath::ConvertToNumber(value1);
@@ -151,11 +164,11 @@ inline bool Le(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		value1->b=(k>0)?true:false;
 		return true;
 	}
-	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't compare");
+	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't compare",vmstate);
 	return false;
 }
 
-inline bool Geeq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
+inline bool Geeq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2,VmState* vmstate)
 {
 
 	StackState ctn1 = MMath::ConvertToNumber(value1);
@@ -172,11 +185,11 @@ inline bool Geeq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 		value1->b=(k>=0)?true:false;
 		return true;
 	}
-	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't compare");
+	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't compare",vmstate);
 	return false;
 }
 
-inline bool Leeq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
+inline bool Leeq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2,VmState* vmstate)
 {
 	if(IsString(value1) && IsString(value2))
 	{
@@ -193,12 +206,19 @@ inline bool Leeq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 			return true;
 	}
 
-	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't compare");
+	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't compare",vmstate);
 	return false;
 }
-inline bool Neq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
+inline bool Neq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2,VmState* vmstate)
 {	
 
+
+	if(value1->v!=value2->v)
+	{
+		value1->v = M_BOOL;
+		value1->b = true;
+		return true;
+	}
 
 	if(IsString(value1) && IsString(value2))
 	{
@@ -256,7 +276,14 @@ inline bool Neq(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2)
 			return true;
 	}
 
-	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't compare");
+	if(ctn1.v!=ctn2.v)
+	{
+		value1->v = M_BOOL;
+		value1->b = true;
+		return true;
+	}
+
+	MError::CreateInstance()->DataTypeOpertatError(value1,value2," Can't compare",vmstate);
 	return false;
 }
 

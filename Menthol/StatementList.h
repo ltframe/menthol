@@ -25,17 +25,19 @@
 
 
 
-typedef void (*initfuncallback)();
+typedef void (*initfuncallback)(VmState*);
 
 struct LocalVarAttr
 {
    string name;
    int index;
+   bool isconst;
 };
 struct GlobalVarAttr
 {
    string name;
    hashValue hash;
+   bool isconst;
 };
 
 
@@ -69,13 +71,13 @@ public:
 	void SetCode(Instruction x,int ipp);  
 	void AddCharCode(char x);
 	int GetIpi();
-	bool AddGlobalMemory(string _name);
+	bool AddGlobalMemory(string _name,bool _isconst=false);
 	GlobalVarAttr FindGlobalMemory(string str);
 	void AddStringConstant(string str);
 	void AddDictKeyConstant(string s);
 	void AddDoubleConstant(double d);
 	static StatementList* GetInstance();
-	bool AddLocalMemory(string _name,int _lineno);
+	bool AddLocalMemory(string _name,int _lineno,bool _isconst=false);
 	LocalVarAttr FindLocalMemory(string _name);
 	void ClearLocalMemory();
 	void CreateCode(vector<Statement*>* _CompileStructTable,string extension);

@@ -1,0 +1,31 @@
+import miup;
+use CIup;
+module IupMenus
+{
+	def Item:$arg1,$arg2
+	{
+		if($arg2==null)
+		{
+			return CIup.Item2($arg1);
+		}
+		return CIup.Item($arg1,$arg2);
+	}
+
+	def Menu:
+	{
+		return CIup.Menu();
+	}
+
+	def Separator:
+	{
+		return CIup.Separator();
+	}
+
+	def Submenu:$arg1,$arg2
+	{
+		return CIup.Submenu($arg1,$arg2);
+	}
+
+}
+
+

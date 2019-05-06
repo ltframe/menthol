@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "Menthol.h"
+#include "../Menthol/MentholHeader.h"
 #include <string>
 #include <iostream>
 #include <string>
@@ -64,6 +64,8 @@ UserFunctionAtter Stringlist[] = {
 		{"Isdigit", String::Isdigit, 1},
 		{"Isalpha", String::Isalpha, 1},
 		{"Toascii", String::Toascii, 1},
+		{"UTF8ToGBK", String::UTF8ToGBK, 1},
+		{"GBKToUTF8", String::GBKToUTF8, 1},
 		{NULL,NULL,0}
 }; 
 
@@ -89,9 +91,8 @@ UserFunctionAtter Mathlist[] = {
 		{"Sqrt",Math::Sqrt,1},
 		{"Tan",Math::Tan,1},
 		{"Tanh",Math::Tanh,1},
-		{"Random",Math::Tanh,1},
+		{"Random",Math::Random,0},
 		{"Cbrt",Math::Cbrt, 1},
-		{"Truncate ",Math::Truncate , 1},
 		{NULL,NULL,0}
 }; 
 
@@ -137,32 +138,32 @@ UserFunctionAtter JsonList[] = {
 	{NULL,NULL,0}
 };
 
-MentholModuleMethod void MP_Init()
+MentholModuleMethod void MP_Init(VmState* vmstate)
 {
-	RunTimeState* Numberprt = CreateModuleRunTime("CNumber");
+	RunTimeState* Numberprt = CreateModuleRunTime("CNumber",vmstate);
 	RegisterModuleFunciton(Numberprt,Numberlist);
 
-	RunTimeState* Environmentprt = CreateModuleRunTime("CEnvironment");
+	RunTimeState* Environmentprt = CreateModuleRunTime("CEnvironment",vmstate);
 	RegisterModuleFunciton(Environmentprt,Environmentlist);
 
-	RunTimeState* Stringprt = CreateModuleRunTime("CString");
+	RunTimeState* Stringprt = CreateModuleRunTime("CString",vmstate);
 	RegisterModuleFunciton(Stringprt,Stringlist);
 
-	RunTimeState* Mathprt = CreateModuleRunTime("CMath");
+	RunTimeState* Mathprt = CreateModuleRunTime("CMath",vmstate);
 	RegisterModuleFunciton(Mathprt,Mathlist);
 
-	RunTimeState* DateTimeprt = CreateModuleRunTime("CDateTime");
+	RunTimeState* DateTimeprt = CreateModuleRunTime("CDateTime",vmstate);
 	RegisterModuleFunciton(DateTimeprt,DateTimelist);
 
-	RunTimeState* Arrayprt = CreateModuleRunTime("CArray");
+	RunTimeState* Arrayprt = CreateModuleRunTime("CArray",vmstate);
 	RegisterModuleFunciton(Arrayprt,Arraylist);
 
-	RunTimeState* Dictprt = CreateModuleRunTime("CDict");
+	RunTimeState* Dictprt = CreateModuleRunTime("CDict",vmstate);
 	RegisterModuleFunciton(Dictprt,Dictlist);
 
-	RunTimeState* Regexprt = CreateModuleRunTime("CRegex");
+	RunTimeState* Regexprt = CreateModuleRunTime("CRegex",vmstate);
 	RegisterModuleFunciton(Regexprt, RegexList);
 
-	RunTimeState* Jsonprt = CreateModuleRunTime("CJson");
+	RunTimeState* Jsonprt = CreateModuleRunTime("CJson",vmstate);
 	RegisterModuleFunciton(Jsonprt, JsonList);
 }

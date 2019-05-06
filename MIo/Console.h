@@ -1,9 +1,9 @@
 #pragma once
-#include "Menthol.h"
+#include "../Menthol/MentholHeader.h"
 namespace Console
 {
-	StackState Out();
-	StackState Oute();
-	StackState In();
-	StackState Clear();
+	StackState Out(VmState* vmstate);
+	StackState Oute(VmState* vmstate);
+	StackState In(VmState* vmstate);
+	StackState Clear(VmState* vmstate);
 }

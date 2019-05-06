@@ -91,19 +91,21 @@ void FunctionDefinition::Release()
 	DELETETHIS
 }
 
-FunctionParameter::FunctionParameter(string s){
+FunctionParameter::FunctionParameter(string s,bool _isconst){
 	wfileaddressline = lineno;
 	name = s;
 	NType = MNT_FunctionParameter;
 	defaultvalue = 0;
+	isconst =_isconst;
 }
 
 
-FunctionParameter::FunctionParameter(string s,Statement* _defaultvalue){
+FunctionParameter::FunctionParameter(string s,Statement* _defaultvalue,bool _isconst){
 	wfileaddressline = lineno;
 	name = s;
 	NType = MNT_FunctionParameterWithDefault;
 	defaultvalue = _defaultvalue;
+	isconst =_isconst;
 	/*if(_defaultvalue->NType==MNT_PlusExpression || _defaultvalue->NType==MNT_MinusExpression)
 	{
 		ValueType v = static_cast<BuiltinTypeDeclare*>(_defaultvalue)->GetBuiltinTypeValue().v;
@@ -122,7 +124,7 @@ void FunctionParameter::CreateCode()
 	{
 		sl->StackID++;
 	}
-	if(!sl->AddLocalMemory(name,wfileaddressline))
+	if(!sl->AddLocalMemory(name,wfileaddressline,isconst))
 	{
 		MError::CreateInstance()->PrintError(name+" redefinition",wfileaddressline);
 	}
@@ -486,7 +488,8 @@ void InitializationList::ModfiyMemberScope(Scope _scope)
 AssignmentDefinition::AssignmentDefinition(Statement * _s,string _oper,Statement * _e,bool _t)
 {
 	StatementList* sl = StatementList::GetInstance();
-	if(_s->NType==MNT_MinusExpression ||_s->NType==MNT_PlusExpression||_s->NType==MNT_ArrayDeclare||_s->NType==MNT_DictDeclare||_s->NType==MNT_FunctionCall){
+	if(_s->NType==MNT_MinusExpression ||_s->NType==MNT_PlusExpression||_s->NType==MNT_ArrayDeclare||_s->NType==MNT_DictDeclare||_s->NType==MNT_FunctionCall
+		|| _s->NType==MNT_BuiltinTypeDeclare || _s->NType==MNT_ModuleFunCall || _s->NType==MNT_ModuleFunctionDefinition){
 		MError::CreateInstance()->PrintError("Invalid left-hand side in assignment");//被赋值的左值无效	
 	} 
 	
@@ -552,14 +555,24 @@ void AssignmentDefinition:: CreateCode()
  					MError::CreateInstance()->PrintError(name+" undeclared identifier",wfileaddressline);	//未找到
 			}else
 			{
+				if(lva.isconst)
+				{
+					MError::CreateInstance()->PrintError(name+" is a constant variable and cannot be assigned",wfileaddressline);	//对const 赋值
+				}
 				sl->AddCode(OP_STORES,wfileaddressline);
 				sl->AddCode(lva.index,wfileaddressline);
 				//sl->StackID++;
 			}
 		}else
 		{
-				if(sl->FindGlobalMemory(name).hash==-1){
+				GlobalVarAttr gva = sl->FindGlobalMemory(name);
+				if(gva.hash==-1){
 					MError::CreateInstance()->PrintError(string(name +string(" undeclared identifier")),wfileaddressline);//未找到	
+				}
+
+				if(gva.isconst)
+				{
+					MError::CreateInstance()->PrintError(name+" is a constant variable and cannot be assigned",wfileaddressline);	//对const 赋值
 				}
 				sl->AddCode(OP_STOREM,wfileaddressline);
 				sl->AddCode(MCommon::CreateInstance()->ELFHash(name),wfileaddressline);
@@ -598,7 +611,7 @@ void AssignmentDefinition::Release()
 	DELETETHIS
 }
 
-InitializationDefinition::InitializationDefinition(Statement * _name,Statement * _e):btd(0)
+InitializationDefinition::InitializationDefinition(Statement * _name,Statement * _e,bool _isconst):btd(0),isconst(_isconst)
 {
 	StatementList* sl = StatementList::GetInstance();
 	e = _e;
@@ -634,14 +647,14 @@ void InitializationDefinition::CreateCode()
 		SAVESTACKID
 		e->CreateCode();
 
-		if(scope==GLOBAL && !sl->AddGlobalMemory(name))
+		if(scope==GLOBAL && !sl->AddGlobalMemory(name,isconst))
 		{
 			MError::CreateInstance()->PrintError(name+" redefinition",wfileaddressline);
 		}
 		
 		if(scope==LOCAL)
 		{
-			if(!sl->AddLocalMemory(name,wfileaddressline))
+			if(!sl->AddLocalMemory(name,wfileaddressline,isconst))
 			{
 				MError::CreateInstance()->PrintError(name+" redefinition",wfileaddressline);
 			}
@@ -651,6 +664,12 @@ void InitializationDefinition::CreateCode()
 			
 			sl->AddCode(OP_INITM,wfileaddressline);
 			sl->AddCode(sl->FindGlobalMemory(name).hash,wfileaddressline);
+			if(isconst){
+				sl->AddCode(1,wfileaddressline);
+			}else
+			{
+				sl->AddCode(0,wfileaddressline);
+			}
 		}
 		RESTORESTACKID	
 		if(scope==LOCAL)
@@ -1792,17 +1811,17 @@ void ThrowExpression::Release()
 }
 
 
-TryParameter::TryParameter(string s){
+TryParameter::TryParameter(string s,bool _isconst){
 	wfileaddressline = lineno;
 	name = s;
 	NType = MNT_TryParameter;
-	
+	isconst =_isconst;
 }
 void TryParameter::CreateCode()
 {
 	StatementList* sl = StatementList::GetInstance();
 	sl->StackID++;
-	if(!sl->AddLocalMemory(name,wfileaddressline))
+	if(!sl->AddLocalMemory(name,wfileaddressline,isconst))
 	{
 		MError::CreateInstance()->PrintError(name+" redefinition",wfileaddressline);
 	}
@@ -1853,6 +1872,24 @@ void TryParameterStatement::Release()
 	DELETETHIS
 }
 
+
+ImportPackagePath::ImportPackagePath(string _s)
+{
+	filename = _s;
+}
+void ImportPackagePath::AddPathString(string _s)
+{
+	filename +="/";
+	filename +=_s;
+}
+string ImportPackagePath::GetPath()
+{
+	return filename;
+}
+void ImportPackagePath::Release()
+{
+	DELETETHIS
+}
 
 
 

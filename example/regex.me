@@ -1,13 +1,29 @@
-import "string";
-import "example1";
-import "console";
-use Console,example1,Regex;
+import string;
+import console;
+import network.curl.System;
+import network.curl.setopt;
+import network.curl.getinfo;
+import network.curl.code;
+import network.curl.callback;
+use Console,String,CurlSystem,CurlSetOpt,CurlGetInfo,CurlCode,CurlCallback,Regex;
+
+module test
+{
+	def getsource:$str
+	{
+		var $a = Regex.Exec($str,"<img.*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>");	
+		for(var $s in $a){		
+			Console.Out($s[1]);		
+		}	
+	}
+}
+
 _mmain:$a,$c
 {	
 
-	var $str = example1.HttpGet("http://www.ltplayer.com/");
-	$a = Regex.Exec($str,"<img.*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>");	
-	for(var $s in $a){		
-		Console.Out($s[1]);		
-	}	
+	var $curl = CurlSystem.init();
+	 CurlSetOpt.url($curl, "http://www.ltplayer.com/");
+	 CurlCallback.writefunction($curl,test.getsource);
+	 var $res = CurlSystem.perform($curl);
+	 CurlSystem.cleanup($curl);	
 }

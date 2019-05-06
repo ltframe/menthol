@@ -1,0 +1,27 @@
+import miup;
+use CIup;
+module IupString
+{
+	def SetLanguage:$arg1
+	{
+		return CIup.SetLanguage($arg1);
+	}
+
+	def GetLanguage:
+	{
+		return CIup.GetLanguage();
+	}
+
+	def SetLanguageString:$arg1,$arg2
+	{
+		return CIup.SetLanguageString($arg1,$arg2);
+	}
+
+	def GetLanguageString:$arg1
+	{
+		return CIup.GetLanguageString($arg1);
+	}
+
+}
+
+

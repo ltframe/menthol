@@ -1,0 +1,21 @@
+import mthread;
+use CThread;
+module Thread
+{
+	def NewThread:$arg1
+	{
+		return CThread.NewThread($arg1);
+	}
+	def Join:$arg1
+	{
+		return CThread.Join($arg1);
+	}
+	def Lock:
+	{
+		return CThread.Lock();
+	}
+	def UnLock:
+	{
+		return CThread.UnLock();
+	}
+}

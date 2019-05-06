@@ -1,10 +1,10 @@
 #pragma once
-#include "Menthol.h"
+#include "../Menthol/MentholHeader.h"
 
 namespace DateTime
 {
-	StackState CurrentDate();
-	StackState CurrentTime();
-	StackState TimeZone();
+	StackState CurrentDate(VmState* vmstate);
+	StackState CurrentTime(VmState* vmstate);
+	StackState TimeZone(VmState* vmstate);
 };
 

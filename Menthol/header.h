@@ -50,9 +50,9 @@ class Statement;
 #define VECTORFOREND }
 
 
-#define STACKSTATEPOINTER StackState*
 
-#define VECOTRSTACKSTATE  vector<StackState>
+
+
 #define VECOTRSTACKSTATEPOINTER  VECOTRSTACKSTATE*
 #define STATICCAST(T,P) static_cast<T*>(P)
 #define CONSTCAST(T)  const_cast<T*>
@@ -135,6 +135,7 @@ enum NodeType{
 	MNT_ImportPackageExpression,
 	MNT_ModuleExpresson,
 	MNT_ModuleFunCall,
+	MNT_ModuleFunctionDefinition,
 	MNT_TernaryExpression,
 	MNT_DictExpression,
 	MNT_FunctionCall,
@@ -221,7 +222,8 @@ enum OperateCode{
 	OP_TJMP,
 	OP_ADD1,
 	OP_INVERTER,
-	OP_TYPEOF
+	OP_TYPEOF,
+	OP_CONST
 	};
 
 enum PackAgeType{

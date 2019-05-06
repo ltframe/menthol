@@ -1,0 +1,42 @@
+import MCryptography;
+import String;
+use CRC,String;
+module Rcx
+{
+	def RC4Encryp:$arg1,$arg2
+	{
+		if(String.Length($arg2)!=16)
+		{
+			return -1;
+		}
+		return CRC.RC4Encryp($arg1,$arg2);
+	}
+
+	def  RC4Decryp:$arg1,$arg2
+	{
+		if(String.Length($arg2)!=16)
+		{
+			return -1;
+		}
+		return CRC.RC4Decryp($arg1,$arg2);
+	}
+
+	def  RC2Encryp:$arg1,$arg2
+	{
+		if(String.Length($arg2)!=16)
+		{
+			return -1;
+		}
+		return CRC.RC2Encryp($arg1,$arg2);
+	}
+	def  RC2Decryp:$arg1,$arg2
+	{
+		if(String.Length($arg2)!=16)
+		{
+			return -1;
+		}
+		return CRC.RC2Decryp($arg1,$arg2);
+	}	
+}
+
+

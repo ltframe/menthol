@@ -1,0 +1,55 @@
+import miup;
+use CIup;
+module IupImages
+{
+	def Image:$arg1,$arg2,$arg3
+	{
+		return CIup.Image($arg1,$arg2,$arg3);
+	}
+	def LoadImage:$arg1
+	{
+		return CIup.LoadImage($arg1);
+	}
+
+	def SaveImage:$arg1,$arg2,$arg3
+	{
+		return CIup.SaveImage($arg1,$arg2,$arg3);
+	}
+
+	def LoadAnimation:$arg1
+	{
+		return CIup.LoadAnimation($arg1);
+	}
+
+	def LoadAnimationFrames:$arg1
+	{
+		return CIup.LoadAnimationFrames($arg1);
+	}
+
+	def GetNativeHandleImage:
+	{
+		return CIup.GetNativeHandleImage();
+	}
+
+	def GetImageNativeHandle:$arg1
+	{
+		return CIup.GetImageNativeHandle($arg1);
+	}
+
+	def ImageFromImImage:$arg1
+	{
+		return CIup.ImageFromImImage($arg1);
+	}
+
+	def ImageToImImage:$arg1
+	{
+		return CIup.ImageToImImage($arg1);
+	}
+
+	def SaveImageAsText:$arg1,$arg2,$arg3,$arg4
+	{
+		return CIup.SaveImageAsText($arg1,$arg2,$arg3,$arg4);
+	}
+}
+
+

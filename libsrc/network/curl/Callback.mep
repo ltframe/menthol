@@ -1,0 +1,17 @@
+import mlibcurl;
+use CCurl_Callback;
+module CurlCallback
+{
+	def writefunction:$arg1,$arg2
+	{
+		return CCurl_Callback.writefunction($arg1,$arg2);
+	}
+	def readfunction:$arg1,$arg2
+	{
+		return CCurl_Callback.readfunction($arg1,$arg2);
+	}
+	def headerfunction:$arg1,$arg2
+	{
+		return CCurl_Callback.headerfunction($arg1,$arg2);
+	}
+}

@@ -1,4 +1,4 @@
-import "msystem";
+import msystem;
 use CEnvironment;
 module Environment{
 	def Version:

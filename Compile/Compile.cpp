@@ -1,6 +1,7 @@
 #include "stdafx.h"
-#include "Menthol.h"
+#include "../Menthol/MentholHeader.h"
 #include <stdlib.h>  
+
 
 int error(char* str,char* cf,int line)
 {
@@ -9,10 +10,8 @@ int error(char* str,char* cf,int line)
 	printf("\r\n");
 	return 1;
 }
-
 int main(int argc, char * argv[])
 {
-	bool debug  = false;
 	SetPrintCompileErrorFunc(error);	
 	int c = Compile(argv[1]);
 	if(!c){

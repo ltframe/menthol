@@ -89,7 +89,7 @@ StatementList::~StatementList(void)
 
 
 
-bool StatementList::AddLocalMemory(string _name,int _lineno){
+bool StatementList::AddLocalMemory(string _name,int _lineno,bool _isconst){
 
 	if(IsGlobalVar(_name)){
 		MError::CreateInstance()->PrintError("Do not allow global variables to be declared inside a function "+_name,_lineno);	
@@ -108,6 +108,7 @@ bool StatementList::AddLocalMemory(string _name,int _lineno){
 	LocalVarAttr lv;
 	lv.name = _name;
 	lv.index = StackID;
+	lv.isconst = _isconst;
 	LocalMemory->push_back(lv);
 	localcount++;
 	return true;
@@ -217,7 +218,7 @@ void StatementList::AddToIncludeFile(string filename)
 		{
 			HMODULE h = ::LoadLibrary(physicalpath.c_str());
 			initfuncallback ProcAdd = (initfuncallback)GetProcAddress(h, "MP_Init");
-			ProcAdd();
+			ProcAdd(0);
 			FreeLibrary(h);
 		}
 	}
@@ -274,7 +275,7 @@ bool StatementList::IsGlobalVar(string name)
 	return false;
 }
 
-bool StatementList::AddGlobalMemory(string _name){
+bool StatementList::AddGlobalMemory(string _name,bool _isconst){
 	//for (std::vector<GlobalVarAttr>::iterator it = GlobalMemory->begin() ; it != GlobalMemory->end(); ++it)
 	//{
 	VECTORFORSTART(GlobalVarAttr, currentmodule.globalmemory, it)
@@ -286,6 +287,7 @@ bool StatementList::AddGlobalMemory(string _name){
 	GlobalVarAttr lv;
 	lv.name = _name;
 	lv.hash = MCommon::CreateInstance()->ELFHash(_name);
+	lv.isconst = _isconst;
 	currentmodule.globalmemory->push_back(lv);
 	//AddStringConstants(_name);
 	return true;
@@ -424,6 +426,7 @@ void StatementList::CreateCode(vector<Statement*>* _CompileStructTable,string ex
 					AddCode(0); ////set strings length
 					int codestart = GetIpi();
 					(*it)->CreateCode();
+					AddCode(OP_HALT);//每一个条全局变量执行后，要返回
 					SetCode(GetIpi()-codestart,codelengthpostion);
 				}
 			/*}*/

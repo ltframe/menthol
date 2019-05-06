@@ -1,0 +1,30 @@
+import miup;
+use CIup;
+module IupHandle
+{
+	def SetHandle:$arg1,$arg2
+	{
+		return CIup.SetHandle($arg1,$arg2);
+	}
+
+	def GetHandle:$arg1
+	{
+		return CIup.GetHandle($arg1);
+	}
+
+	def GetName:$arg1
+	{
+		return CIup.GetName($arg1);
+	}
+
+	def GetAllNames:$arg1
+	{
+		return CIup.GetAllNames($arg1);
+	}
+	def GetAllDialogs:$arg1
+	{
+		return CIup.GetAllDialogs($arg1);
+	}
+}
+
+

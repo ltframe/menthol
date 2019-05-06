@@ -1,5 +1,5 @@
-import "console";
-import "example1";
+import console;
+import example1;
 use Console,example1;
 
 module test
@@ -11,7 +11,9 @@ module test
 }
 _mmain:$a,$c
 {	
-	while(true){
+	var $i=0;
+	while($i<100){
 		example1.CallBack(test.test);
+		$i+=1;
 	}
 }

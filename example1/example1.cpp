@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "Menthol.h"
+#include "../Menthol/MentholHeader.h"
 #include <string>
 #include <iostream>
 #include <string>
@@ -22,37 +22,41 @@
 #include <windows.h>
 #include <wininet.h>
 #pragma comment(lib,"Wininet.lib")
+#pragma comment(lib,"libzplay.lib")
+#include <process.h>
+
 using namespace std; 
 
-
-StackState test()
+StackState test(VmState* vmstate)
 {
-	StackState value =GetParam(1);
+
 	StackState st;
 	st.v = M_STRING;
-	st = String_CreateString("this is a test string");
+	st = String_CreateString("this is a test string", vmstate);
 	return st;
+
 }
 
 
-StackState CallBack()
+
+StackState CallBack(VmState* vmstate)
 {
-	StackState value1 =GetParam(1);
-	CreateFunctionCall(1);
-	StackState arr = Array_CreateArray();
+	StackState value1 =GetParam(1,vmstate);
+	CreateFunctionCall(1, vmstate);
+	StackState arr = Array_CreateArray(vmstate);
 	StackState v;
 	v.v = M_NUMBER;
 	v.d = 789456;
 	Array_Push(arr.parray,v);
-	PushArray(arr.parray);
-	StackState ret = CallFunction(value1);
+	PushArray(arr.parray, vmstate);
+	StackState ret = CallFunction(value1,vmstate);
 	return ret;
 }
 
 using namespace libZPlay;
 
 
-StackState CreatePlay()
+StackState CreatePlay(VmState* vmstate)
 {
 	ZPlay *player = CreateZPlay();
 	StackState t;
@@ -61,19 +65,19 @@ StackState CreatePlay()
 	return t;
 }
 
-StackState OpenFile()
+StackState OpenFile(VmState* vmstate)
 {
-	StackState inst =GetParam(1);
-	StackState file =GetParam(2);
-	StackState func =GetParam(3);
+	StackState inst =GetParam(1,vmstate);
+	StackState file =GetParam(2,vmstate);
+	StackState func =GetParam(3,vmstate);
 	ZPlay *player = static_cast<ZPlay*>(inst.p);
 	int result = player->OpenFile(file.str->string, sfAutodetect);
 	StackState t;
 	if(result == 0)
 	{
-		CreateFunctionCall(1);
-		PushString(String_CreateString(player->GetError()).str);
-		CallFunction(func);
+		CreateFunctionCall(1, vmstate);
+		PushString(String_CreateString(player->GetError(), vmstate).str,vmstate);
+		CallFunction(func, vmstate);
 	}
 	t.b= result;
 	t.v = M_BOOL;
@@ -82,9 +86,9 @@ StackState OpenFile()
 
 
 
-StackState Release()
+StackState Release(VmState* vmstate)
 {
-	StackState inst =GetParam(1);
+	StackState inst =GetParam(1,vmstate);
 	ZPlay *player = static_cast<ZPlay*>(inst.p);
 	player->Release();
 	StackState st;
@@ -93,13 +97,13 @@ StackState Release()
 }
 
 
-StackState GetStreamInfo()
+StackState GetStreamInfo(VmState* vmstate)
 {
-	StackState inst =GetParam(1);
+	StackState inst =GetParam(1,vmstate);
 	ZPlay *player = static_cast<ZPlay*>(inst.p);
 	TStreamInfo info;
 	player->GetStreamInfo(&info);		
-	StackState st = Dict_CreateDict();
+	StackState st = Dict_CreateDict(vmstate);
 	StackState _d;
 	_d.v =M_NUMBER;
 	_d.d = info.Length.hms.hour;
@@ -112,10 +116,10 @@ StackState GetStreamInfo()
 }
 
 
-StackState Play()
+StackState Play(VmState* vmstate)
 {
-	StackState inst =GetParam(1);
-	StackState func =GetParam(2);
+	StackState inst =GetParam(1,vmstate);
+	StackState func =GetParam(2,vmstate);
 	ZPlay *player = static_cast<ZPlay*>(inst.p);
 	player->Play();
 	while(1)
@@ -128,8 +132,8 @@ StackState Play()
 		player->GetPosition(&pos);
 		// display position
 
-		CreateFunctionCall(1);
-		StackState st = Dict_CreateDict();
+		CreateFunctionCall(1,vmstate);
+		StackState st = Dict_CreateDict(vmstate);
 		StackState _d;
 		_d.v =M_NUMBER;
 		_d.d = pos.hms.hour;
@@ -141,12 +145,12 @@ StackState Play()
 		_d.d = pos.hms.millisecond;
 		Dict_Push("Millisecond",st.pdict,_d);
 		
-		PushDict(st.pdict);
+		PushDict(st.pdict, vmstate);
 
 		player->GetStatus(&status);	
 
-		PushNumber(status.fPlay);
-		CallFunction(func);
+		PushNumber(status.fPlay, vmstate);
+		CallFunction(func, vmstate);
 		if(status.fPlay == 0){
 			break;
 		}
@@ -157,9 +161,9 @@ StackState Play()
 	return st;
 }
 
-StackState Play2()
+StackState Play2(VmState* vmstate)
 {
-	StackState inst =GetParam(1);
+	StackState inst =GetParam(1,vmstate);
 	ZPlay *player = static_cast<ZPlay*>(inst.p);
 	player->Play();
 	StackState st;
@@ -167,14 +171,14 @@ StackState Play2()
 	return st;
 }
 
-StackState GetPosition()
+StackState GetPosition(VmState* vmstate)
 {
-	StackState inst =GetParam(1);
+	StackState inst =GetParam(1,vmstate);
 	ZPlay *player = static_cast<ZPlay*>(inst.p);
 	TStreamTime pos;
 	player->GetPosition(&pos);
 
-	StackState st = Dict_CreateDict();
+	StackState st = Dict_CreateDict(vmstate);
 	StackState _d;
 	_d.v =M_NUMBER;
 	_d.d = pos.hms.hour;
@@ -187,9 +191,9 @@ StackState GetPosition()
 }
 
 
-StackState GetStatus()
+StackState GetStatus(VmState* vmstate)
 {
-	StackState inst =GetParam(1);
+	StackState inst =GetParam(1,vmstate);
 	ZPlay *player = static_cast<ZPlay*>(inst.p);
 	TStreamStatus status;
 	player->GetStatus(&status);	
@@ -200,11 +204,11 @@ StackState GetStatus()
 }
 
 
-StackState HttpGet()
+StackState HttpGet(VmState* vmstate)
 {
 	StackState ret;
 	string v;
-	char* szUrl = GetParam(1).str->string;
+	char* szUrl = GetParam(1,vmstate).str->string;
     char* szAgent= "";
     HINTERNET hInternet1 = 
         InternetOpen(NULL,INTERNET_OPEN_TYPE_PRECONFIG,NULL,NULL,NULL);
@@ -245,12 +249,12 @@ StackState HttpGet()
      } while (NULL != dwReadDataLength);
 	 InternetCloseHandle(hInternet2);
      InternetCloseHandle(hInternet1);
-	 ret = String_CreateString(const_cast<char*>(v.c_str()));
+	 ret = String_CreateString(const_cast<char*>(v.c_str()), vmstate);
 	 free(pBuf);
 	return ret;
 }
 
-StackState HideCursor()
+StackState HideCursor(VmState* vmstate)
 {
 	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_CURSOR_INFO CursorInfo;
@@ -265,7 +269,6 @@ StackState HideCursor()
 
 UserFunctionAtter example1list[] = {
 	{ "HideCursor", HideCursor, 0 },
-	{ "test", test, 0 },
 	{ "CallBack", CallBack, 1 },
 	{ "CreatePlay", CreatePlay, 0 },
 	{ "OpenFile", OpenFile, 3 },
@@ -276,12 +279,13 @@ UserFunctionAtter example1list[] = {
 	{ "GetPosition", GetPosition, 1 },
 	{ "GetStatus", GetStatus, 1 },
 	{ "HttpGet", HttpGet, 1 },
+	{ "test", test ,0},
 	{NULL,NULL,0}
 };
 
-MentholModuleMethod void MP_Init()
+MentholModuleMethod void MP_Init(VmState* vmstate)
 {
-	RunTimeState* prt = CreateModuleRunTime("example1");
+	RunTimeState* prt = CreateModuleRunTime("example1",vmstate);
 	RegisterModuleFunciton(prt, example1list);
 }
 

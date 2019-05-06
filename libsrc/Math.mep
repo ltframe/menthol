@@ -1,8 +1,8 @@
-import "msystem";
+import msystem;
 use CMath;
 module Math
 {
-	var @PI = 3.14159265358979323846,@E=2.7182818284590452354;
+	var const @PI = 3.14159265358979323846,const @E=2.7182818284590452354;
 	def Abs:$n
 	{
 		if(typeof($n)!="M_NUMBER"){
@@ -163,12 +163,9 @@ module Math
 	   return CMath.Tanh($n);
 	}
 
-	def Random:$n
+	def Random:
 	{
-		if(typeof($n)!="M_NUMBER"){
-			return null;
-		}
-		return CMath.Tanh($n);
+		return CMath.Random();
 	}
 
 	def Cbrt:$n
@@ -177,13 +174,5 @@ module Math
 			return null;
 		}
 		return CMath.Cbrt($n);
-	}
-
-	def Truncate :$n
-	{
-		if(typeof($n)!="M_NUMBER"){
-			return null;
-		}
-		return CMath.Truncate($n);
 	}
 }

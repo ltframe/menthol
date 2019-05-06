@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "Menthol.h"
+#include "../Menthol/MentholHeader.h"
 #include <string>
 #include <iostream>
 #include <string>
@@ -19,6 +19,9 @@
 #include "Console.h"
 #include "File.h"
 #include "Drives.h"
+#pragma comment(lib,"Shlwapi.lib")
+
+
 using namespace std;
 
 UserFunctionAtter Directorylist[] = {
@@ -30,6 +33,8 @@ UserFunctionAtter Directorylist[] = {
 	{"Mkdir",Directory::Mkdir,1},
 	{"Rename",Directory::Rename,2},
 	{"Exists",Directory::Exists,1},
+	{"Rename",Directory::IsDirectory,1},
+	{"Exists",Directory::GetDirectoryList,1},
 	{NULL,NULL,0}
 }; 
 
@@ -42,9 +47,11 @@ UserFunctionAtter Consolelist[] = {
 }; 
 
 UserFunctionAtter Filelist[] = {
-	{"Readfile",File::Readfile,1},	
+	{"Open",File::Open,2},	
+	{"Readfile",File::Readfile,1},
+	{"Close",File::Close,1},
 	{"Writefile",File::Writefile,2},
-	{"Copy",File::Copy,3},
+	{"Copy",File::Copy,2},
 	{"Create",File::Create,1},
 	{"Delete",File::Delete,1},
 	{"Exists",File::Exists,1},
@@ -52,6 +59,8 @@ UserFunctionAtter Filelist[] = {
 	{"GetCreationTime",File::GetCreationTime,1},
 	{"GetLastAccessTime",File::GetLastAccessTime,1},
 	{"GetLastWriteTime",File::GetLastWriteTime,1},
+	{"IsFile",File::IsFile,1},
+	{"GetFileList",File::GetFileList,1},
 	{NULL,NULL,0}
 }; 
 
@@ -65,17 +74,18 @@ UserFunctionAtter Driveslist[] = {
 }; 
 	
 
-MentholModuleMethod void	MP_Init()
+MentholModuleMethod void MP_Init(VmState* vmstate)
 {
-	RunTimeState* Directoryprt = CreateModuleRunTime("CDirectory");
+	RunTimeState* Directoryprt = CreateModuleRunTime("CDirectory",vmstate);
 	RegisterModuleFunciton(Directoryprt,Directorylist);
 
-	RunTimeState* Consoleprt = CreateModuleRunTime("CConsole");
+	RunTimeState* Consoleprt = CreateModuleRunTime("CConsole",vmstate);
 	RegisterModuleFunciton(Consoleprt,Consolelist);
 
-	RunTimeState* Fileprt = CreateModuleRunTime("CFile");
+	RunTimeState* Fileprt = CreateModuleRunTime("CFile",vmstate);
 	RegisterModuleFunciton(Fileprt,Filelist);
 
-	RunTimeState* Drivesprt = CreateModuleRunTime("CDrives");
+	RunTimeState* Drivesprt = CreateModuleRunTime("CDrives",vmstate);
 	RegisterModuleFunciton(Drivesprt,Driveslist);
 }
+

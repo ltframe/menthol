@@ -24,6 +24,7 @@ void SetPrintRunTimeErrorFunc(PrintErrorFunc _pef)
 
 int Compile(char* cfile)
 {
+
 	StatementList *als =new StatementList();
 	MError* _MError = new MError();
 	MError::CreateInstance()->SetCompilePrintErrorFunc(_PrintCompileErrorFunc);
@@ -97,6 +98,9 @@ int Run(char* files,char* arg1,char* arg2)
 	MError::CreateInstance()->SetRunTimePrintErrorFunc(_PrintRunTimerrorFunc);
 	Vm::Init();
 
+	VmState* vmstate = Vm::NewVmState();
+	Vm::_NewVm(vmstate);
+
 	StackState v1;
 	v1.v = M_NULL;
 	v1.i=0;
@@ -107,41 +111,41 @@ int Run(char* files,char* arg1,char* arg2)
 
 
 	if(arg1){
-		v1.str=Vm::CreateString(arg1);
+		v1.str=Vm::CreateString(arg1,vmstate);
 		v1.v = M_STRING;
 	}
 	if(arg2){
-		v2.str=Vm::CreateString(arg2);
+		v2.str=Vm::CreateString(arg2,vmstate);
 		v2.v = M_STRING;
 	}
 
 
 
-	Vm::InitStack(v1,v2);
+	Vm::InitStack(v1,v2,vmstate);
 
 	PathInfo pinfo = MCommon::CreateInstance()->StringPathSplit(files);
 
 	string flag = MBinary::CreateInstance()->ReadPackageFormat(files);
 
 	if(flag != MENTHOLEXECUTEEXTENSION2){
-		MError::CreateInstance()->PrintRunTimeError(files+string(" is not menthol executable program"));
+		MError::CreateInstance()->PrintRunTimeError(files+string(" is not menthol executable program"),vmstate);
 		return 0;
 	}
 
 	
 	ImportFileAttr ifa = {files,MPA_USER_PACKAGE};
-	Vm::EntryPoint(ifa,CONSTCAST(char)((pinfo.drive+pinfo.dir).c_str()));
+	Vm::EntryPoint(ifa,CONSTCAST(char)((pinfo.drive+pinfo.dir).c_str()),vmstate);
 	return 0;
 }
 
-RunTimeState* CreateModuleRunTime(char* modulename)
+RunTimeState* CreateModuleRunTime(char* modulename,VmState *vmstate)
 {
 	if(iscompile)
 	{
 		StatementList::GetInstance()->AddExternalModuleList(modulename);
 		return 0;
 	}
-	return Vm::CreateModuleRunTime(modulename);
+	return Vm::CreateModuleRunTime(modulename,vmstate);
 }
 
 void RegisterModuleFunciton(RunTimeState* moduleinst,UserFunctionAtter* functionlist)
@@ -163,15 +167,15 @@ void RegisterModuleFunciton(RunTimeState* moduleinst,UserFunctionAtter* function
     }  
 }
 
-StackState GetParam(int index)
+StackState GetParam(int index,VmState * vmstate)
 {
-	return Vm::GetParam(index);
+	return Vm::GetParam(index,vmstate);
 }
 
-StackState Array_CreateArray()
+StackState Array_CreateArray(VmState * vmstate)
 {
 	StackState sk;
-	sk.parray = Vm::CreateArray();
+	sk.parray = Vm::CreateArray(vmstate);
 	sk.v= M_ARRAY;	
 	return sk;
 }
@@ -195,7 +199,7 @@ void Array_Set(pArray sk1,StackState sk2,int index){
 	ar->at(index)=sk2;
 }
 
-pString Array_Join(pArray a1,char* link)
+pString Array_Join(pArray a1,char* link,VmState *vmstate)
 {
 	VECOTRSTACKSTATEPOINTER ar1  = STATICCASTPARRAY(a1);
 	string str;
@@ -236,7 +240,7 @@ pString Array_Join(pArray a1,char* link)
 	//}
 	VECTORFOREND
 	str.erase(str.end() - 1);  
-	return  Vm::CreateString(CONSTCAST(char)(str.c_str()));
+	return  Vm::CreateString(CONSTCAST(char)(str.c_str()),vmstate);
 }
 
 pArray Array_Reverse(pArray a1)
@@ -253,10 +257,10 @@ void Array_Push(pArray p,StackState st){
 
 
 
-StackState Dict_CreateDict()
+StackState Dict_CreateDict(VmState * vmstate)
 {
 	StackState sk;
-	sk.pdict = Vm::CreateDict();
+	sk.pdict = Vm::CreateDict(vmstate);
 	sk.v= M_DICT;	
 	return sk;
 }
@@ -294,14 +298,14 @@ void Dict_Set(char* key,pDict pdict,StackState sk2)
 	_ss->find(hash)->second=sk2;
 }
 
-pString Dict_Key(pDict pdict,hashValue sk2)
+pString Dict_Key(pDict pdict,hashValue sk2,VmState *vmstate)
 {
 	map<hashValue,StackState>* _ss = (map<hashValue,StackState>*)(pdict->dict);	
 	for(map <hashValue, StackState>::iterator m1_Iter = _ss->begin( ); m1_Iter != _ss->end( ); m1_Iter++)
 	{
 		if((*m1_Iter).first==sk2)
 		{
-			return Vm::CreateDictKeyString(sk2);
+			return Vm::CreateDictKeyString(sk2,vmstate);
 		}
 	}
 	return 0;
@@ -309,10 +313,10 @@ pString Dict_Key(pDict pdict,hashValue sk2)
 
 
 
-StackState String_CreateString(char* str)
+StackState String_CreateString(char* str,VmState *vmstate)
 {
 	StackState sk;
-	sk.str = Vm::CreateString(str);
+	sk.str = Vm::CreateString(str,vmstate);
 	sk.v= M_STRING;	
 	return sk;
 }
@@ -320,35 +324,44 @@ StackState String_CreateString(char* str)
 
 
 
-void CreateFunctionCall(int pc)
+void CreateFunctionCall(int pc,VmState * vmstate)
 {
-	Vm::CreateFunctionCall(pc);
+	Vm::CreateFunctionCall(pc,vmstate);
 }
-void PushNumber(double d)
+void PushNumber(double d,VmState * vmstate)
 {
-	Vm::Push_Number(d);	
-}
-
-void PushString(pString str)
-{
-	Vm::Push_String(str);
+	Vm::Push_Number(d,vmstate);	
 }
 
-void PushArray(pArray arr)
+void PushString(pString str,VmState * vmstate)
 {
-	Vm::Push_Array(arr);
+	Vm::Push_String(str,vmstate);
 }
 
-void PushDict(pDict dict)
+void PushArray(pArray arr,VmState * vmstate)
 {
-	Vm::Push_Dict(dict);
+	Vm::Push_Array(arr,vmstate);
+}
+
+void PushDict(pDict dict,VmState * vmstate)
+{
+	Vm::Push_Dict(dict,vmstate);
+}
+
+void PushBool(bool arr,VmState * vmstate)
+{
+	Vm::Push_Bool(arr,vmstate);
+}
+void PushObject(pInst arr,VmState * vmstate)
+{
+	Vm::Push_Object(arr,vmstate);
 }
 
 
 
-StackState CallFunction(StackState fu)
+StackState CallFunction(StackState fu,VmState * vmstate)
 {
-	StackState func = Vm::CallFunction(fu);
+	StackState func = Vm::CallFunction(fu,vmstate);
 	return func;
 }
 
@@ -376,4 +389,27 @@ StackState Bool_CreateBool(bool b)
 	sk.v=M_BOOL;	
 	return sk;	
 
+}
+
+StackState Object_CreateObject(pInst p)
+{
+	StackState sk;
+	sk.p = p;
+	sk.v=M_OBJECT;	
+	return sk;
+}
+
+VmState* NewVmState()
+{
+	return Vm::NewVmState();
+}
+
+void NewVm(VmState* vmstate)
+{
+	Vm::NewVm(vmstate);
+}
+//多线程，用于清楚多线成产生的垃圾
+void ClearVmState(VmState* vmstate)
+{
+	Vm::ClearVmState(vmstate);
 }

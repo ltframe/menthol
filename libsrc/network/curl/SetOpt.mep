@@ -1,0 +1,397 @@
+import mlibcurl;
+use CCurl_Setopt;
+module CurlSetOpt
+{
+	def verbose:$arg1,$arg2
+	{
+		return CCurl_Setopt.verbose($arg1,41,$arg2); 
+	}
+
+	def header:$arg1,$arg2
+	{
+		return CCurl_Setopt.header($arg1,42,$arg2); 
+	}
+
+	def noprogress:$arg1,$arg2
+	{
+		 return CCurl_Setopt.noprogress($arg1,43,$arg2); 
+	}
+
+	def nosignal:$arg1,$arg2
+	{
+		 return CCurl_Setopt.nosignal($arg1,99,$arg2); 
+	}
+
+	def autoreferer:$arg1,$arg2
+	{
+		 return CCurl_Setopt.autoreferer($arg1,58,$arg2); 
+	}
+
+	def encoding:$arg1,$arg2
+	{
+		return CCurl_Setopt.encoding($arg1,10102,$arg2); 
+	}
+
+	def followlocation:$arg1,$arg2
+	{
+		 return CCurl_Setopt.followlocation($arg1,52,$arg2); 
+	}
+
+	def unrestricted_AUTH:$arg1,$arg2
+	{
+		return CCurl_Setopt.unrestricted_AUTH($arg1,105,$arg2); 
+	}
+
+	def maxredirs:$arg1,$arg2
+	{
+		return CCurl_Setopt.maxredirs($arg1,68,$arg2); 
+	}
+
+	def post:$arg1,$arg2
+	{
+		return CCurl_Setopt.post($arg1,47,$arg2); 
+	}
+
+	def postfields:$arg1,$arg2
+	{
+		return CCurl_Setopt.postfields($arg1,10015,$arg2); 
+	}
+
+	def postfieldsize:$arg1,$arg2
+	{
+		return CCurl_Setopt.postfieldsize($arg1,60,$arg2); 
+	}
+
+	def postfieldsize_LARGE:$arg1,$arg2
+	{
+		 return CCurl_Setopt.postfieldsize_LARGE($arg1,30120,$arg2); 
+	}
+
+	def httppost:$arg1,$arg2
+	{
+		return CCurl_Setopt.httppost($arg1,10024,$arg2); 
+	}
+
+	def referer:$arg1,$arg2
+	{
+		return CCurl_Setopt.referer($arg1,10016,$arg2); 
+	}
+
+	def useragent:$arg1,$arg2
+	{
+		 return CCurl_Setopt.useragent($arg1,10018,$arg2); 
+	}
+
+	def httpheader:$arg1,$arg2
+	{
+		 return CCurl_Setopt.httpheader($arg1,10023,$arg2); 
+	}
+
+	def httpauth:$arg1,$arg2
+	{
+		return CCurl_Setopt.httpauth($arg1,107,$arg2); 
+	}
+
+	def timeout:$arg1,$arg2
+	{
+		 return CCurl_Setopt.timeout($arg1,13,$arg2); 
+	}
+
+	def cookie:$arg1,$arg2
+	{
+		 return CCurl_Setopt.cookie($arg1,10022,$arg2); 
+	}
+
+	def cookiefile:$arg1,$arg2
+	{
+		 return CCurl_Setopt.cookiefile($arg1,10031,$arg2); 
+	}
+
+	def cookiejar:$arg1,$arg2
+	{
+		 return CCurl_Setopt.cookiejar($arg1,10082,$arg2); 
+	}
+
+	def cookiesession:$arg1,$arg2
+	{
+		 return CCurl_Setopt.cookiesession($arg1,96,$arg2); 
+	}
+
+	def cookielist:$arg1,$arg2
+	{
+		 return CCurl_Setopt.cookielist($arg1,10135,$arg2); 
+	}
+
+	def httpget:$arg1,$arg2
+	{
+		return CCurl_Setopt.httpget($arg1,80,$arg2); 
+	}
+
+	def http_version:$arg1,$arg2
+	{
+		 return CCurl_Setopt.http_version($arg1,84,$arg2); 
+	}
+	def ignore_content_length:$arg1,$arg2
+	{
+		 return CCurl_Setopt.ignore_content_length($arg1,136,$arg2); 
+	}
+
+	def http_content_decoding:$arg1,$arg2
+	{
+		 return CCurl_Setopt.http_content_decoding($arg1,158,$arg2); 
+	}
+
+	def http_transfer_decoding:$arg1,$arg2
+	{
+		return CCurl_Setopt.http_transfer_decoding($arg1,157,$arg2); 
+	}
+	def transfertext:$arg1,$arg2
+	{
+		return CCurl_Setopt.transfertext($arg1,53,$arg2); 
+	}
+
+	def crlf:$arg1,$arg2
+	{
+		return CCurl_Setopt.crlf($arg1,27,$arg2); 
+	}
+
+	def range:$arg1,$arg2
+	{
+		return CCurl_Setopt.range($arg1,10007,$arg2); 
+	}
+
+	def resume_from:$arg1,$arg2
+	{
+		 return CCurl_Setopt.resume_from($arg1,21,$arg2); 
+	}
+
+	def resume_from_large:$arg1,$arg2
+	{
+		return CCurl_Setopt.resume_from_large($arg1,30116,$arg2); 
+	}
+
+	def customrequest:$arg1,$arg2
+	{
+		 return CCurl_Setopt.customrequest($arg1,10036,$arg2); 
+	}
+
+	def filetime:$arg1,$arg2
+	{
+		 return CCurl_Setopt.filetime($arg1,69,$arg2); 
+	}
+
+	def nobody:$arg1,$arg2
+	{
+		return CCurl_Setopt.nobody($arg1,44,$arg2); 
+	}
+
+	def infilesize:$arg1,$arg2
+	{
+	  return CCurl_Setopt.infilesize($arg1,14,$arg2); 
+	}
+
+	def infilesize_large:$arg1,$arg2
+	{
+	  return CCurl_Setopt.infilesize_large($arg1,30115,$arg2); 
+	}
+
+	def upload:$arg1,$arg2
+	{
+	  return CCurl_Setopt.upload($arg1,46,$arg2); 
+	}
+
+	def maxfilesize:$arg1,$arg2
+	{
+	  return CCurl_Setopt.maxfilesize($arg1,114,$arg2); 
+	}
+
+	def maxfilesize_large:$arg1,$arg2
+	{
+	  return CCurl_Setopt.maxfilesize_large($arg1,30117,$arg2); 
+	}
+
+	def timecondition:$arg1,$arg2
+	{
+	  return CCurl_Setopt.timecondition($arg1,33,$arg2); 
+	}
+
+	def timevalue:$arg1,$arg2
+	{
+		return CCurl_Setopt.timevalue($arg1,34,$arg2); 
+	}
+	def url:$arg1,$arg2
+	{
+		return CCurl_Setopt.url($arg1,10002,$arg2); 
+	}
+
+	def protocols:$arg1,$arg2
+	{
+		return CCurl_Setopt.protocols($arg1,181,$arg2); 
+	}
+
+	def redir_protocols:$arg1,$arg2
+	{
+		return CCurl_Setopt.redir_protocols($arg1,182,$arg2); 
+	}
+
+	def proxy:$arg1,$arg2
+	{
+		return CCurl_Setopt.proxy($arg1,10004,$arg2); 
+	}
+
+	def username:$arg1,$arg2
+	{
+		return CCurl_Setopt.username($arg1,10173,$arg2); 
+	}
+
+	def password:$arg1,$arg2
+	{
+		return CCurl_Setopt.password($arg1,10174,$arg2); 
+	}
+
+	def userpwd:$arg1,$arg2
+	{
+		return CCurl_Setopt.userpwd($arg1,10005,$arg2); 
+	}
+
+	def proxyuserpwd:$arg1,$arg2
+	{
+		return CCurl_Setopt.proxyuserpwd($arg1,10006,$arg2); 
+	}
+
+	def proxyport:$arg1,$arg2
+	{
+		return CCurl_Setopt.proxyport($arg1,59,$arg2); 
+	}
+
+	def proxytype:$arg1,$arg2
+	{
+		 return CCurl_Setopt.proxytype($arg1,101,$arg2); 
+	}
+
+	def httpproxytunnel:$arg1,$arg2
+	{
+	  return CCurl_Setopt.httpproxytunnel($arg1,61,$arg2); 
+	}
+
+	def interface:$arg1,$arg2
+	{
+	  return CCurl_Setopt.interface($arg1,10062,$arg2); 
+	}
+
+	def localport:$arg1,$arg2
+	{
+		 return CCurl_Setopt.localport($arg1,139,$arg2); 
+	}
+
+	def localportrange:$arg1,$arg2
+	{
+		return CCurl_Setopt.localportrange($arg1,140,$arg2); 
+	}
+
+	def dns_cache_timeout:$arg1,$arg2
+	{
+		return CCurl_Setopt.dns_cache_timeout($arg1,92,$arg2); 
+	}
+
+	def dns_use_global_cache:$arg1,$arg2
+	{
+	  return CCurl_Setopt.dns_use_global_cache($arg1,91,$arg2); 
+	}	
+
+	def buffersize:$arg1,$arg2
+	{
+		return CCurl_Setopt.buffersize($arg1,98,$arg2); 
+	}
+
+	def port:$arg1,$arg2
+	{
+		return CCurl_Setopt.port($arg1,3,$arg2); 
+	}
+
+	def TCP_nodelay:$arg1,$arg2
+	{
+		return CCurl_Setopt.TCP_nodelay($arg1,121,$arg2); 
+	}
+
+	def sslcert:$arg1,$arg2
+	{
+		 return CCurl_Setopt.sslcert($arg1,64,$arg2); 
+	}
+
+	def sslcerttype:$arg1,$arg2
+	{
+		return CCurl_Setopt.sslcerttype($arg1,10086,$arg2); 
+	}
+
+	def sslcertpasswd:$arg1,$arg2
+	{
+		 return CCurl_Setopt.sslcertpasswd($arg1,10026,$arg2); 
+	}
+
+	def sslkey:$arg1,$arg2
+	{
+		return CCurl_Setopt.sslkey($arg1,10087,$arg2); 
+	}
+
+	def sslkeytype:$arg1,$arg2
+	{
+		return CCurl_Setopt.sslkeytype($arg1,10088,$arg2); 
+	}
+
+	def sslkeypasswd:$arg1,$arg2
+	{
+		return CCurl_Setopt.sslkeypasswd($arg1,10026,$arg2); 
+	}
+
+	def sslengine:$arg1,$arg2
+	{
+		 return CCurl_Setopt.sslengine($arg1,10089,$arg2); 
+	}
+
+	def sslengine_default:$arg1,$arg2
+	{
+		 return CCurl_Setopt.sslengine_default($arg1,90,$arg2); 
+	}
+
+	def ssl_verifypeer:$arg1,$arg2
+	{
+		return CCurl_Setopt.ssl_verifypeer($arg1,64,$arg2); 
+	}
+
+	def cainfo:$arg1,$arg2
+	{
+		return CCurl_Setopt.cainfo($arg1,10065,$arg2); 
+	}
+
+	def capath:$arg1,$arg2
+	{
+		return CCurl_Setopt.capath($arg1,10097,$arg2); 
+	}
+
+	def random_file:$arg1,$arg2
+	{
+		return CCurl_Setopt.random_file($arg1,10076,$arg2); 
+	}
+
+	def egdsocket:$arg1,$arg2
+	{
+		return CCurl_Setopt.egdsocket($arg1,10077,$arg2); 
+	}
+
+	def ssl_verifyhost:$arg1,$arg2
+	{
+		return CCurl_Setopt.ssl_verifyhost($arg1,81,$arg2); 
+	}
+
+	def ssl_cipher_list:$arg1,$arg2
+	{
+		return CCurl_Setopt.ssl_cipher_list($arg1,10083,$arg2); 
+	}
+
+	def ssl_sessionid_cache:$arg1,$arg2
+	{
+		return CCurl_Setopt.ssl_sessionid_cache($arg1,150,$arg2); 
+	}
+	
+}

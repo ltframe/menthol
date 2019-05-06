@@ -1,0 +1,38 @@
+module IupConst
+{
+	var  const @IUP_CENTER       = 65535;
+	var  const @IUP_LEFT         = 65534;
+	var  const @IUP_RIGHT        = 65534;        
+	var  const @IUP_MOUSEPOS     = 65532; 
+	var  const @IUP_CURRENT      = 65531;
+	var  const @IUP_CENTERPARENT = 65530; 
+	var  const @IUP_TOP          = 65534; 
+	var  const @IUP_BOTTOM       = 65534;    
+	var  const @IUP_IGNORE       = -1;
+	var  const @IUP_DEFAULT      =-2;
+	var  const @IUP_CLOSE        =-3;
+	var  const @IUP_CONTINUE     =-4; 
+	var  const @IUP_ERROR        =1;
+	var  const @IUP_NOERROR   	  =0;
+	var  const @IUP_OPENED       =-1; 
+	var  const @IUP_INVALID      =-1; 
+	var  const @IUP_INVALID_ID   =-10;
+	var  const @IUP_PRIMARY      =-1;
+	var  const @IUP_SECONDARY    =-2;
+	var  const @IUP_GETPARAM_BUTTON1  =-1;
+	var  const @IUP_GETPARAM_INIT     =-2;
+	var  const @IUP_GETPARAM_BUTTON2  =-3;
+	var  const @IUP_GETPARAM_BUTTON3  =-4;
+	var  const @IUP_GETPARAM_CLOSE    =-5;
+	var  const @IUP_GETPARAM_MAP      =-6;
+	var  const @IUP_GETPARAM_OK       =-1;
+	var  const @IUP_GETPARAM_CANCEL   =-3;
+	var  const @IUP_GETPARAM_HELP     =-4;
+	var  const @IUP_BUTTON1           ="1";
+	var  const @IUP_BUTTON2		   ="2";
+	var  const @IUP_BUTTON3           ="3";
+	var  const @IUP_BUTTON4           ="4";
+	var  const @IUP_BUTTON5           ="5";
+}
+
+

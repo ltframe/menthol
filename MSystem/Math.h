@@ -1,29 +1,29 @@
 #pragma once
-#include "Menthol.h"
+#include "../Menthol/MentholHeader.h"
 namespace Math
 {
-	StackState Abs();
-	StackState Acos();
-	StackState Asin();
-	StackState Atan();
-	StackState Atan2();
-	StackState Ceil();
-	StackState Cos();
-	StackState Cosh();
-	StackState Exp();
-	StackState Fabs();
-	StackState Floor();
-	StackState Fmod();
-	StackState Log();
-	StackState Log10();
-	StackState Pow();
-	StackState Sin();
-	StackState Sinh();
-	StackState Sqrt();
-	StackState Tan();
-	StackState Tanh();
-	StackState Random();
-	StackState Cbrt();
-	StackState Truncate();
+	StackState Abs(VmState* vmstate);
+	StackState Acos(VmState* vmstate);
+	StackState Asin(VmState* vmstate);
+	StackState Atan(VmState* vmstate);
+	StackState Atan2(VmState* vmstate);
+	StackState Ceil(VmState* vmstate);
+	StackState Cos(VmState* vmstate);
+	StackState Cosh(VmState* vmstate);
+	StackState Exp(VmState* vmstate);
+	StackState Fabs(VmState* vmstate);
+	StackState Floor(VmState* vmstate);
+	StackState Fmod(VmState* vmstate);
+	StackState Log(VmState* vmstate);
+	StackState Log10(VmState* vmstate);
+	StackState Pow(VmState* vmstate);
+	StackState Sin(VmState* vmstate);
+	StackState Sinh(VmState* vmstate);
+	StackState Sqrt(VmState* vmstate);
+	StackState Tan(VmState* vmstate);
+	StackState Tanh(VmState* vmstate);
+	StackState Random(VmState* vmstate);
+	StackState Cbrt(VmState* vmstate);
+	//StackState Truncate(VmState* vmstate);
 };
 
