@@ -5,73 +5,67 @@
 [Englist][1] [中文][2]
 
 # Menthol
-Menthol is an easy-to-use, easy-to-learn scripting language with a simple syntax and easy development. With C / C++, you can quickly develop extension methods.
+Menthol是一个简单、易用、易学的脚本语言,语法简单,开发简便,使用C/C++可以快速为它开发扩展
+
+## 特性
+* 无类型
+* 自动内存管理
+* 面向函数编程
+* 方便的函数封装
+* 简便的方法扩展
 
 
-## Teatures
-* No type
-* Automatic memory management
-* Functional programming
-* Convenient feature pack
-* Simple feature extension development
+## 教程说明
 
-
-## Tutorial
-
-###### Keywords
+###### 关键字
 ```html
 if else for break true false
 try except throw continue return while
 null import _mmain def var in typeof module use
 ```
 
-###### Operators
+###### 操作符
 ```html
 - * / () ; , | &  ? [] ! % ^ : :: .. = < > != <> || &&  >= <= == += -= /= *= %= &= |= ^= << >> **
 ```
-###### Basic concepts
-Menthol is a functional language, but it is a module-based language. In menthol, in addition to the startup function _mmain, other user-defined functions, such as global variables and functions, must be defined based on the module.
+###### 基本概念
+menthol是一个函数式语言，但它是基于模块操作的语言，在menthol,除了启动函数_mmain，其他用户定义的全局变量、函数都必须基于模块而定义.
 
-###### Use package
-A package is a collection of modules written in Mint or C/C++ with a .med extension. If you want to use a module in a package, you need to import it using the import keyword.
-
-    Import console;
-
-The console is the system's own input and output package, which contains modules that control the inputs and outputs. There is no need to distinguish between file cases when importing.
-
-
-###### use module
-After importing the package, you can use the modules inside the package. You need to use the use keyword before using it. Note that the module name is case sensitive. You can introduce multiple module names after use, separated by commas.
+###### 导入包
+包就是一个用menthol语言或者C/C++写成的模块集合，扩展名为.med,如果要使用包中的模块，需要用import关键字导入
 
     Import console;
-    Use the Console;
 
+console是系统自带的输入输出包，里面包含了控制输入输出的模块，导入时不需要区分文件大小写.
 
-If you want to import the package in the folder, you can use '.' instead of the '/' in the file path. To import the Iup's IupControlsStandard, use the button to use
+###### 使用模块
+导入包以后，就可以使用包内的模块了，使用前需要用use关键字来使用，注意，模块名是去区分大小写的,在一个use后面可以引入多个模块名，用逗号隔开
+
+    Import console;
+    use Console;
+
+如果要导入文件夹中的包，可以用'.'来代替文件路径中的'/',如要导入iup的IupControlsStandard,使用button,可以使用
 
 	Import iup.controlsstandard;
 	use IupControlsStandard;
 
+如果使用的模块在同一包内，并且在使用前已经定义，则不要用use在引入
 
-If you are using modules that are in the same package and defined before use, you do not need to reintroduce them using the use keyword.
-
-
-
-###### Variable concept
-All menthol programs start with the system automatically executing _mmain, using the keyword var to declare variables, all global variables must start with @, and there should be a $ in front of the local variable.Variables that cannot be modified are preceded by const
+###### 基本操作
+所有的menthol都由系统自动执行_mmain开始,声明变量使用关键字var,全部变量要在变量名前加@,局部变量要在变量名前加$,不可以修改的变量前面要用const修饰
 ```html
 module test
 {
-	var @global;// global variable
-	var const @global;// const global variable
+	var @global;// 全局变量
+	var const @global2;// const 全局变量
 }
 _mmain:$a,$c
 {    
-	var $v = 0; //local variable
-	var const $v2 = 0; //const local variable
+	var $v = 0; //局部变量
+	var cosnt $v2 = 0; //const 局部变量
 }
 ```
-###### Error handling
+###### 错误处理
 
 ```html
 Import console;
@@ -98,7 +92,7 @@ _mmain:$a,$c
 
 ```
 
-###### Array
+###### 数组
 
 ```html
 Import console;
@@ -107,9 +101,9 @@ _mmain:$a,$c
 {    
 	var $arr = [1,2,3,4,5,6];
 	Console.Out($arr[1]);
-	Console.Out($arr[1..][3]);
-	Console.Out($arr[..3][4]);
-	Console.Out($arr[2..5][5]);
+	Console.Out($arr[1..][7]);
+	Console.Out($arr[..3][8]);
+	Console.Out($arr[2..5][9]);
 	$arr = "abcdefghi";
 	Console.Out($arr[1]);
 }
@@ -120,7 +114,7 @@ _mmain:$a,$c
 
 
 
-###### Dictionary
+###### 字典
 
 ```html
 Import console;
@@ -147,7 +141,7 @@ _mmain:$a,$c
 ```
 
 
-###### Funciton
+###### 函数
 
 ```html
 Import console;
@@ -168,7 +162,8 @@ _mmain:$a,$c
 
 ```
 
-###### threading
+
+###### 多线程
 
 ```html
 import console;
@@ -206,14 +201,13 @@ _mmain:$a,$c
 
 
 ###### Gui
-Menthol uses iup as a class library for implementing interfaces
+Menthol使用iup作为实现界面的类库
 
 <div align=left>
 <img src="http://www.ltplayer.com/images/mentholhtmlimg/iup2.png"/></div>
 
 
-
-###### Develop an external extension library (c / c ++)
+###### 开发外部扩展库(c/c++)
 example1.dll
 
 ```cpp
@@ -239,7 +233,7 @@ MentholPackMethod void example1_Init(VmState* vmstate)
 }
 
 ```
-For more information on menthol, please visit [menthol document][6]
+关于更多的menthol的相关文档，请浏览[menthol文档][10]
 
 
   [1]: https://github.com/ltframe/menthol/blob/master/README.md
@@ -248,3 +242,7 @@ For more information on menthol, please visit [menthol document][6]
   [4]: http://www.ltplayer.com/doc/menthol/index.html
   [5]: http://www.ltplayer.com/doc/menthol/index.html
   [6]: http://www.ltplayer.com/doc/menthol/index.html
+  [7]: http://www.ltplayer.com/doc/menthol/index.html
+  [8]: http://www.ltplayer.com/doc/menthol/index.html
+  [9]: http://www.ltplayer.com/doc/menthol/index.html
+  [10]: http://www.ltplayer.com/doc/menthol/index.html
