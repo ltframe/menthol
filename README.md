@@ -236,8 +236,8 @@ MentholPackMethod void example1_Init(VmState* vmstate)
 关于更多的menthol的相关文档，请浏览[menthol文档][10]
 
 
-  [1]: https://github.com/ltframe/menthol/blob/master/README.md
-  [2]: https://github.com/ltframe/menthol/blob/master/README_EN.md
+  [1]: https://github.com/ltframe/menthol/blob/master/README_EN.md
+  [2]: https://github.com/ltframe/menthol/blob/master/README.md
   [3]: http://www.ltplayer.com/doc/menthol/index.html
   [4]: http://www.ltplayer.com/doc/menthol/index.html
   [5]: http://www.ltplayer.com/doc/menthol/index.html
