@@ -1,8 +1,8 @@
 <div align=center>
 	<img src="http://www.ltplayer.com/images/gitlogo.png"/></div>
 
-<div align=center>
-	[Englist][1] [中文][2]</div>
+
+[Englist][1] [中文][2]
 
 # Menthol
 Menthol is an easy-to-use, easy-to-learn scripting language with a simple syntax and easy development. With C / C++, you can quickly develop extension methods.
