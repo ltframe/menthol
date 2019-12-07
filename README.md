@@ -1,6 +1,8 @@
 <div align=center>
 	<img src="http://www.ltplayer.com/images/gitlogo.png"/></div>
 
+<div align=center>
+	[Englist][1] [中文][2] </div>
 
 # Menthol
 Menthol is an easy-to-use, easy-to-learn scripting language with a simple syntax and easy development. With C / C++, you can quickly develop extension methods.
@@ -105,9 +107,9 @@ _mmain:$a,$c
 {    
 	var $arr = [1,2,3,4,5,6];
 	Console.Out($arr[1]);
-	Console.Out($arr[1..][1]);
-	Console.Out($arr[..3][2]);
-	Console.Out($arr[2..5][3]);
+	Console.Out($arr[1..][3]);
+	Console.Out($arr[..3][4]);
+	Console.Out($arr[2..5][5]);
 	$arr = "abcdefghi";
 	Console.Out($arr[1]);
 }
@@ -237,7 +239,7 @@ MentholPackMethod void example1_Init(VmState* vmstate)
 }
 
 ```
-For more information on menthol, please visit [menthol document][4]
+For more information on menthol, please visit [menthol document][6]
 
 ----------
 
@@ -339,9 +341,9 @@ _mmain:$a,$c
 {    
 	var $arr = [1,2,3,4,5,6];
 	Console.Out($arr[1]);
-	Console.Out($arr[1..][5]);
-	Console.Out($arr[..3][6]);
-	Console.Out($arr[2..5][7]);
+	Console.Out($arr[1..][7]);
+	Console.Out($arr[..3][8]);
+	Console.Out($arr[2..5][9]);
 	$arr = "abcdefghi";
 	Console.Out($arr[1]);
 }
@@ -471,14 +473,16 @@ MentholPackMethod void example1_Init(VmState* vmstate)
 }
 
 ```
-关于更多的menthol的相关文档，请浏览[menthol文档][8]
+关于更多的menthol的相关文档，请浏览[menthol文档][10]
 
 
-  [1]: http://www.ltplayer.com/doc/menthol/index.html
-  [2]: http://www.ltplayer.com/doc/menthol/index.html
+  [1]: README.md
+  [2]: README_CN.md
   [3]: http://www.ltplayer.com/doc/menthol/index.html
   [4]: http://www.ltplayer.com/doc/menthol/index.html
   [5]: http://www.ltplayer.com/doc/menthol/index.html
   [6]: http://www.ltplayer.com/doc/menthol/index.html
   [7]: http://www.ltplayer.com/doc/menthol/index.html
   [8]: http://www.ltplayer.com/doc/menthol/index.html
+  [9]: http://www.ltplayer.com/doc/menthol/index.html
+  [10]: http://www.ltplayer.com/doc/menthol/index.html
