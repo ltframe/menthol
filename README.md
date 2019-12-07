@@ -2,7 +2,7 @@
 	<img src="http://www.ltplayer.com/images/gitlogo.png"/></div>
 
 <div align=center>
-	[Englist][1] [中文][2] </div>
+	[Englist][1] [中文][2]</div>
 
 # Menthol
 Menthol is an easy-to-use, easy-to-learn scripting language with a simple syntax and easy development. With C / C++, you can quickly develop extension methods.
@@ -476,8 +476,8 @@ MentholPackMethod void example1_Init(VmState* vmstate)
 关于更多的menthol的相关文档，请浏览[menthol文档][10]
 
 
-  [1]: README.md
-  [2]: README_CN.md
+  [1]: https://github.com/ltframe/menthol/blob/master/README.md
+  [2]: https://github.com/ltframe/menthol/blob/master/README_CN.md
   [3]: http://www.ltplayer.com/doc/menthol/index.html
   [4]: http://www.ltplayer.com/doc/menthol/index.html
   [5]: http://www.ltplayer.com/doc/menthol/index.html
