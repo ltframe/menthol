@@ -20,7 +20,7 @@ Menthol is an easy-to-use, easy-to-learn scripting language with a simple syntax
 
 ###### Keywords
 ```html
-if else for break true false
+if else for break true false const
 try except throw continue return while
 null import _mmain def var in typeof module use
 ```
