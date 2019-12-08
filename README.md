@@ -5,7 +5,7 @@
 [Englist][1] | [简体中文][2]
 
 # Menthol
-Menthol是一个简单、易用、易学的脚本语言,语法简单,开发简便,使用C/C++可以快速为它开发扩展
+Menthol是一个简单、易用、易学的脚本语言,语法简单,开发简便,使用C/C++可以快速为它开发扩展.about more:[website][11]
 
 ## 特性
 * 无类型
@@ -246,3 +246,4 @@ MentholPackMethod void example1_Init(VmState* vmstate)
   [8]: http://www.ltplayer.com/doc/menthol/index.html
   [9]: http://www.ltplayer.com/doc/menthol/index.html
   [10]: http://www.ltplayer.com/doc/menthol/index.html
+  [11]: http://www.ltplayer.com/

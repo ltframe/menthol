@@ -5,7 +5,7 @@
 [Englist][1] | [简体中文][2]
 
 # Menthol
-Menthol is an easy-to-use, easy-to-learn scripting language with a simple syntax and easy development. With C / C++, you can quickly develop extension methods.
+Menthol is an easy-to-use, easy-to-learn scripting language with a simple syntax and easy development. With C / C++, you can quickly develop extension methods.about more:[website][7]
 
 
 ## Teatures
@@ -248,3 +248,4 @@ For more information on menthol, please visit [menthol document][6]
   [4]: http://www.ltplayer.com/doc/menthol/index.html
   [5]: http://www.ltplayer.com/doc/menthol/index.html
   [6]: http://www.ltplayer.com/doc/menthol/index.html
+  [7]: http://www.ltplayer.com/
