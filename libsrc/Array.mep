@@ -78,7 +78,28 @@ module Array
 		}
 		return false;
 	}
-
+	def Clone:$arr
+	{
+		var $_arr=[];
+		for(var $_value in $arr)
+		{
+			$_arr+=$_value;
+		}
+		return $_arr;
+	}
+	def indexOf:$arr,$element
+	{
+		var $i=0;
+		while($i<Length($arr))
+		{
+			if(typeof($arr[$i])!=typeof($element)){continue;}
+			if($arr[$i]==$element){
+				return $i;
+			}
+			$i+=1;
+		}
+		return -1;
+	}
 }
 
 

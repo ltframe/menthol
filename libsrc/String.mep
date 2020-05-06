@@ -103,6 +103,61 @@ module String{
 	{
 		return CString.GBKToUTF8($arg1);
 	}
+	def ToArray:$arr
+	{
+		var $_arr = [];
+		for(var $i in $arr)
+		{
+			$_arr+=$i;
+		}
+		return $_arr;
+	}
+	def Trim:$str
+	{
+		var $_str="";
+		for(var $i in $str)
+		{
+			if($i!=" ")
+			{
+				$_str+=$i;
+			}		
+		}
+		return $_str;
+	}
+	def Insert:$str,$str2,$index
+	{
+		var $_str="",$i=0;
+		while($i<Length($str))
+		{ 
+			if($i==$index)
+			{
+				$_str+=$str2;
+			}
+			$_str+=$str[$i];
+			$i+=1;
+		}
+		return $_str;
+	}
+	def PadLeft:$str,$str2,$c
+	{
+		var $_str = $str,$i=0;
+		while($i<$c)
+		{
+			$_str+=$str2;
+			$i+=1; 
+		}
+		return $_str;
+	}
+	def PadRight:$str,$str2,$c
+	{
+		var $_str ="",$i=0;
+		while($i<$c)
+		{
+			$_str+=$str2;
+			$i+=1; 
+		}
+		return $_str+$str;
+	}
 }
 
 module Regex
