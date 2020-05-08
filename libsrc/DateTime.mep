@@ -1,5 +1,6 @@
 import msystem;
-use CDateTime;
+import string;
+use CDateTime,Regex;
 module DateTime
 {
 	def CurrentDate:
@@ -13,6 +14,71 @@ module DateTime
 	def TimeZone:
 	{
 		return CDateTime.TimeZone();
+	}
+	def AddDays:$datetime,$v
+	{
+		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}$"))
+		{
+			$datetime+=" 0:0:0";
+			return CDateTime.AddSeconds($datetime,$v);
+		}
+		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}\s{1,}\d{1,2}:\d{1,2}:\d{1,2}$"))
+		{
+			return CDateTime.AddDays($datetime,$v);
+		}
+		return "The first is not datetime type";
+	}
+	def AddHours:$datetime,$v
+	{
+		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}$"))
+		{
+			$datetime+=" 0:0:0";
+			return CDateTime.AddSeconds($datetime,$v);
+		}
+		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}\s{1,}\d{1,2}:\d{1,2}:\d{1,2}$"))
+		{
+			return CDateTime.AddHours($datetime,$v);
+		}
+		return "The first is not datetime type";
+	}
+	def AddMinutes:$datetime,$v
+	{
+		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}$"))
+		{
+			$datetime+=" 0:0:0";
+			return CDateTime.AddSeconds($datetime,$v);
+		}
+		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}\s{1,}\d{1,2}:\d{1,2}:\d{1,2}$"))
+		{
+			return CDateTime.AddMinutes($datetime,$v);
+		}
+		return "The first is not datetime type";
+	}
+	def AddSeconds:$datetime,$v
+	{
+		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}$"))
+		{
+			$datetime+=" 0:0:0";
+			return CDateTime.AddSeconds($datetime,$v);
+		}
+		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}\s{1,}\d{1,2}:\d{1,2}:\d{1,2}$"))
+		{
+			return CDateTime.AddSeconds($datetime,$v);
+		}
+		return "The first is not datetime type";
+	}
+	def AddYears:$datetime,$v
+	{
+		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}$"))
+		{
+			$datetime+=" 0:0:0";
+			return CDateTime.AddSeconds($datetime,$v);
+		}
+		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}\s{1,}\d{1,2}:\d{1,2}:\d{1,2}$"))
+		{
+			return CDateTime.AddYears($datetime,$v);
+		}
+		return "The first is not datetime type";
 	}
 }
 

@@ -164,16 +164,28 @@ module Regex
 {
 	def Exec:$arg1,$arg2,$arg3
 	{
+		if(typeof("$arg3")!="M_NUMBER")
+		{
+			$arg3 = 0;
+		}
 		return CRegex.Exec($arg1,$arg2,$arg3);
 	}
 
 	def Test:$arg1,$arg2,$arg3
 	{
+		if(typeof("$arg3")!="M_NUMBER")
+		{
+			$arg3 = 0;
+		}
 		return CRegex.Test($arg1,$arg2,$arg3);
 	}
 
 	def Replace:$arg1,$arg2,$arg3,$arg4
 	{
+		if(typeof("$arg4")!="M_NUMBER")
+		{
+			$arg4 = 0;
+		}
 		return CRegex.Replace($arg1,$arg2,$arg3,$arg4);
 	}
 }
