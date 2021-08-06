@@ -4,6 +4,9 @@
 
 [Englist][1] | [简体中文][2]
 
+###### note: Because you  upload more than 100M files, if you want to debug compilation, please unzip the cryptlibD.7z under the MCryptography folder to the current directory
+
+
 # Menthol
 Menthol is an easy-to-use, easy-to-learn scripting language with a simple syntax and easy development. With C / C++, you can quickly develop extension methods.about more:[www.ltplayer.com][7]
 

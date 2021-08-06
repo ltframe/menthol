@@ -4,6 +4,9 @@
 
 [Englist][1] | [简体中文][2]
 
+###### 重要提示：因无法上传超100M文件，如果您要Debug编译，请解压MCryptography文件夹下的cryptlibD.7z至当前目录
+
+
 # Menthol
 Menthol是一个简单、易用、易学的脚本语言,语法简单,开发简便,使用C/C++可以快速为它开发扩展.关于更多信息请访问官方网站:[www.ltplayer.com][11]
 
