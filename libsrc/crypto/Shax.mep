@@ -2,26 +2,27 @@ import MCryptography;
 use CSHA;
 module Shax
 {
+	var const @cshainst =mmrt(CSHA);
 	def SHA1:$arg1
 	{
-		return CSHA.SHA1($arg1);
+		return @cshainst.SHA1($arg1);
 	}
 
 	def SHA224:$arg1
 	{
-		return CSHA.SHA224($arg1);
+		return @cshainst.SHA224($arg1);
 	}
 	def SHA256:$arg1
 	{
-		return CSHA.SHA256($arg1);
+		return @cshainst.SHA256($arg1);
 	}
 	def SHA384:$arg1
 	{
-		return CSHA.SHA384($arg1);
+		return @cshainst.SHA384($arg1);
 	}
 	def SHA512:$arg1
 	{
-		return CSHA.SHA512($arg1);
+		return @cshainst.SHA512($arg1);
 	}
 }
 

@@ -269,6 +269,7 @@ StatementList* StatementList::GetInstance()
 	return _StatementList;
 }
 
+//测试变量开始头是@开头的为全局变量，var开头的为局部变量
 bool StatementList::IsGlobalVar(string name)
 {
 	if(name[0]=='@')return true;
@@ -310,6 +311,8 @@ GlobalVarAttr StatementList::FindGlobalMemory(string str)
 
 void StatementList::CreateCode(vector<Statement*>* _CompileStructTable,string extension)
 {	
+
+	//写入文件二进制文件的文件表示，字符形式
 	if(MCommon::CreateInstance()->StrCmpNoCase(extension,MENTHOLEXTENSION)){
 		string fileext = MENTHOLEXECUTEEXTENSION2;
 		for(int i=0;i<fileext.length();i++){
@@ -323,11 +326,15 @@ void StatementList::CreateCode(vector<Statement*>* _CompileStructTable,string ex
 		}
 	}
 
+
+	//需要使用的包的入口，此地址保存了文件所使用的包的文件地址
 	int importentry = GetIpi();
 	AddCode(0); //import files entry point
 
+	//是了模块列表的地址
 	int moduleentry = GetIpi();
 	AddCode(0); //package entry point
+
 
 	int includemoduleentry = GetIpi();
 	AddCode(0);
@@ -352,6 +359,8 @@ void StatementList::CreateCode(vector<Statement*>* _CompileStructTable,string ex
 	AddCode(0); ////set strings length
 
 
+
+	//导入使用的包文件
 	VECTORFORSTART(ImportFileAttr,includefiles,it)
 		AddCode((*it).ptype);
 		int filepathpostion = GetIpi(); //filepath  postion;	
@@ -689,7 +698,7 @@ void StatementList::RestDebugIpi()
 {
 	debugipi = 0;
 }
-
+//从UseModuleList中查找是否存在
 bool StatementList::FindUseModuleList(string modulename)
 {
 	VECTORFORSTART(ModuleAndConstant, UseModuleList, it)
@@ -698,6 +707,7 @@ bool StatementList::FindUseModuleList(string modulename)
 	VECTORFOREND
 	return false;
 }
+//往UseModuleList中加入使用的模块
 void StatementList::AddUseModuleList(string modulename)
 {
 	if (FindUseModuleList(modulename))

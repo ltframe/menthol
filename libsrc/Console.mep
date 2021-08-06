@@ -2,23 +2,24 @@ import mio;
 use CConsole;
 module Console{
 
+	var const @consoleinst = mmrt(CConsole);
 	def Out:$arg1
 	{
-		return CConsole.Out($arg1);
+		return @consoleinst.Out($arg1);
 	}
 
 	def Oute:$arg1
 	{
-		return CConsole.Oute($arg1);
+		return @consoleinst.Oute($arg1);
 	}
 
 	def In:
 	{
-		return CConsole.In();
+		return @consoleinst.In();
 	}
 
 	def Clear:
 	{
-		return CConsole.Clear();
+		return @consoleinst.Clear();
 	}
 }

@@ -12,21 +12,22 @@ module test
 {
 	def getsource:$str
 	{
-		Console.Out(String.UTF8ToGBK($str));
+		mmrt(Console).Out(mmrt(String).UTF8ToGBK($str));
 	}
 }
 _mmain:$a,$c
 {	
-	  var $curl = CurlSystem.init();
-	  CurlSetOpt.url($curl, "http://www.baidu.com");
-	  CurlCallback.writefunction($curl,test.getsource);
-	  var $res = CurlSystem.perform($curl);
-	  if($res == CurlCode.@CURLE_OK)
+	  var $CurlSystem = mmrt(CurlSystem);
+	  var $curl = $CurlSystem.init();
+	  mmrt(CurlSetOpt).url($curl, "http://www.baidu.com");
+	  mmrt(CurlCallback).writefunction($curl,mmrt(test).getsource);
+	  var $res = $CurlSystem.perform($curl);
+	  if($res == mmrt(CurlCode).@CURLE_OK)
 	  {
-		var $url = CurlGetInfo.effective_url($curl);
+		var $url = mmrt(CurlGetInfo).effective_url($curl);
 		if($url){
-			Console.Out($url);
+			mmrt(Console).Out($url);
 		}
 	 }
-	 CurlSystem.cleanup($curl);
+	  $CurlSystem.cleanup($curl);
 }

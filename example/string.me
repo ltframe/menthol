@@ -3,21 +3,21 @@ use Console;
 _mmain:$a,$c
 {	
 
-	var $arr = "abcdefghijklmn";
+	var $arr = "abcdefghijklmn",const $inst =mmrt(Console);
 	var $i=0;
 	while($i<100){
-		Console.Out($arr[7]);
-		Console.Out($arr[5..]);
-		Console.Out($arr[..6]);
-		Console.Out($arr[3..6]);
+		$inst.Out($arr[7]);
+		$inst.Out($arr[5..]);
+		$inst.Out($arr[..6]);
+		$inst.Out($arr[3..6]);
 		var $s = "123456";
-		Console.Out($s);	
-		Console.Out($s[3]);		
+		$inst.Out($s);	
+		$inst.Out($s[3]);		
 		$s[2] = 1;
-		Console.Out($s);
+		$inst.Out($s);
 		var $g = 100;	
-		Console.Out($s[2]);		
-		Console.Out($g);
+		$inst.Out($s[2]);		
+		$inst.Out($g);
 		$i+=1;
 	}
 }

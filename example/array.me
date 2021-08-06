@@ -2,23 +2,24 @@ import console;
 use Console;
 _mmain:$a,$c
 {			
+	var const $inst =mmrt(Console);
 	var $arr = [1,2,3,4,5,6];
 	$a = $arr[1..];
 	for(var $i in $a){
-		Console.Out($i);
+		$inst.Out($i);
 	}
-	Console.Out("************");
+	$inst.Out("************");
 	$a = $arr[..3];
 	for(var $i in $a){
-		Console.Out($i);
+		$inst.Out($i);
 	}
-	Console.Out("************");
+	$inst.Out("************");
 	$a = $arr[2..5];
 	for(var $i in $a){
-		Console.Out($i);
+		$inst.Out($i);
 	}
 
-	Console.Out("************");
+	$inst.Out("************");
 	$arr = "abcdefghi";
-	Console.Out($arr[1]);
+	$inst.Out($arr[1]);
 }

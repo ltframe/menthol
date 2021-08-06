@@ -2,19 +2,20 @@ import console;
 use Console;
 _mmain:$a,$c
 {	
+	var $inst =mmrt(Console);
 	var $arr = [1,2,3,4,6,7];
 	for(var $i in $arr)
 	{
-		Console.Out($i);
+		$inst.Out($i);
 	}
 	$arr ="abcdefghi";
 	for(var $i in $arr)
 	{
-		Console.Out($i);
+		$inst.Out($i);
 	}
 	$arr =(key1::"value1",key2::"value2");
 	for(var $key,$value in $arr)
 	{
-		Console.Out($key+":"+$value);
+		$inst.Out($key+":"+$value);
 	}
 }

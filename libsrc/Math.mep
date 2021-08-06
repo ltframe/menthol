@@ -2,13 +2,15 @@ import msystem;
 use CMath;
 module Math
 {
+	
 	var const @PI = 3.14159265358979323846,const @E=2.7182818284590452354;
+	var const @mathinst = mmrt(CMath);
 	def Abs:$n
 	{
 		if(typeof($n)!="M_NUMBER"){
 			return null;
 		}
-		return CMath.Abs($n);
+		return @mathinst.Abs($n);
 	}
 
 	def Acos:$n
@@ -16,7 +18,7 @@ module Math
 		if(typeof($n)!="M_NUMBER"){
 			return null;
 		}
-	    return CMath.Acos($n);
+	    return @mathinst.Acos($n);
 	}
 
 	def Asin:$n
@@ -24,7 +26,7 @@ module Math
 		if(typeof($n)!="M_NUMBER"){
 			return null;
 		}
-	    return CMath.Asin($n);
+	    return @mathinst.Asin($n);
 	}
 
 	def Atan:$n
@@ -32,7 +34,7 @@ module Math
 		if(typeof($n)!="M_NUMBER"){
 			return null;
 		}
-		return CMath.Atan($n);
+		return @mathinst.Atan($n);
 	}
 
 	def Atan2:$n,$n2
@@ -40,7 +42,7 @@ module Math
 		if(typeof($n)!="M_NUMBER" || typeof($n2)!="M_NUMBER"){
 			return null;
 		}
-		return CMath.Atan2($n,$n2);
+		return @mathinst.Atan2($n,$n2);
 	}
 
 	def Ceil:$n
@@ -48,7 +50,7 @@ module Math
 		if(typeof($n)!="M_NUMBER"){
 			return null;
 		}
-		return CMath.Ceil($n);
+		return @mathinst.Ceil($n);
 	}
 
 	def Cos:$n
@@ -56,7 +58,7 @@ module Math
 		if(typeof($n)!="M_NUMBER"){
 			return null;
 		}
-	    return CMath.Cos($n);
+	    return @mathinst.Cos($n);
 	}
 
 	def Cosh:$n
@@ -64,7 +66,7 @@ module Math
 		if(typeof($n)!="M_NUMBER"){
 			return null;
 		}
-		return CMath.Cosh($n);
+		return @mathinst.Cosh($n);
 	}
 
 	def Exp:$n
@@ -72,7 +74,7 @@ module Math
 		if(typeof($n)!="M_NUMBER"){
 			return null;
 		}
-	    return CMath.Exp($n);
+	    return @mathinst.Exp($n);
 	}
 
 	def Fabs:$n
@@ -80,7 +82,7 @@ module Math
 		if(typeof($n)!="M_NUMBER"){
 			return null;
 		}
-	    return CMath.Fabs($n);
+	    return @mathinst.Fabs($n);
 	}
 
 	def Floor:$n
@@ -88,7 +90,7 @@ module Math
 		if(typeof($n)!="M_NUMBER"){
 			return null;
 		}
-	    return CMath.Floor($n);
+	    return @mathinst.Floor($n);
 	}
 
 	def Fmod:$n,$n2
@@ -96,7 +98,7 @@ module Math
 		if(typeof($n)!="M_NUMBER" || typeof($n2)!="M_NUMBER"){
 			return null;
 		}
-	    return CMath.Fmod($n,$n2);
+	    return @mathinst.Fmod($n,$n2);
 	}
 
 	def Log:$n
@@ -104,7 +106,7 @@ module Math
 		if(typeof($n)!="M_NUMBER"){
 			return null;
 		}
-	   return CMath.Log($n);
+	   return @mathinst.Log($n);
 	}
 
 	def Log10:$n
@@ -112,7 +114,7 @@ module Math
 		if(typeof($n)!="M_NUMBER"){
 			return null;
 		}
-		return CMath.Log10($n);
+		return @mathinst.Log10($n);
 	}
 
 	def Pow:$n,$n2
@@ -120,7 +122,7 @@ module Math
 		if(typeof($n)!="M_NUMBER" || typeof($n2)!="M_NUMBER"){
 			return null;
 		}
-		return CMath.Pow($n,$n2);
+		return @mathinst.Pow($n,$n2);
 	}
 
 	def Sin:$n
@@ -128,7 +130,7 @@ module Math
 		if(typeof($n)!="M_NUMBER"){
 			return null;
 		}
-	   return CMath.Sin($n);
+	   return @mathinst.Sin($n);
 	}
 
 	def Sinh:$n
@@ -136,7 +138,7 @@ module Math
 		if(typeof($n)!="M_NUMBER"){
 			return null;
 		}
-		return CMath.Sinh($n);
+		return @mathinst.Sinh($n);
 	}
 
 	def Sqrt:$n
@@ -144,7 +146,7 @@ module Math
 		if(typeof($n)!="M_NUMBER"){
 			return null;
 		}
-		return CMath.Sqrt($n);
+		return @mathinst.Sqrt($n);
 	}
 
 	def Tan:$n
@@ -152,7 +154,7 @@ module Math
 		if(typeof($n)!="M_NUMBER"){
 			return null;
 		}
-		return CMath.Tan($n);
+		return @mathinst.Tan($n);
 	}
 
 	def Tanh:$n
@@ -160,12 +162,12 @@ module Math
 		if(typeof($n)!="M_NUMBER"){
 			return null;
 		}
-	   return CMath.Tanh($n);
+	   return @mathinst.Tanh($n);
 	}
 
 	def Random:
 	{
-		return CMath.Random();
+		return @mathinst.Random();
 	}
 
 	def Cbrt:$n
@@ -173,6 +175,6 @@ module Math
 		if(typeof($n)!="M_NUMBER"){
 			return null;
 		}
-		return CMath.Cbrt($n);
+		return @mathinst.Cbrt($n);
 	}
 }

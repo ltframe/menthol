@@ -5,7 +5,7 @@ import iup.Dialogs;
 import iup.Callbacks;
 import iup.ControlsStandard;
 import iup.Attributes;
-import iup.const;
+import iup.Const;
 import iup.images;
 import iup.handle;
 import iup.menus;
@@ -26,54 +26,62 @@ module iupapptest
 {
 	var @appico;
 	var @applogo;
+	var const @IupAttributes = mmrt(IupAttributes);
+	var const @IupSystem = mmrt(IupSystem);
+	var const @IupDialogs = mmrt(IupDialogs);
+	var const @IupConst =mmrt(IupConst);
+	var const @IupLayout =mmrt(IupLayout);
+	var const @IupControlsStandard =mmrt(IupControlsStandard);
+	var const @IupControlsContainers =mmrt(IupControlsContainers);
+	var const @IupImages =mmrt(IupImages);
 	def loadappico:$imgname
 	{
-		@appico = IupImages.LoadImage($imgname);
+		@appico = @IupImages.LoadImage($imgname);
 	}
 
 	def loadapplogo:$imgname
 	{
-		@applogo = IupImages.LoadImage($imgname);
+		@applogo = @IupImages.LoadImage($imgname);
 	}
 
 	def closewindow:$ih
 	{
-		IupSystem.Destroy(IupLayout.GetDialog($ih));
+		@IupSystem.Destroy(@IupLayout.GetDialog($ih));
 	}
 	def aboutme:$ih
 	{
-		var $vbox = IupControlsContainers.Vbox();
-		var $logo = IupControlsStandard.Label();
-		IupAttributes.SetAttribute($logo,"RASTERSIZE","500X0");
-		IupAttributes.SetAttributeHandle($logo,"IMAGE",@applogo);
-		IupLayout.Append($vbox,$logo);
-		var $sep1 = IupControlsStandard.FlatSeparator();
-		IupAttributes.SetAttribute($sep1, "ORIENTATION", "HORIZONTAL");
-		IupLayout.Append($vbox,$sep1);
+		var $vbox = @IupControlsContainers.Vbox();
+		var $logo = @IupControlsStandard.Label();
+		@IupAttributes.SetAttribute($logo,"RASTERSIZE","500X0");
+		@IupAttributes.SetAttributeHandle($logo,"IMAGE",@applogo);
+		@IupLayout.Append($vbox,$logo);
+		var $sep1 = @IupControlsStandard.FlatSeparator();
+		@IupAttributes.SetAttribute($sep1, "ORIENTATION", "HORIZONTAL");
+		@IupLayout.Append($vbox,$sep1);
 
-		var $content =  IupControlsStandard.Label("MentholIup 使用Menthol编写而成\r\n\n基于IUP开发而成");
-		IupAttributes.SetAttribute($content,"PADDING", "20X10");
-		IupLayout.Append($vbox,$content);
-		IupLayout.Append($vbox,IupAttributes.SetAttributes(IupControlsStandard.Link("http://www.ltplayer.com","http://www.ltplayer.com"),"PADDING=20X10"));
+		var $content =  @IupControlsStandard.Label("MentholIup 使用Menthol编写而成\r\n\n基于IUP开发而成");
+		@IupAttributes.SetAttribute($content,"PADDING", "20X10");
+		@IupLayout.Append($vbox,$content);
+		@IupLayout.Append($vbox,@IupAttributes.SetAttributes(@IupControlsStandard.Link("http://www.ltplayer.com","http://www.ltplayer.com"),"PADDING=20X10"));
 
-		var $okbutton = IupControlsStandard.Button("确  定");
-		IupCallbacks.SetCallback($okbutton,"ACTION",closewindow);
-		var $okbox = IupControlsContainers.Hbox($okbutton);
-		IupAttributes.SetAttribute($okbutton,"RASTERSIZE", "50X25");
-		IupLayout.Append($vbox,$okbox);
-		IupAttributes.SetAttribute($okbox,"MARGIN", "400X15");
+		var $okbutton = @IupControlsStandard.Button("确  定");
+		mmrt(IupCallbacks).SetCallback($okbutton,"ACTION",closewindow);
+		var $okbox = @IupControlsContainers.Hbox($okbutton);
+		@IupAttributes.SetAttribute($okbutton,"RASTERSIZE", "50X25");
+		@IupLayout.Append($vbox,$okbox);
+		@IupAttributes.SetAttribute($okbox,"MARGIN", "400X15");
 
-		var $maindialog = IupDialogs.Dialog($vbox);
-		IupAttributes.SetAttribute($maindialog, "RASTERSIZE", "500X300");
-		IupAttributes.SetAttributeHandle($maindialog,"ICON",@appico);
-		IupAttributes.SetAttribute($maindialog,"DIALOGFRAME","YES");
-		IupAttributes.SetAttribute($maindialog, "TITLE", "关于Iupltplayer");
-		IupDialogs.Popup($maindialog,IupConst.@IUP_CENTER,IupConst.@IUP_CENTER);
-		IupSystem.Destroy($maindialog);  
+		var $maindialog = @IupDialogs.Dialog($vbox);
+		@IupAttributes.SetAttribute($maindialog, "RASTERSIZE", "500X300");
+		@IupAttributes.SetAttributeHandle($maindialog,"ICON",@appico);
+		@IupAttributes.SetAttribute($maindialog,"DIALOGFRAME","YES");
+		@IupAttributes.SetAttribute($maindialog, "TITLE", "关于Iupltplayer");
+		@IupDialogs.Popup($maindialog,@IupConst.@IUP_CENTER,@IupConst.@IUP_CENTER);
+		@IupSystem.Destroy($maindialog);  
 	}
 	def website:$ih
 	{
-		Environment.System("start http://www.ltplayer.com");
+		mmrt(Environment).System("start http://www.ltplayer.com");
 	}
 	def hotkey:$ih,$key
 	{
@@ -86,129 +94,132 @@ module imgmoduletest
 {
 	def setmenuico:$handle,$imgname
 	{
-		IupAttributes.SetAttributeHandle($handle,"IMAGE",IupImages.LoadImage($imgname));
+		mmrt(IupAttributes).SetAttributeHandle($handle,"IMAGE",mmrt(IupImages).LoadImage($imgname));
 	}
 }
 
 module dialogscallbackmoduletest
 {
-	
+	var const @IupAttributes = mmrt(IupAttributes),const @IupDialogs = mmrt(IupDialogs);
+	var const @IupSystem = mmrt(IupSystem);
+	var const @IupConst =mmrt(IupConst);
+	var const @IupCallbacks =mmrt(IupCallbacks);
 	def filedialog:$ih
 	{
-		var $fd = IupDialogs.FileDlg();
-		IupAttributes.SetAttribute($fd, "DIALOGTYPE", "OPEN");
-		IupAttributes.SetAttribute($fd, "TITLE", "IupFileDlg Test");
-		IupAttributes.SetAttribute($fd, "FILTER", "*.*");
-		IupAttributes.SetAttribute($fd, "MULTIPLEFILES", "YES");
+		var $fd = @IupDialogs.FileDlg();
+		@IupAttributes.SetAttribute($fd, "DIALOGTYPE", "OPEN");
+		@IupAttributes.SetAttribute($fd, "TITLE", "IupFileDlg Test");
+		@IupAttributes.SetAttribute($fd, "FILTER", "*.*");
+		@IupAttributes.SetAttribute($fd, "MULTIPLEFILES", "YES");
 		
-		IupDialogs.Popup($fd,IupConst.@IUP_CURRENT, IupConst.@IUP_CURRENT);
+		@IupDialogs.Popup($fd,@IupConst.@IUP_CURRENT, @IupConst.@IUP_CURRENT);
 
-		if(IupAttributes.GetAttribute($fd, "STATUS")!="-1")
+		if(@IupAttributes.GetAttribute($fd, "STATUS")!="-1")
 		{
-			IupDialogs.Message("choose file",IupAttributes.GetAttribute($fd, "VALUE"));
+			@IupDialogs.Message("choose file",@IupAttributes.GetAttribute($fd, "VALUE"));
 		}
-		IupSystem.Destroy($fd); 
-		return IupConst.@IUP_DEFAULT;
+		@IupSystem.Destroy($fd); 
+		return @IupConst.@IUP_DEFAULT;
 
 	}	
 
 	def help_cb:$ih
 	{
-		IupDialogs.Message("message","help_cb clikced");
-		return IupConst.@IUP_DEFAULT;
+		@IupDialogs.Message("message","help_cb clikced");
+		return @IupConst.@IUP_DEFAULT;
 	}
 	def messagedlg:$ih
 	{
-		var $dlg = IupDialogs.MessageDlg();
-		IupAttributes.SetAttribute($dlg, "DIALOGTYPE", "WARNING");
-		IupAttributes.SetAttribute($dlg, "TITLE", "IupMessageDlg Test");
-		IupAttributes.SetAttribute($dlg, "BUTTONS", "OKCANCEL");
-		IupAttributes.SetAttribute($dlg, "VALUE", "Message Text");
-		IupCallbacks.SetCallback($dlg, "HELP_CB", help_cb);
-		IupDialogs.Popup($dlg, IupConst.@IUP_CURRENT, IupConst.@IUP_CURRENT);
-		IupSystem.Destroy($dlg);
-		return IupConst.@IUP_DEFAULT;
+		var $dlg = @IupDialogs.MessageDlg();
+		@IupAttributes.SetAttribute($dlg, "DIALOGTYPE", "WARNING");
+		@IupAttributes.SetAttribute($dlg, "TITLE", "IupMessageDlg Test");
+		@IupAttributes.SetAttribute($dlg, "BUTTONS", "OKCANCEL");
+		@IupAttributes.SetAttribute($dlg, "VALUE", "Message Text");
+		@IupCallbacks.SetCallback($dlg, "HELP_CB", help_cb);
+		@IupDialogs.Popup($dlg, @IupConst.@IUP_CURRENT, @IupConst.@IUP_CURRENT);
+		@IupSystem.Destroy($dlg);
+		return @IupConst.@IUP_DEFAULT;
 	}
 
 	def alarmdialog:$ih
 	{
-		var $selectkey = IupDialogs.Alarm("IupAlarm Example", "File not saved! Save it now?", "Yes", "No", "Cancel");
+		var $selectkey = @IupDialogs.Alarm("IupAlarm Example", "File not saved! Save it now?", "Yes", "No", "Cancel");
 		if($selectkey==1)
 		{
-			IupDialogs.Message("message","yes clikced");
+			@IupDialogs.Message("message","yes clikced");
 		}
 		else
 		{
 				if($selectkey==2)
 				{		
-					IupDialogs.Message("message","no clikced");
+					@IupDialogs.Message("message","no clikced");
 				}
 				else
 				{
 					if($selectkey==3)
 					{	
-						IupDialogs.Message("message","Cancel clikced");
+						@IupDialogs.Message("message","Cancel clikced");
 					}		
 				}
 		}
-		return IupConst.@IUP_DEFAULT;
+		return @IupConst.@IUP_DEFAULT;
 	}
 
 	def colordialog:$ih
 	{
-			var $dlg = IupDialogs.ColorDlg();
-			IupAttributes.SetAttribute($dlg, "VALUE", "128 0 255");
-			IupAttributes.SetAttribute($dlg, "ALPHA", "142");
-			IupAttributes.SetAttribute($dlg, "SHOWHEX", "YES");
-			IupAttributes.SetAttribute($dlg, "SHOWCOLORTABLE", "YES");
-			IupAttributes.SetAttribute($dlg, "TITLE", "IupColorDlg Test");
-			IupCallbacks.SetCallback($dlg, "HELP_CB", help_cb);
+			var $dlg = @IupDialogs.ColorDlg();
+			@IupAttributes.SetAttribute($dlg, "VALUE", "128 0 255");
+			@IupAttributes.SetAttribute($dlg, "ALPHA", "142");
+			@IupAttributes.SetAttribute($dlg, "SHOWHEX", "YES");
+			@IupAttributes.SetAttribute($dlg, "SHOWCOLORTABLE", "YES");
+			@IupAttributes.SetAttribute($dlg, "TITLE", "IupColorDlg Test");
+			@IupCallbacks.SetCallback($dlg, "HELP_CB", help_cb);
 
-			IupDialogs.Popup($dlg, IupConst.@IUP_CURRENT, IupConst.@IUP_CURRENT);
-			var $status = IupAttributes.GetAttribute($dlg, "STATUS");
+			@IupDialogs.Popup($dlg, @IupConst.@IUP_CURRENT, @IupConst.@IUP_CURRENT);
+			var $status = @IupAttributes.GetAttribute($dlg, "STATUS");
 			
 			if(typeof($status)=="M_NULL")
 			{
-				Console.Out($status);
-				IupSystem.Destroy($dlg); 
+				mmrt(Console).Out($status);
+				@IupSystem.Destroy($dlg); 
 				return; 
 			}
 			if($status=="1")
 			{
-				IupDialogs.Message("choose color",IupAttributes.GetAttribute($dlg, "VALUE"));
+				@IupDialogs.Message("choose color",@IupAttributes.GetAttribute($dlg, "VALUE"));
 			}
-			IupSystem.Destroy($dlg); 
-			return IupConst.@IUP_DEFAULT;
+			@IupSystem.Destroy($dlg); 
+			return @IupConst.@IUP_DEFAULT;
 	}	
 
 	def fontdialog:$ih
 	{
-			var $dlg = IupDialogs.FontDlg();
-			IupAttributes.SetAttribute($dlg, "VALUE", "Times New Roman, Bold 20");
-			IupAttributes.SetAttribute($dlg, "TITLE", "IupFontDlg Test");
-			IupCallbacks.SetCallback($dlg, "HELP_CB", help_cb);
+			var $dlg = @IupDialogs.FontDlg();
+			@IupAttributes.SetAttribute($dlg, "VALUE", "Times New Roman, Bold 20");
+			@IupAttributes.SetAttribute($dlg, "TITLE", "IupFontDlg Test");
+			@IupCallbacks.SetCallback($dlg, "HELP_CB", help_cb);
 
-			IupDialogs.Popup($dlg, IupConst.@IUP_CURRENT, IupConst.@IUP_CURRENT);
-			var $status = IupAttributes.GetAttribute($dlg, "STATUS");
+			@IupDialogs.Popup($dlg, @IupConst.@IUP_CURRENT, @IupConst.@IUP_CURRENT);
+			var $status = @IupAttributes.GetAttribute($dlg, "STATUS");
 			
 			if(typeof($status)=="M_NULL")
 			{
-				IupSystem.Destroy($dlg); 
+				@IupSystem.Destroy($dlg); 
 				return; 
 			}
 			if($status=="1")
 			{
-				IupDialogs.Message("choose font",IupAttributes.GetAttribute($dlg, "VALUE"));
+				@IupDialogs.Message("choose font",@IupAttributes.GetAttribute($dlg, "VALUE"));
 			}
-			IupSystem.Destroy($dlg);  
-			return IupConst.@IUP_DEFAULT;
+			@IupSystem.Destroy($dlg);  
+			return @IupConst.@IUP_DEFAULT;
 	}
 
 	def listdialog:$ih
 	{
 		var $items = ["111","222","444"];
 		var $status = [0,0,0];
-		var $ret = IupDialogs.ListDialog(2,"Color Selection",3,$items,0,16,5,$status);
+		var $ret = @IupDialogs.ListDialog(2,"Color Selection",3,$items,0,16,5,$status);
 
 		var $i=0;
 		var $str="";
@@ -222,80 +233,80 @@ module dialogscallbackmoduletest
 			$i+=1;
 		}
 
-		IupDialogs.Message("message",$str==""?"no chooose":$str);
-		return IupConst.@IUP_DEFAULT;
+		@IupDialogs.Message("message",$str==""?"no chooose":$str);
+		return @IupConst.@IUP_DEFAULT;
 	}
 
 	def message:$ih
 	{
-		IupDialogs.Message("message","this is a message");
-		return IupConst.@IUP_DEFAULT;
+		@IupDialogs.Message("message","this is a message");
+		return @IupConst.@IUP_DEFAULT;
 	}
 	def messageerror:$ih
 	{
-		IupDialogs.MessageError("message","this is a MessageError");
-		return IupConst.@IUP_DEFAULT;
+		@IupDialogs.MessageError("message","this is a MessageError");
+		return @IupConst.@IUP_DEFAULT;
 	}
 
 	def messagealarm:$ih
 	{
-		var $k = IupDialogs.MessageAlarm("message","this is a mesagealarm","YESNOCANCEL");
+		var $k = @IupDialogs.MessageAlarm("message","this is a mesagealarm","YESNOCANCEL");
 		if($k==1){
-			IupDialogs.Message("message","YES");
-			return IupConst.@IUP_DEFAULT;
+			@IupDialogs.Message("message","YES");
+			return @IupConst.@IUP_DEFAULT;
 		}
 		if($k==2){
-			IupDialogs.Message("message","NO");
-			return IupConst.@IUP_DEFAULT;
+			@IupDialogs.Message("message","NO");
+			return @IupConst.@IUP_DEFAULT;
 		}
 		if($k==3){
-			IupDialogs.Message("message","CANCEL");
-			return IupConst.@IUP_DEFAULT;
+			@IupDialogs.Message("message","CANCEL");
+			return @IupConst.@IUP_DEFAULT;
 		}
-		return IupConst.@IUP_DEFAULT;
+		return @IupConst.@IUP_DEFAULT;
 	}
 	
 	def Calendar:$ih
 	{		
-		IupDialogs.Message("message",IupAttributes.GetAttribute($ih, "VALUE"));
-		return IupConst.@IUP_DEFAULT;
+		@IupDialogs.Message("message",@IupAttributes.GetAttribute($ih, "VALUE"));
+		return @IupConst.@IUP_DEFAULT;
 
 	}
 	def cancel_cb:$ih
 	{
-		IupSystem.Destroy(IupLayout.GetDialog($ih));
-		return IupConst.@IUP_CONTINUE;
+		@IupSystem.Destroy(mmrt(IupLayout).GetDialog($ih));
+		return @IupConst.@IUP_CONTINUE;
 	}
 	def progressdialog:$ih
 	{
-		var $dlg = IupDialogs.ProgressDlg();
-		IupAttributes.SetAttribute($dlg, "TITLE", "IupProgressDlg Test");
-		IupAttributes.SetAttribute($dlg, "DESCRIPTION", "Description first line\nSecond Line"); // Actually can have any number of lines.
-		IupAttributes.SetAttribute($dlg, "TOTALCOUNT", "300");
-		IupCallbacks.SetCallback($dlg, "CANCEL_CB", cancel_cb);
-		IupDialogs.	ShowXY($dlg, IupConst.@IUP_CENTER,IupConst.@IUP_CENTER);
-		return IupConst.@IUP_DEFAULT;
+		var $dlg = @IupDialogs.ProgressDlg();
+		@IupAttributes.SetAttribute($dlg, "TITLE", "IupProgressDlg Test");
+		@IupAttributes.SetAttribute($dlg, "DESCRIPTION", "Description first line\nSecond Line"); // Actually can have any number of lines.
+		@IupAttributes.SetAttribute($dlg, "TOTALCOUNT", "300");
+		@IupCallbacks.SetCallback($dlg, "CANCEL_CB", cancel_cb);
+		@IupDialogs.	ShowXY($dlg, @IupConst.@IUP_CENTER,@IupConst.@IUP_CENTER);
+		return @IupConst.@IUP_DEFAULT;
 	}
 
 	def gettextstring:$ih
 	{
-		IupDialogs.GetText("text edit",IupAttributes.GetAttribute($ih,"VALUE"),200);
-		return IupConst.@IUP_DEFAULT;
+		@IupDialogs.GetText("text edit",@IupAttributes.GetAttribute($ih,"VALUE"),200);
+		return @IupConst.@IUP_DEFAULT;
 	}
 
 	def timer_cb:$ih
 	{
 	
-		var $label = IupHandle.GetHandle("timerlabelhandel");
-		IupAttributes.SetAttribute($label, "TITLE", Number.ToString(DateTime.TimeZone()));
-		IupConst.@IUP_DEFAULT;
+		var $label = mmrt(IupHandle).GetHandle("timerlabelhandel");
+		@IupAttributes.SetAttribute($label, "TITLE", mmrt(Number).ToString(mmrt(DateTime).TimeZone()));
+		@IupConst.@IUP_DEFAULT;
 	}
 
 	def timerrun:$ih
 	{
-		var $t = IupAttributes.SetAttributes(IupSystem.Timer(),"TIME=1000,RUN=YES");
-		IupCallbacks.SetCallback($t,"ACTION_CB",timer_cb);
-		IupConst.@IUP_DEFAULT;
+		var $t = @IupAttributes.SetAttributes(@IupSystem.Timer(),"TIME=1000,RUN=YES");
+		@IupCallbacks.SetCallback($t,"ACTION_CB",timer_cb);
+		@IupConst.@IUP_DEFAULT;
 	}
 
 
@@ -304,34 +315,39 @@ module dialogscallbackmoduletest
 
 module controlsmoduletest
 {
+	var const @IupLayout =mmrt(IupLayout),const @IupControlsStandard=mmrt(IupControlsStandard);
+	var const @IupAttributes =mmrt(IupAttributes);
+	var const @IupControlsContainers =mmrt(IupControlsContainers);
+	var const @Number =mmrt(Number);
+	var const @IupCallbacks =mmrt(IupCallbacks);
 	def radioaction:$ih,$s
 	{
-		  var $pos = IupLayout.GetChildPos(IupLayout.GetParent($ih), $ih);
-		  IupDialogs.Message("message","radio："+Number.ToString($pos+1) +"\r\n status:"+ Number.ToString($s));
+		  var $pos = @IupLayout.GetChildPos(@IupLayout.GetParent($ih), $ih);
+		  mmrt(IupDialogs).Message("message","radio："+@Number.ToString($pos+1) +"\r\n status:"+ @Number.ToString($s));
 	}
 	def radio:
 	{
-		var $radio1 = IupControlsStandard.Toggle("radio1");
-		var $radio2 = IupControlsStandard.Toggle("radio2");
-		var $hbox = IupControlsContainers.Hbox([$radio1,$radio2]);
+		var $radio1 = @IupControlsStandard.Toggle("radio1");
+		var $radio2 = @IupControlsStandard.Toggle("radio2");
+		var $hbox = @IupControlsContainers.Hbox([$radio1,$radio2]);
 
-		var $radios = IupControlsContainers.Radio($hbox);
-		var $frame = IupControlsContainers.Frame($radios);
+		var $radios = @IupControlsContainers.Radio($hbox);
+		var $frame = @IupControlsContainers.Frame($radios);
 
-		IupCallbacks.SetCallback($radio1,"ACTION",radioaction);
-		IupCallbacks.SetCallback($radio2,"ACTION",radioaction);
+		@IupCallbacks.SetCallback($radio1,"ACTION",radioaction);
+		@IupCallbacks.SetCallback($radio2,"ACTION",radioaction);
 
-		IupAttributes.SetAttribute($frame, "TITLE", "Frame");
+		@IupAttributes.SetAttribute($frame, "TITLE", "Frame");
 		return $frame;
 
 	}
 	def tabs:
 	{
 		var $vbox1,$vbox2;
-		var $tabs = IupControlsContainers.Tabs([$vbox1=IupControlsContainers.Vbox(IupControlsStandard.Button("tab1")),$vbox2=IupControlsContainers.Vbox(IupControlsStandard.Button("tab2"))]);
-		IupAttributes.SetAttribute($vbox1, "TABTITLE", "Tab A");
-		IupAttributes.SetAttribute($vbox2, "TABTITLE", "Tab B");
-		IupAttributes.SetAttribute($tabs, "SIZE", "100X50");
+		var $tabs = @IupControlsContainers.Tabs([$vbox1=@IupControlsContainers.Vbox(@IupControlsStandard.Button("tab1")),$vbox2=@IupControlsContainers.Vbox(@IupControlsStandard.Button("tab2"))]);
+		@IupAttributes.SetAttribute($vbox1, "TABTITLE", "Tab A");
+		@IupAttributes.SetAttribute($vbox2, "TABTITLE", "Tab B");
+		@IupAttributes.SetAttribute($tabs, "SIZE", "100X50");
 		return $tabs;
 	}
 
@@ -339,65 +355,68 @@ module controlsmoduletest
 
 module menumoduletest
 {
+	var const @IupLayout = mmrt(IupLayout),const @IupMenus = mmrt(IupMenus);
+	var const @imgmoduletest  =mmrt(imgmoduletest),const @IupCallbacks = mmrt(IupCallbacks);
+	var const @iupapptest =mmrt(iupapptest);
 	def menu_init:
 	{
-		var $firstmenu = IupMenus.Menu();
-		var $firstmenu_1 = IupMenus.Item("Open (CTRL+O)");	
-		imgmoduletest.setmenuico($firstmenu_1,"ico/open.PNG");
-		IupCallbacks.SetCallback($firstmenu_1,"ACTION");
-		var $firstmenu_2 = IupMenus.Item("Menu2");	
-		imgmoduletest.setmenuico($firstmenu_2,"ico/menu2.PNG");
-		IupCallbacks.SetCallback($firstmenu_2,"ACTION");
+		var $firstmenu = @IupMenus.Menu();
+		var $firstmenu_1 = @IupMenus.Item("Open (CTRL+O)");	
+		@imgmoduletest.setmenuico($firstmenu_1,"ico/open.PNG");
+		@IupCallbacks.SetCallback($firstmenu_1,"ACTION");
+		var $firstmenu_2 = @IupMenus.Item("Menu2");	
+		@imgmoduletest.setmenuico($firstmenu_2,"ico/menu2.PNG");
+		@IupCallbacks.SetCallback($firstmenu_2,"ACTION");
 
-		var $firstmenu_3 = IupMenus.Menu();
-		var $firstmenu_3_sub_1 = IupMenus.Item("SubMenu_1");
-		var $firstmenu_3_sub_2 = IupMenus.Item("SubMenu_2");	
-		var $firstmenu_3_sub_3 = IupMenus.Item("SubMenu_3");
-		var $firstmenu_3_sub_4 = IupMenus.Item("SubMenu_4");			
-		IupAttributes.SetAttribute($firstmenu_3_sub_1,"VALUE","ON");		
-		IupLayout.Append($firstmenu_3,$firstmenu_3_sub_1);
-		IupLayout.Append($firstmenu_3,$firstmenu_3_sub_2);
-		IupLayout.Append($firstmenu_3,$firstmenu_3_sub_3);
-		IupLayout.Append($firstmenu_3,$firstmenu_3_sub_4);
-		var $firstmenu_3_sub = IupMenus.Submenu("SubMenu",$firstmenu_3);
-		IupLayout.Append($firstmenu_3_sub,$firstmenu_3);
-		imgmoduletest.setmenuico($firstmenu_3_sub,"ico/submenu.PNG");
+		var $firstmenu_3 = @IupMenus.Menu();
+		var $firstmenu_3_sub_1 = @IupMenus.Item("SubMenu_1");
+		var $firstmenu_3_sub_2 = @IupMenus.Item("SubMenu_2");	
+		var $firstmenu_3_sub_3 = @IupMenus.Item("SubMenu_3");
+		var $firstmenu_3_sub_4 = @IupMenus.Item("SubMenu_4");			
+		mmrt(IupAttributes).SetAttribute($firstmenu_3_sub_1,"VALUE","ON");		
+		@IupLayout.Append($firstmenu_3,$firstmenu_3_sub_1);
+		@IupLayout.Append($firstmenu_3,$firstmenu_3_sub_2);
+		@IupLayout.Append($firstmenu_3,$firstmenu_3_sub_3);
+		@IupLayout.Append($firstmenu_3,$firstmenu_3_sub_4);
+		var $firstmenu_3_sub = @IupMenus.Submenu("SubMenu",$firstmenu_3);
+		@IupLayout.Append($firstmenu_3_sub,$firstmenu_3);
+		@imgmoduletest.setmenuico($firstmenu_3_sub,"ico/submenu.PNG");
 
 
-		var $itemexit = IupMenus.Item("Exit");
-		imgmoduletest.setmenuico($itemexit,"ico/exit.PNG");
-		IupCallbacks.SetCallback($itemexit,"ACTION",iupapptest.closewindow);
-		IupLayout.Append($firstmenu,$firstmenu_1);
-		IupLayout.Append($firstmenu,$firstmenu_2);
-		IupLayout.Append($firstmenu,$firstmenu_3_sub);
-		IupLayout.Append($firstmenu,IupMenus.Separator());
-		IupLayout.Append($firstmenu,$itemexit);
+		var $itemexit = @IupMenus.Item("Exit");
+		@imgmoduletest.setmenuico($itemexit,"ico/exit.PNG");
+		@IupCallbacks.SetCallback($itemexit,"ACTION",@iupapptest.closewindow);
+		@IupLayout.Append($firstmenu,$firstmenu_1);
+		@IupLayout.Append($firstmenu,$firstmenu_2);
+		@IupLayout.Append($firstmenu,$firstmenu_3_sub);
+		@IupLayout.Append($firstmenu,@IupMenus.Separator());
+		@IupLayout.Append($firstmenu,$itemexit);
 		
 
 
 
-		var $menu3 = IupMenus.Menu();
-		var $itemabout = IupMenus.Item("About");	
-		imgmoduletest.setmenuico($itemabout,"ico/about.PNG");
-		IupCallbacks.SetCallback($itemabout,"ACTION",iupapptest.aboutme);
-		var $itemurl = IupMenus.Item("WebSite");	
-		imgmoduletest.setmenuico($itemurl,"ico/website.PNG");
-		IupCallbacks.SetCallback($itemurl,"ACTION",iupapptest.website);
-		IupLayout.Append($menu3,$itemabout);
-		IupLayout.Append($menu3,$itemurl);
+		var $menu3 = @IupMenus.Menu();
+		var $itemabout = @IupMenus.Item("About");	
+		@imgmoduletest.setmenuico($itemabout,"ico/about.PNG");
+		@IupCallbacks.SetCallback($itemabout,"ACTION",@iupapptest.aboutme);
+		var $itemurl = @IupMenus.Item("WebSite");	
+		@imgmoduletest.setmenuico($itemurl,"ico/website.PNG");
+		@IupCallbacks.SetCallback($itemurl,"ACTION",@iupapptest.website);
+		@IupLayout.Append($menu3,$itemabout);
+		@IupLayout.Append($menu3,$itemurl);
 
 
-		var $menu = IupMenus.Menu();
-		var $sub1_menu = IupMenus.Submenu("MENU(F)",$firstmenu);
-		var $sub3_menu = IupMenus.Submenu("HELP(H)",$menu3);
+		var $menu = @IupMenus.Menu();
+		var $sub1_menu = @IupMenus.Submenu("MENU(F)",$firstmenu);
+		var $sub3_menu = @IupMenus.Submenu("HELP(H)",$menu3);
 
-		IupLayout.Append($menu,$sub1_menu);
-	    IupLayout.Append($menu,$sub3_menu);
-		IupHandle.SetHandle("mymenu", $menu);
+		@IupLayout.Append($menu,$sub1_menu);
+	    @IupLayout.Append($menu,$sub3_menu);
+		mmrt(IupHandle).SetHandle("mymenu", $menu);
 	}
 	def selectitem:$ih,$item,$text
 	{
-		Console.Out($text);
+		mmrt(Console).Out($text);
 	}
 }
 
@@ -409,11 +428,11 @@ module hotkeymoduletest
 {
 	def key:$ih,$key
 	{
-		var $keystring = IupKeyboard.GetKeyCodeString($key);		
+		var $keystring = mmrt(IupKeyboard).GetKeyCodeString($key);		
 		if(typeof($keystring)!="M_NULL")
 		{ 
 			if($keystring=="K_cO"){
-				dialogscallbackmoduletest.filedialog($ih);
+				mmrt(dialogscallbackmoduletest).filedialog($ih);
 			}
 		}
 	}
@@ -423,19 +442,21 @@ module hotkeymoduletest
 
 module test
 {	
+	var @IupDialogs = mmrt(IupDialogs);
+	var @IupConst = mmrt(IupConst);
 	def bbb:$str
 	{
-		IupDialogs.Message("ffffff",$str);
+		@IupDialogs.Message("ffffff",$str);
 	}
 	def bbb2:
 	{
-		var $maindialog = IupDialogs.Dialog();
-		IupAttributes.SetAttribute($maindialog, "RASTERSIZE", "100X100");
-		IupDialogs.Popup($maindialog,IupConst.@IUP_CENTER,IupConst.@IUP_CENTER);
+		var $maindialog = @IupDialogs.Dialog();
+		mmrt(IupAttributes).SetAttribute($maindialog, "RASTERSIZE", "100X100");
+		@IupDialogs.Popup($maindialog,@IupConst.@IUP_CENTER,@IupConst.@IUP_CENTER);
 	}
 	def ttt3:$num, $x, $y
 	{
-		IupDialogs.Message("ffffff",$x);
+		@IupDialogs.Message("ffffff",$x);
 	}	
 }
 
@@ -443,156 +464,162 @@ module test
 
 module interface 
 {
+	var @dialogscallbackmoduletest =mmrt(dialogscallbackmoduletest);
+	var @IupControlsStandard =mmrt(IupControlsStandard);
+	var @IupAttributes =mmrt(IupAttributes);
+	var @IupCallbacks =mmrt(IupCallbacks);
+	var const @IupControlsContainers =mmrt(IupControlsContainers);
+	var const @IupHandle =mmrt(IupHandle);
 	def createfiledialogbutton:
 	{
-		var $filedialogbutton = IupControlsStandard.Button("FileDialog");
-		IupCallbacks.SetCallback($filedialogbutton,"ACTION",dialogscallbackmoduletest.filedialog);
+		var $filedialogbutton = @IupControlsStandard.Button("FileDialog");
+		@IupCallbacks.SetCallback($filedialogbutton,"ACTION",@dialogscallbackmoduletest.filedialog);
 		return $filedialogbutton;
 	}
 	def createmessagedlgbutton:
 	{
-		var $messagedialogbutton = IupControlsStandard.Button("MessageDialog");
-		IupCallbacks.SetCallback($messagedialogbutton,"ACTION",dialogscallbackmoduletest.messagedlg);
+		var $messagedialogbutton = @IupControlsStandard.Button("MessageDialog");
+		@IupCallbacks.SetCallback($messagedialogbutton,"ACTION",@dialogscallbackmoduletest.messagedlg);
 		return $messagedialogbutton;		
 	} 
 
 	def createcolordialogbutton:
 	{
-		var $colordialogbutton = IupControlsStandard.Button("ColorDialog");
-		IupCallbacks.SetCallback($colordialogbutton,"ACTION",dialogscallbackmoduletest.colordialog);
+		var $colordialogbutton = @IupControlsStandard.Button("ColorDialog");
+		@IupCallbacks.SetCallback($colordialogbutton,"ACTION",@dialogscallbackmoduletest.colordialog);
 		return $colordialogbutton;
 	}
 	def createfontdialogbutton:
 	{
-		var $fontdialogbutton = IupControlsStandard.Button("FontDialog");
-		IupCallbacks.SetCallback($fontdialogbutton,"ACTION",dialogscallbackmoduletest.fontdialog);
+		var $fontdialogbutton = @IupControlsStandard.Button("FontDialog");
+		@IupCallbacks.SetCallback($fontdialogbutton,"ACTION",@dialogscallbackmoduletest.fontdialog);
 		return $fontdialogbutton;
 	}
 
 	def createalarmdialogbutton:
 	{
-		var $Alarmdialogbutton = IupControlsStandard.Button("AlarmDialog");
-		IupCallbacks.SetCallback($Alarmdialogbutton,"ACTION",dialogscallbackmoduletest.alarmdialog);
+		var $Alarmdialogbutton = @IupControlsStandard.Button("AlarmDialog");
+		@IupCallbacks.SetCallback($Alarmdialogbutton,"ACTION",@dialogscallbackmoduletest.alarmdialog);
 		return $Alarmdialogbutton;
 	}
 
 	def createlistdialogbutton:
 	{
-		var $listdialogbutton = IupControlsStandard.Button("listDialog");
-		IupCallbacks.SetCallback($listdialogbutton,"ACTION",dialogscallbackmoduletest.listdialog);
+		var $listdialogbutton = @IupControlsStandard.Button("listDialog");
+		@IupCallbacks.SetCallback($listdialogbutton,"ACTION",@dialogscallbackmoduletest.listdialog);
 		return $listdialogbutton;
 	}
 
 	def cratemessagebutton:
 	{
-		var $messagebutton = IupControlsStandard.Button("Message");
-		IupCallbacks.SetCallback($messagebutton,"ACTION",dialogscallbackmoduletest.message);
+		var $messagebutton = @IupControlsStandard.Button("Message");
+		@IupCallbacks.SetCallback($messagebutton,"ACTION",@dialogscallbackmoduletest.message);
 		return $messagebutton;
 	}
 	def cratemessageerrorbutton:
 	{
-		var $messageerrorbutton = IupControlsStandard.Button("MessageError");
-		IupCallbacks.SetCallback($messageerrorbutton,"ACTION",dialogscallbackmoduletest.messageerror);
+		var $messageerrorbutton = @IupControlsStandard.Button("MessageError");
+		@IupCallbacks.SetCallback($messageerrorbutton,"ACTION",@dialogscallbackmoduletest.messageerror);
 		return $messageerrorbutton;
 	}
 	def cratemessagealarmbutton:
 	{
-		var $messagealarmbutton = IupControlsStandard.Button("MessageAlarm");
-		IupCallbacks.SetCallback($messagealarmbutton,"ACTION",dialogscallbackmoduletest.messagealarm);
+		var $messagealarmbutton = @IupControlsStandard.Button("MessageAlarm");
+		@IupCallbacks.SetCallback($messagealarmbutton,"ACTION",@dialogscallbackmoduletest.messagealarm);
 		return $messagealarmbutton;
 	}
 
 	def createdetachBox:
 	{
-		var $hox = 	IupControlsContainers.Hbox(IupControlsStandard.Button("Test BUTTON"));
-		var $dbox = IupControlsContainers.DetachBox($hox);
-		IupAttributes.SetAttribute($dbox, "ORIENTATION", "VERTICAL");
+		var $hox = 	@IupControlsContainers.Hbox(@IupControlsStandard.Button("Test BUTTON"));
+		var $dbox = @IupControlsContainers.DetachBox($hox);
+		@IupAttributes.SetAttribute($dbox, "ORIENTATION", "VERTICAL");
 		return $dbox;
 	}
 	def createexpander:
 	{
 		
-		var $exp = IupControlsContainers.Expander(IupControlsStandard.Button("Test BUTTON"));
-		IupAttributes.SetAttribute($exp, "TITLE", "IupExpander Title");
-		IupAttributes.SetAttribute($exp, "AUTOSHOW", "Yes");
-		var $hox = 	IupControlsContainers.Hbox($exp);
+		var $exp = @IupControlsContainers.Expander(@IupControlsStandard.Button("Test BUTTON"));
+		@IupAttributes.SetAttribute($exp, "TITLE", "IupExpander Title");
+		@IupAttributes.SetAttribute($exp, "AUTOSHOW", "Yes");
+		var $hox = 	@IupControlsContainers.Hbox($exp);
 		return $hox;
 	}
 	def createfaltbutton:
 	{	
-		return IupControlsStandard.FlatButton("FLAT BUTTON");
+		return @IupControlsStandard.FlatButton("FLAT BUTTON");
 	}
 
 	def createcalendarbutton:
 	{	
-		var $calendar = IupControlsStandard.Calendar();
-		IupCallbacks.SetCallback($calendar,"VALUECHANGED_CB",dialogscallbackmoduletest.Calendar);
+		var $calendar = @IupControlsStandard.Calendar();
+		@IupCallbacks.SetCallback($calendar,"VALUECHANGED_CB",@dialogscallbackmoduletest.Calendar);
 		return $calendar;
 	}
 
 	def createcolorbrowser:
 	{
-		return IupControlsStandard.ColorBrowser();
+		return @IupControlsStandard.ColorBrowser();
 	}
 
 	def createdatepick:
 	{
-		return IupControlsStandard.DatePick();
+		return @IupControlsStandard.DatePick();
 	}
 
 	def createdial:
 	{
-		return IupControlsStandard.Dial("HORIZONTAL");
+		return @IupControlsStandard.Dial("HORIZONTAL");
 	}
 
 	def createlist:
 	{
-		var $list = IupControlsStandard.List();
-		IupAttributes.SetAttribute($list, "1", "111");
-		IupAttributes.SetAttribute($list, "2", "222");
-		IupAttributes.SetAttribute($list, "3", "333");
+		var $list = @IupControlsStandard.List();
+		@IupAttributes.SetAttribute($list, "1", "111");
+		@IupAttributes.SetAttribute($list, "2", "222");
+		@IupAttributes.SetAttribute($list, "3", "333");
 		return $list;
 	}
 	def crateprogressbar:
 	{
-		return IupAttributes.SetAttributes(IupControlsStandard.ProgressBar(),"VALUE=2,MAX=10,MIN=0");
+		return @IupAttributes.SetAttributes(@IupControlsStandard.ProgressBar(),"VALUE=2,MAX=10,MIN=0");
 	}
 	def cratetext:
 	{
-		var $text = IupAttributes.SetAttributes(IupControlsStandard.Text(),"VALUE=this is a text,SIZE=100X");
-		IupCallbacks.SetCallback($text,"ACTION",dialogscallbackmoduletest.gettextstring);
+		var $text = @IupAttributes.SetAttributes(@IupControlsStandard.Text(),"VALUE=this is a text,SIZE=100X");
+		@IupCallbacks.SetCallback($text,"ACTION",@dialogscallbackmoduletest.gettextstring);
 		return $text;
 	}
 	def crateval:
 	{
-		return IupAttributes.SetAttributes(IupControlsStandard.Val("HORIZONTAL"),"VALUE=2");
+		return @IupAttributes.SetAttributes(@IupControlsStandard.Val("HORIZONTAL"),"VALUE=2");
 	}
 	def cratelabel:
 	{
-		return  IupControlsStandard.Label("This ia a label");
+		return  @IupControlsStandard.Label("This ia a label");
 	}
 	def createdropbutton:
 	{
-		var $list = IupControlsStandard.List();
-		IupAttributes.SetAttribute($list, "1", "111");
-		IupAttributes.SetAttribute($list, "2", "222");
-		IupAttributes.SetAttribute($list, "3", "333");
-		return IupAttributes.SetAttributes(IupControlsStandard.DropButton($list),"TITLE=dropdown");
+		var $list = @IupControlsStandard.List();
+		@IupAttributes.SetAttribute($list, "1", "111");
+		@IupAttributes.SetAttribute($list, "2", "222");
+		@IupAttributes.SetAttribute($list, "3", "333");
+		return @IupAttributes.SetAttributes(@IupControlsStandard.DropButton($list),"TITLE=dropdown");
 	}
 	def createprocessdialogbutton:
 	{
-		var $progressdialogbutton = IupControlsStandard.Button("ProgressDialog");
-		IupCallbacks.SetCallback($progressdialogbutton,"ACTION",dialogscallbackmoduletest.progressdialog);
+		var $progressdialogbutton = @IupControlsStandard.Button("ProgressDialog");
+		@IupCallbacks.SetCallback($progressdialogbutton,"ACTION",@dialogscallbackmoduletest.progressdialog);
 		return $progressdialogbutton;
 	}
 	def createtimerbutton:
 	{
-		var $label = IupControlsStandard.Label("click button to run");
-		IupHandle.SetHandle("timerlabelhandel", $label);
-		var $timerbutton = IupControlsStandard.Button("RUN");
-		var $hbox = IupControlsContainers.Vbox([$label,$timerbutton]);
-		IupCallbacks.SetCallback($timerbutton,"ACTION",dialogscallbackmoduletest.timerrun);
-		var $frame = IupAttributes.SetAttributes(IupControlsContainers.Frame($hbox),"TITLE=timerframe");
+		var $label = @IupControlsStandard.Label("click button to run");
+		@IupHandle.SetHandle("timerlabelhandel", $label);
+		var $timerbutton = @IupControlsStandard.Button("RUN");
+		var $hbox = @IupControlsContainers.Vbox([$label,$timerbutton]);
+		@IupCallbacks.SetCallback($timerbutton,"ACTION",@dialogscallbackmoduletest.timerrun);
+		var $frame = @IupAttributes.SetAttributes(@IupControlsContainers.Frame($hbox),"TITLE=timerframe");
 		return $frame;
 	}
 	
@@ -610,46 +637,54 @@ module interface
 					3,2,1,2,3,3,3,2,1,2,3, 
 					2,1,2,3,3,3,3,3,2,1,2, 
 					1,2,3,3,3,3,3,3,3,2,1];
-			var $img_x = IupImages.Image(11,11,$im);
-			IupHandle.SetHandle("img_x", $img_x);
-			var $b = IupControlsStandard.Label("createimage");
-			IupAttributes.SetAttribute($b,"IMAGE","img_x");
-			var $frame = IupAttributes.SetAttributes(IupControlsContainers.Frame(IupControlsContainers.Vbox($b)),"TITLE=createimage,SIZE=50x50");
+			var $img_x = mmrt(IupImages).Image(11,11,$im);
+			@IupHandle.SetHandle("img_x", $img_x);
+			var $b = @IupControlsStandard.Label("createimage");
+			@IupAttributes.SetAttribute($b,"IMAGE","img_x");
+			var $frame = @IupAttributes.SetAttributes(@IupControlsContainers.Frame(@IupControlsContainers.Vbox($b)),"TITLE=createimage,SIZE=50x50");
 			return $frame;
 	}
 }
 
 _mmain:$a,$c
 {
+		mmrt(IupSystem).Init();
+	var $iupapptest =mmrt(iupapptest);	
+	$iupapptest.loadappico("ico/ico.png");
+	$iupapptest.loadapplogo("ico/logo.png");
+	mmrt(menumoduletest).menu_init();
 
-	IupSystem.Init();
-	iupapptest.loadappico("ico/ico.png");
-	iupapptest.loadapplogo("ico/logo.png");
-	menumoduletest.menu_init();
+	var $IupControlsContainers =mmrt(IupControlsContainers);
+	var $interface =mmrt(interface);
+	var $controlsmoduletest =mmrt(controlsmoduletest);
+	var $IupAttributes =mmrt(IupAttributes);
+	var $IupDialogs =mmrt(IupDialogs);
+	var $IupCallbacks =mmrt(IupCallbacks);
+	var const $IupConst =mmrt(IupConst);
+	var $vbox1 = $IupControlsContainers.Vbox([$interface.cratemessagealarmbutton(),$interface.createmessagedlgbutton(),$interface.createcolordialogbutton(),$interface.createfontdialogbutton(),$interface.createalarmdialogbutton(),$interface.createlistdialogbutton(),$interface.cratemessagebutton(),$interface.cratemessageerrorbutton(),$interface.cratemessagealarmbutton(),
+	$controlsmoduletest.radio()]);
+	$IupAttributes.SetAttributes($vbox1, "GAP=30,MARGIN=20X10");
+	var $vbox2 = $IupControlsContainers.Vbox([$interface.createdetachBox(),$interface.createexpander(),$interface.createfaltbutton(),$interface.createcalendarbutton(),$interface.createcolorbrowser()]);
+	$IupAttributes.SetAttributes($vbox2, "GAP=30,MARGIN=20X10");
+	var $vbox3= $IupControlsContainers.Vbox([$interface.createlist(),$interface.crateprogressbar(),$interface.cratetext(),$interface.crateval(),$interface.cratelabel(),$interface.createdropbutton(),$interface.createprocessdialogbutton(),$interface.createdatepick()]);
+	$IupAttributes.SetAttributes($vbox3, "GAP=40,MARGIN=20X10");
+	var $vbox4= $IupControlsContainers.Vbox([$controlsmoduletest.tabs(),$interface.createtimerbutton(),$interface.createimage(),$interface.createdial()]);
+	$IupAttributes.SetAttributes($vbox4, "GAP=30,MARGIN=20X10");
+	var $hbox =  $IupControlsContainers.Hbox([$vbox1,$vbox2,$vbox3,$vbox4]);
 
-	var $vbox1 = IupControlsContainers.Vbox([interface.cratemessagealarmbutton(),interface.createmessagedlgbutton(),interface.createcolordialogbutton(),interface.createfontdialogbutton(),interface.createalarmdialogbutton(),interface.createlistdialogbutton(),interface.cratemessagebutton(),interface.cratemessageerrorbutton(),interface.cratemessagealarmbutton(),
-	controlsmoduletest.radio()]);
-	IupAttributes.SetAttributes($vbox1, "GAP=30,MARGIN=20X10");
-	var $vbox2 = IupControlsContainers.Vbox([interface.createdetachBox(),interface.createexpander(),interface.createfaltbutton(),interface.createcalendarbutton(),interface.createcolorbrowser()]);
-	IupAttributes.SetAttributes($vbox2, "GAP=30,MARGIN=20X10");
-	var $vbox3= IupControlsContainers.Vbox([interface.createlist(),interface.crateprogressbar(),interface.cratetext(),interface.crateval(),interface.cratelabel(),interface.createdropbutton(),interface.createprocessdialogbutton(),interface.createdatepick()]);
-	IupAttributes.SetAttributes($vbox3, "GAP=40,MARGIN=20X10");
-	var $vbox4= IupControlsContainers.Vbox([controlsmoduletest.tabs(),interface.createtimerbutton(),interface.createimage(),interface.createdial()]);
-	IupAttributes.SetAttributes($vbox4, "GAP=30,MARGIN=20X10");
-	var $hbox =  IupControlsContainers.Hbox([$vbox1,$vbox2,$vbox3,$vbox4]);
+	var $maindialog = $IupDialogs.Dialog($hbox);
+	
+	$IupAttributes.SetAttribute($maindialog, "RASTERSIZE", "1000X600");
+	$IupAttributes.SetAttribute($maindialog, "BACKGROUND", "255 128 128");
+	$IupAttributes.SetAttribute($maindialog, "BORDER", "NO");
+	$IupAttributes.SetAttribute($maindialog, "TRAY", "YES");
+	$IupAttributes.SetAttributeHandle($maindialog, "TRAYIMAGE", $iupapptest.@appico);
+	$IupAttributes.SetAttribute($maindialog, "TITLE", "MentholIup");
+	$IupAttributes.SetAttributeHandle($maindialog,"ICON",$iupapptest.@appico);
+	$IupAttributes.SetAttribute($maindialog, "MENU", "mymenu");
+	$IupCallbacks.SetCallback($maindialog,"K_ANY",mmrt(hotkeymoduletest).key);
+	$IupDialogs.ShowXY($maindialog,$IupConst.@IUP_CENTER,$IupConst.@IUP_CENTER);
+	$IupCallbacks.MainLoop();
 
-	var $maindialog = IupDialogs.Dialog($hbox);
-
-	IupAttributes.SetAttribute($maindialog, "RASTERSIZE", "1000X600");
-	IupAttributes.SetAttribute($maindialog, "BACKGROUND", "255 128 128");
-	IupAttributes.SetAttribute($maindialog, "BORDER", "NO");
-	IupAttributes.SetAttribute($maindialog, "TRAY", "YES");
-	IupAttributes.SetAttributeHandle($maindialog, "TRAYIMAGE", iupapptest.@appico);
-	IupAttributes.SetAttribute($maindialog, "TITLE", "MentholIup");
-	IupAttributes.SetAttributeHandle($maindialog,"ICON",iupapptest.@appico);
-	IupAttributes.SetAttribute($maindialog, "MENU", "mymenu");
-	IupCallbacks.SetCallback($maindialog,"K_ANY",hotkeymoduletest.key);
-	IupDialogs.ShowXY($maindialog,IupConst.@IUP_CENTER,IupConst.@IUP_CENTER);
-	IupCallbacks.MainLoop();
 }
  

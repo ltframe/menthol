@@ -1,24 +1,23 @@
 import MCryptography;
-import FileSystem;
 use CMDX;
-use File;
 module Mdx
 {
+	var const @cmdxinst = mmrt(CMDX); 
 	def  MD5:$arg1
 	{
-		return CMDX.MD5($arg1);
+		return @cmdxinst.MD5($arg1);
 	}
 	def  MD5File:$arg1
 	{
-		return CMDX.MD5File($arg1);
+		return @cmdxinst.MD5File($arg1);
 	}
 	def  MD4:$arg1
 	{
-		return CMDX.MD4($arg1);
+		return @cmdxinst.MD4($arg1);
 	}
 	def  MD2:$arg1
 	{
-		return CMDX.MD2($arg1);
+		return @cmdxinst.MD2($arg1);
 	}
 }
 

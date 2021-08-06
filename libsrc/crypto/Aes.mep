@@ -3,21 +3,22 @@ import String;
 use CAES,String;
 module Aesx
 {
+	var const @caseinst = mmrt(Aesx),const @stringinst = mmrt(String); 
 	def AESEncryp:$arg1,$arg2
 	{
-		if(String.Length($arg2)!=16)
+		if(@stringinst.Length($arg2)!=16)
 		{
 			return -1;
 		}
-		return CAES.AESEncryp($arg1,$arg2);
+		return @caseinst.AESEncryp($arg1,$arg2);
 	}
 	def AESDecryp:$arg1,$arg2
 	{
-		if(String.Length($arg2)!=16)
+		if(@stringinst.Length($arg2)!=16)
 		{
 			return -1;
 		}
-		return CAES.AESDecryp($arg1,$arg2);
+		return @caseinst.AESDecryp($arg1,$arg2);
 	}
 
 }

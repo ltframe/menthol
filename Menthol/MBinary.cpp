@@ -25,7 +25,7 @@ MBinary* MBinary::CreateInstance()
 
 void MBinary::ReadBinary(ImportFileAttr fileattr, vector<Instruction> *codelist,
 	vector<RunTimeState*> *vrts, vector<StringValue>* dictkeyconstants, void(*_AddRunTimeStateList)(RunTimeState*)
-	,vector<GlobalCodeRuntimeAtter>* globallist){
+	/*,vector<GlobalCodeRuntimeAtter>* globallist*/){
 
 
 	std::ifstream t;  
@@ -97,8 +97,9 @@ loopstart:
 			currentruntimestate->functionlist = new vector <FunctionAtter>();
 			currentruntimestate->strings = new vector<string>();
 			currentruntimestate->includemodule = new vector<ModuleState*>();
-			currentruntimestate->globalvalues = new VECOTRSTACKSTATE();
+			//currentruntimestate->globalvalues = new VECOTRSTACKSTATE();
 			currentruntimestate->debuglist = new vector<MentholDebug>();
+			currentruntimestate->globalcode = new vector<vector<Instruction>*>();
 			_AddRunTimeStateList(currentruntimestate);
 			_tempruntimestate->push_back(currentruntimestate);
 		}
@@ -126,6 +127,7 @@ loopstart:
 						ps->hash = hash;
 						ps->rts = (*it);
 						VECTORFORSTART(RunTimeState*,_tempruntimestate,it1)
+							//(*it1)
 							(*it1)->includemodule->push_back(ps);
 						VECTORFOREND
 					break;
@@ -187,17 +189,21 @@ loopstart:
    		int loopid = i;
 		int c = i+allgloballength*4-4;
 		while(loopid<c){
-				vector<Instruction> *globalcodelist =new vector<Instruction>();
+				
 				hashValue packagenamehash = ReadCode(bufferf, loopid);
 				VECTORFORSTART(RunTimeState*,vrts,it)
 					if((*it)->hash==packagenamehash){
 						int codelenght = ReadCode(bufferf, loopid);
+						vector<Instruction> *globalcodelist = new vector<Instruction>();
 						for (int si = 0; si<codelenght; si++)
 						{
 							globalcodelist->push_back(ReadCode(bufferf, loopid));
 						}
+
+						(*it)->globalcode->push_back(globalcodelist);
 						GlobalCodeRuntimeAtter gcra = { globalcodelist, (*it), codelenght };
-						globallist->push_back(gcra);
+						//globallist->push_back(gcra);
+					
 						break;
 					}
 				VECTORFOREND

@@ -2,24 +2,25 @@ import miup;
 use CIup;
 module IupString
 {
+	var const @ciupinst =mmrt(CIup);
 	def SetLanguage:$arg1
 	{
-		return CIup.SetLanguage($arg1);
+		return @ciupinst.SetLanguage($arg1);
 	}
 
 	def GetLanguage:
 	{
-		return CIup.GetLanguage();
+		return @ciupinst.GetLanguage();
 	}
 
 	def SetLanguageString:$arg1,$arg2
 	{
-		return CIup.SetLanguageString($arg1,$arg2);
+		return @ciupinst.SetLanguageString($arg1,$arg2);
 	}
 
 	def GetLanguageString:$arg1
 	{
-		return CIup.GetLanguageString($arg1);
+		return @ciupinst.GetLanguageString($arg1);
 	}
 
 }

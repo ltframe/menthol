@@ -7,7 +7,7 @@
 int error(char* str,char* cf,int line)
 {
 	printf("\r\n");
-	printf("runtime llerror: %s, in %s,at line %d",str,cf,line);
+	printf("runtime error: %s, in %s,at line %d",str,cf,line);
 	printf("\r\n");
 	return 1;
 }

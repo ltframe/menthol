@@ -1,0 +1,4402 @@
+Terminals unused in grammar
+
+   '='
+
+
+State 90 conflicts: 1 shift/reduce
+State 180 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: start $end
+
+    1 start: run_statement
+    2      | start run_statement
+
+    3 run_statement: import_expresson
+    4              | moduledefine
+    5              | USE use_expression_list ';'
+    6              | wmain_definition
+
+    7 wmain_definition: WMAIN ':' function_parameter funciton_codeblock_statement
+
+    8 functiondefinition: DEF IDENTIFIER ':' function_parameter funciton_codeblock_statement
+    9                   | DEF IDENTIFIER ':' funciton_codeblock_statement
+
+   10 global_initialization: initialization_expression ';'
+   11                      | expression_definition ';'
+
+   12 function_parameter_list: VARIDENTIFIER
+   13                        | VARIDENTIFIER ASSIGN_ASSIGN assignment_expression_definition
+   14                        | CONST VARIDENTIFIER
+   15                        | CONST VARIDENTIFIER ASSIGN_ASSIGN assignment_expression_definition
+
+   16 function_parameter: function_parameter_list
+   17                   | function_parameter ',' function_parameter_list
+
+   18 funciton_codeblock_statement: '{' statement_list '}'
+   19                             | '{' '}'
+
+   20 function_arguments: assignment_expression_definition
+   21                   | function_arguments ',' assignment_expression_definition
+
+   22 primary_expression: dict_declare
+   23                   | array_declare
+   24                   | built-intype_declare
+   25                   | indentifier_expression
+   26                   | '(' assignment_expression_definition ')'
+   27                   | TYPEOF '(' assignment_expression_definition ')'
+   28                   | MMRT '(' assignment_expression_definition ')'
+
+   29 list_element: primary_expression
+   30             | list_element '[' assignment_expression_definition ']'
+   31             | list_element '[' assignment_expression_definition ARRAYSECTION ']'
+   32             | list_element '[' ARRAYSECTION assignment_expression_definition ']'
+   33             | list_element '[' assignment_expression_definition ARRAYSECTION assignment_expression_definition ']'
+   34             | list_element DICT_OP IDENTIFIER
+   35             | list_element '.' IDENTIFIER '(' function_arguments ')'
+   36             | list_element '.' IDENTIFIER '(' ')'
+   37             | list_element '(' function_arguments ')'
+   38             | list_element '(' ')'
+   39             | list_element '.' GLOBALVARIDENTIFIER
+   40             | list_element '.' IDENTIFIER
+
+   41 statement_list: statement
+   42               | statement_list statement
+
+   43 prefix_expression: list_element
+   44                  | '-' prefix_expression
+   45                  | '+' prefix_expression
+   46                  | '!' prefix_expression
+
+   47 power_expression: prefix_expression
+   48                 | power_expression POWER_OP prefix_expression
+
+   49 multiplicative_expression: power_expression
+   50                          | multiplicative_expression '*' power_expression
+   51                          | multiplicative_expression '/' power_expression
+   52                          | multiplicative_expression '%' power_expression
+
+   53 subtraction_expression: multiplicative_expression
+   54                       | subtraction_expression '-' multiplicative_expression
+
+   55 additive_expression: subtraction_expression
+   56                    | additive_expression '+' subtraction_expression
+
+   57 shift_left_expression: additive_expression
+   58                      | shift_left_expression SHIFT_LEFT_OP additive_expression
+
+   59 shift_expression: shift_left_expression
+   60                 | shift_expression SHIFT_RIGHT_OP shift_left_expression
+
+   61 relational_expression: shift_expression
+   62                      | relational_expression '<' shift_expression
+   63                      | relational_expression '>' shift_expression
+   64                      | relational_expression LE_OP shift_expression
+   65                      | relational_expression GE_OP shift_expression
+
+   66 equality_expression: relational_expression
+   67                    | equality_expression EQ_OP relational_expression
+   68                    | equality_expression NEQ_OP relational_expression
+
+   69 and_expression: equality_expression
+   70               | and_expression '&' equality_expression
+
+   71 exclusive_or_expression: and_expression
+   72                        | exclusive_or_expression '^' and_expression
+
+   73 inclusive_or_expression: exclusive_or_expression
+   74                        | inclusive_or_expression '|' exclusive_or_expression
+
+   75 logical_and_expression: inclusive_or_expression
+   76                       | logical_and_expression AND_OP inclusive_or_expression
+
+   77 logical_or_expression: logical_and_expression
+   78                      | logical_or_expression OR_OP logical_and_expression
+
+   79 conditional_expression: logical_or_expression
+   80                       | logical_or_expression '?' expression_definition ':' conditional_expression
+
+   81 indentifier_expression: VARIDENTIFIER
+   82                       | GLOBALVARIDENTIFIER
+
+   83 assignment_expression_definition: conditional_expression
+   84                                 | prefix_expression assignment_operator assignment_expression_definition
+
+   85 expression_definition: assignment_expression_definition
+   86                      | expression_definition ',' assignment_expression_definition
+
+   87 array_declare: '[' expression_definition ']'
+   88              | '[' ']'
+
+   89 dict_expression: IDENTIFIER DICT_OP assignment_expression_definition
+
+   90 dict_statement: dict_expression
+   91               | dict_statement ',' dict_expression
+
+   92 dict_declare: '(' dict_statement ')'
+   93             | '(' ')'
+
+   94 Initialization_Definition: indentifier_expression
+   95                          | indentifier_expression ASSIGN_ASSIGN assignment_expression_definition
+   96                          | CONST indentifier_expression
+   97                          | CONST indentifier_expression ASSIGN_ASSIGN assignment_expression_definition
+
+   98 initialization_list: Initialization_Definition
+   99                    | initialization_list ',' Initialization_Definition
+
+  100 initialization_expression: VAR initialization_list
+
+  101 statement: funciton_codeblock_statement
+  102          | jump_statement
+  103          | selection_statement
+  104          | iteration_statement
+  105          | expression_statement
+  106          | initialization_expression ';'
+
+  107 expression_statement: ';'
+  108                     | expression_definition ';'
+
+  109 selection_statement: if_statement
+  110                    | try_statement
+
+  111 iteration_statement: for_statement
+  112                    | while_statement
+
+  113 built-intype_declare: NUMBER
+  114                     | STRING
+  115                     | DOUBLE
+  116                     | TRUE_KEYWORD
+  117                     | FALSE_KEYWORD
+  118                     | NULL_KEYWORD
+  119                     | IDENTIFIER
+
+  120 assignment_operator: ASSIGN_ASSIGN
+  121                    | MUL_ASSIGN
+  122                    | DIV_ASSIGN
+  123                    | MOD_ASSIGN
+  124                    | ADD_ASSIGN
+  125                    | SUB_ASSIGN
+  126                    | AND_ASSIGN
+  127                    | XOR_ASSIGN
+  128                    | OR_ASSIGN
+
+  129 if_statement: IF '(' expression_definition ')' funciton_codeblock_statement
+  130             | IF '(' expression_definition ')' funciton_codeblock_statement ELSE funciton_codeblock_statement
+
+  131 while_statement: WHILE '(' expression_definition ')' funciton_codeblock_statement
+
+  132 for_statement: FOR '(' initialization_expression IN assignment_expression_definition ')' funciton_codeblock_statement
+
+  133 jump_statement: CONTINUE ';'
+  134               | BREAK ';'
+  135               | RETURN ';'
+  136               | RETURN expression_definition ';'
+  137               | THROW function_arguments ';'
+
+  138 try_parameter_list: VARIDENTIFIER
+  139                   | CONST VARIDENTIFIER
+
+  140 try_parameter: try_parameter_list
+  141              | try_parameter ',' try_parameter_list
+
+  142 try_statement: TRY funciton_codeblock_statement EXCEPT ':' try_parameter funciton_codeblock_statement
+
+  143 import_expresson: IMPORT import_expression_list ';'
+
+  144 import_expression_list: IDENTIFIER
+  145                       | import_expression_list '.' IDENTIFIER
+
+  146 use_expression_list: IDENTIFIER
+  147                    | use_expression_list ',' IDENTIFIER
+
+  148 moduledefine: MODULE IDENTIFIER '{' modulestatementlist '}'
+  149             | MODULE IDENTIFIER '{' '}'
+
+  150 modulestatementlist: modulestatement
+  151                    | modulestatementlist modulestatement
+
+  152 modulestatement: functiondefinition
+  153                | global_initialization
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'!' (33) 46
+'%' (37) 52
+'&' (38) 70
+'(' (40) 26 27 28 35 36 37 38 92 93 129 130 131 132
+')' (41) 26 27 28 35 36 37 38 92 93 129 130 131 132
+'*' (42) 50
+'+' (43) 45 56
+',' (44) 17 21 86 91 99 141 147
+'-' (45) 44 54
+'.' (46) 35 36 39 40 145
+'/' (47) 51
+':' (58) 7 8 9 80 142
+';' (59) 5 10 11 106 107 108 133 134 135 136 137 143
+'<' (60) 62
+'=' (61)
+'>' (62) 63
+'?' (63) 80
+'[' (91) 30 31 32 33 87 88
+']' (93) 30 31 32 33 87 88
+'^' (94) 72
+'{' (123) 18 19 148 149
+'|' (124) 74
+'}' (125) 18 19 148 149
+error (256)
+VARIDENTIFIER (258) 12 13 14 15 81 138 139
+IDENTIFIER (259) 8 9 34 35 36 40 89 119 144 145 146 147 148 149
+GLOBALVARIDENTIFIER (260) 39 82
+NUMBER (261) 113
+STRING (262) 114
+DOUBLE (263) 115
+TRUE_KEYWORD (264) 116
+FALSE_KEYWORD (265) 117
+IF (266) 129 130
+ELSE (267) 130
+FOR (268) 132
+BREAK (269) 134
+TRY (270) 142
+EXCEPT (271) 142
+THROW (272) 137
+IMPORT (273) 143
+MODULE (274) 148 149
+USE (275) 5
+CONTINUE (276) 133
+RETURN (277) 135 136
+WHILE (278) 131
+NULL_KEYWORD (279) 118
+POWER_OP (280) 48
+NEQ_OP (281) 68
+OR_OP (282) 78
+AND_OP (283) 76
+GE_OP (284) 65
+LE_OP (285) 64
+EQ_OP (286) 67
+ADD_ASSIGN (287) 124
+SUB_ASSIGN (288) 125
+DIV_ASSIGN (289) 122
+MUL_ASSIGN (290) 121
+ASSIGN_ASSIGN (291) 13 15 95 97 120
+MOD_ASSIGN (292) 123
+AND_ASSIGN (293) 126
+OR_ASSIGN (294) 128
+XOR_ASSIGN (295) 127
+SHIFT_LEFT_OP (296) 58
+SHIFT_RIGHT_OP (297) 60
+WMAIN (298) 7
+DEF (299) 8 9
+VAR (300) 100
+IN (301) 132
+ARRAYSECTION (302) 31 32 33
+DICT_OP (303) 34 89
+TYPEOF (304) 27
+CONST (305) 14 15 96 97 139
+MMRT (306) 28
+
+
+Nonterminals, with rules where they appear
+
+$accept (75)
+    on left: 0
+start (76)
+    on left: 1 2, on right: 0 2
+run_statement (77)
+    on left: 3 4 5 6, on right: 1 2
+wmain_definition (78)
+    on left: 7, on right: 6
+functiondefinition (79)
+    on left: 8 9, on right: 152
+global_initialization (80)
+    on left: 10 11, on right: 153
+function_parameter_list (81)
+    on left: 12 13 14 15, on right: 16 17
+function_parameter (82)
+    on left: 16 17, on right: 7 8 17
+funciton_codeblock_statement (83)
+    on left: 18 19, on right: 7 8 9 101 129 130 131 132 142
+function_arguments (84)
+    on left: 20 21, on right: 21 35 37 137
+primary_expression (85)
+    on left: 22 23 24 25 26 27 28, on right: 29
+list_element (86)
+    on left: 29 30 31 32 33 34 35 36 37 38 39 40, on right: 30 31 32
+    33 34 35 36 37 38 39 40 43
+statement_list (87)
+    on left: 41 42, on right: 18 42
+prefix_expression (88)
+    on left: 43 44 45 46, on right: 44 45 46 47 48 84
+power_expression (89)
+    on left: 47 48, on right: 48 49 50 51 52
+multiplicative_expression (90)
+    on left: 49 50 51 52, on right: 50 51 52 53 54
+subtraction_expression (91)
+    on left: 53 54, on right: 54 55 56
+additive_expression (92)
+    on left: 55 56, on right: 56 57 58
+shift_left_expression (93)
+    on left: 57 58, on right: 58 59 60
+shift_expression (94)
+    on left: 59 60, on right: 60 61 62 63 64 65
+relational_expression (95)
+    on left: 61 62 63 64 65, on right: 62 63 64 65 66 67 68
+equality_expression (96)
+    on left: 66 67 68, on right: 67 68 69 70
+and_expression (97)
+    on left: 69 70, on right: 70 71 72
+exclusive_or_expression (98)
+    on left: 71 72, on right: 72 73 74
+inclusive_or_expression (99)
+    on left: 73 74, on right: 74 75 76
+logical_and_expression (100)
+    on left: 75 76, on right: 76 77 78
+logical_or_expression (101)
+    on left: 77 78, on right: 78 79 80
+conditional_expression (102)
+    on left: 79 80, on right: 80 83
+indentifier_expression (103)
+    on left: 81 82, on right: 25 94 95 96 97
+assignment_expression_definition (104)
+    on left: 83 84, on right: 13 15 20 21 26 27 28 30 31 32 33 84 85
+    86 89 95 97 132
+expression_definition (105)
+    on left: 85 86, on right: 11 80 86 87 108 129 130 131 136
+array_declare (106)
+    on left: 87 88, on right: 23
+dict_expression (107)
+    on left: 89, on right: 90 91
+dict_statement (108)
+    on left: 90 91, on right: 91 92
+dict_declare (109)
+    on left: 92 93, on right: 22
+Initialization_Definition (110)
+    on left: 94 95 96 97, on right: 98 99
+initialization_list (111)
+    on left: 98 99, on right: 99 100
+initialization_expression (112)
+    on left: 100, on right: 10 106 132
+statement (113)
+    on left: 101 102 103 104 105 106, on right: 41 42
+expression_statement (114)
+    on left: 107 108, on right: 105
+selection_statement (115)
+    on left: 109 110, on right: 103
+iteration_statement (116)
+    on left: 111 112, on right: 104
+built-intype_declare (117)
+    on left: 113 114 115 116 117 118 119, on right: 24
+assignment_operator (118)
+    on left: 120 121 122 123 124 125 126 127 128, on right: 84
+if_statement (119)
+    on left: 129 130, on right: 109
+while_statement (120)
+    on left: 131, on right: 112
+for_statement (121)
+    on left: 132, on right: 111
+jump_statement (122)
+    on left: 133 134 135 136 137, on right: 102
+try_parameter_list (123)
+    on left: 138 139, on right: 140 141
+try_parameter (124)
+    on left: 140 141, on right: 141 142
+try_statement (125)
+    on left: 142, on right: 110
+import_expresson (126)
+    on left: 143, on right: 3
+import_expression_list (127)
+    on left: 144 145, on right: 143 145
+use_expression_list (128)
+    on left: 146 147, on right: 5 147
+moduledefine (129)
+    on left: 148 149, on right: 4
+modulestatementlist (130)
+    on left: 150 151, on right: 148 151
+modulestatement (131)
+    on left: 152 153, on right: 150 151
+
+
+State 0
+
+    0 $accept: . start $end
+
+    IMPORT  shift, and go to state 1
+    MODULE  shift, and go to state 2
+    USE     shift, and go to state 3
+    WMAIN   shift, and go to state 4
+
+    start             go to state 5
+    run_statement     go to state 6
+    wmain_definition  go to state 7
+    import_expresson  go to state 8
+    moduledefine      go to state 9
+
+
+State 1
+
+  143 import_expresson: IMPORT . import_expression_list ';'
+
+    IDENTIFIER  shift, and go to state 10
+
+    import_expression_list  go to state 11
+
+
+State 2
+
+  148 moduledefine: MODULE . IDENTIFIER '{' modulestatementlist '}'
+  149             | MODULE . IDENTIFIER '{' '}'
+
+    IDENTIFIER  shift, and go to state 12
+
+
+State 3
+
+    5 run_statement: USE . use_expression_list ';'
+
+    IDENTIFIER  shift, and go to state 13
+
+    use_expression_list  go to state 14
+
+
+State 4
+
+    7 wmain_definition: WMAIN . ':' function_parameter funciton_codeblock_statement
+
+    ':'  shift, and go to state 15
+
+
+State 5
+
+    0 $accept: start . $end
+    2 start: start . run_statement
+
+    $end    shift, and go to state 16
+    IMPORT  shift, and go to state 1
+    MODULE  shift, and go to state 2
+    USE     shift, and go to state 3
+    WMAIN   shift, and go to state 4
+
+    run_statement     go to state 17
+    wmain_definition  go to state 7
+    import_expresson  go to state 8
+    moduledefine      go to state 9
+
+
+State 6
+
+    1 start: run_statement .
+
+    $default  reduce using rule 1 (start)
+
+
+State 7
+
+    6 run_statement: wmain_definition .
+
+    $default  reduce using rule 6 (run_statement)
+
+
+State 8
+
+    3 run_statement: import_expresson .
+
+    $default  reduce using rule 3 (run_statement)
+
+
+State 9
+
+    4 run_statement: moduledefine .
+
+    $default  reduce using rule 4 (run_statement)
+
+
+State 10
+
+  144 import_expression_list: IDENTIFIER .
+
+    $default  reduce using rule 144 (import_expression_list)
+
+
+State 11
+
+  143 import_expresson: IMPORT import_expression_list . ';'
+  145 import_expression_list: import_expression_list . '.' IDENTIFIER
+
+    ';'  shift, and go to state 18
+    '.'  shift, and go to state 19
+
+
+State 12
+
+  148 moduledefine: MODULE IDENTIFIER . '{' modulestatementlist '}'
+  149             | MODULE IDENTIFIER . '{' '}'
+
+    '{'  shift, and go to state 20
+
+
+State 13
+
+  146 use_expression_list: IDENTIFIER .
+
+    $default  reduce using rule 146 (use_expression_list)
+
+
+State 14
+
+    5 run_statement: USE use_expression_list . ';'
+  147 use_expression_list: use_expression_list . ',' IDENTIFIER
+
+    ';'  shift, and go to state 21
+    ','  shift, and go to state 22
+
+
+State 15
+
+    7 wmain_definition: WMAIN ':' . function_parameter funciton_codeblock_statement
+
+    VARIDENTIFIER  shift, and go to state 23
+    CONST          shift, and go to state 24
+
+    function_parameter_list  go to state 25
+    function_parameter       go to state 26
+
+
+State 16
+
+    0 $accept: start $end .
+
+    $default  accept
+
+
+State 17
+
+    2 start: start run_statement .
+
+    $default  reduce using rule 2 (start)
+
+
+State 18
+
+  143 import_expresson: IMPORT import_expression_list ';' .
+
+    $default  reduce using rule 143 (import_expresson)
+
+
+State 19
+
+  145 import_expression_list: import_expression_list '.' . IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 27
+
+
+State 20
+
+  148 moduledefine: MODULE IDENTIFIER '{' . modulestatementlist '}'
+  149             | MODULE IDENTIFIER '{' . '}'
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    DEF                  shift, and go to state 37
+    VAR                  shift, and go to state 38
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '}'                  shift, and go to state 43
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    functiondefinition                go to state 47
+    global_initialization             go to state 48
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 67
+    expression_definition             go to state 68
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    initialization_expression         go to state 71
+    built-intype_declare              go to state 72
+    modulestatementlist               go to state 73
+    modulestatement                   go to state 74
+
+
+State 21
+
+    5 run_statement: USE use_expression_list ';' .
+
+    $default  reduce using rule 5 (run_statement)
+
+
+State 22
+
+  147 use_expression_list: use_expression_list ',' . IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 75
+
+
+State 23
+
+   12 function_parameter_list: VARIDENTIFIER .
+   13                        | VARIDENTIFIER . ASSIGN_ASSIGN assignment_expression_definition
+
+    ASSIGN_ASSIGN  shift, and go to state 76
+
+    $default  reduce using rule 12 (function_parameter_list)
+
+
+State 24
+
+   14 function_parameter_list: CONST . VARIDENTIFIER
+   15                        | CONST . VARIDENTIFIER ASSIGN_ASSIGN assignment_expression_definition
+
+    VARIDENTIFIER  shift, and go to state 77
+
+
+State 25
+
+   16 function_parameter: function_parameter_list .
+
+    $default  reduce using rule 16 (function_parameter)
+
+
+State 26
+
+    7 wmain_definition: WMAIN ':' function_parameter . funciton_codeblock_statement
+   17 function_parameter: function_parameter . ',' function_parameter_list
+
+    ','  shift, and go to state 78
+    '{'  shift, and go to state 79
+
+    funciton_codeblock_statement  go to state 80
+
+
+State 27
+
+  145 import_expression_list: import_expression_list '.' IDENTIFIER .
+
+    $default  reduce using rule 145 (import_expression_list)
+
+
+State 28
+
+   81 indentifier_expression: VARIDENTIFIER .
+
+    $default  reduce using rule 81 (indentifier_expression)
+
+
+State 29
+
+  119 built-intype_declare: IDENTIFIER .
+
+    $default  reduce using rule 119 (built-intype_declare)
+
+
+State 30
+
+   82 indentifier_expression: GLOBALVARIDENTIFIER .
+
+    $default  reduce using rule 82 (indentifier_expression)
+
+
+State 31
+
+  113 built-intype_declare: NUMBER .
+
+    $default  reduce using rule 113 (built-intype_declare)
+
+
+State 32
+
+  114 built-intype_declare: STRING .
+
+    $default  reduce using rule 114 (built-intype_declare)
+
+
+State 33
+
+  115 built-intype_declare: DOUBLE .
+
+    $default  reduce using rule 115 (built-intype_declare)
+
+
+State 34
+
+  116 built-intype_declare: TRUE_KEYWORD .
+
+    $default  reduce using rule 116 (built-intype_declare)
+
+
+State 35
+
+  117 built-intype_declare: FALSE_KEYWORD .
+
+    $default  reduce using rule 117 (built-intype_declare)
+
+
+State 36
+
+  118 built-intype_declare: NULL_KEYWORD .
+
+    $default  reduce using rule 118 (built-intype_declare)
+
+
+State 37
+
+    8 functiondefinition: DEF . IDENTIFIER ':' function_parameter funciton_codeblock_statement
+    9                   | DEF . IDENTIFIER ':' funciton_codeblock_statement
+
+    IDENTIFIER  shift, and go to state 81
+
+
+State 38
+
+  100 initialization_expression: VAR . initialization_list
+
+    VARIDENTIFIER        shift, and go to state 28
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    CONST                shift, and go to state 82
+
+    indentifier_expression     go to state 83
+    Initialization_Definition  go to state 84
+    initialization_list        go to state 85
+
+
+State 39
+
+   27 primary_expression: TYPEOF . '(' assignment_expression_definition ')'
+
+    '('  shift, and go to state 86
+
+
+State 40
+
+   28 primary_expression: MMRT . '(' assignment_expression_definition ')'
+
+    '('  shift, and go to state 87
+
+
+State 41
+
+   44 prefix_expression: '-' . prefix_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression      go to state 49
+    list_element            go to state 50
+    prefix_expression       go to state 88
+    indentifier_expression  go to state 66
+    array_declare           go to state 69
+    dict_declare            go to state 70
+    built-intype_declare    go to state 72
+
+
+State 42
+
+   45 prefix_expression: '+' . prefix_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression      go to state 49
+    list_element            go to state 50
+    prefix_expression       go to state 89
+    indentifier_expression  go to state 66
+    array_declare           go to state 69
+    dict_declare            go to state 70
+    built-intype_declare    go to state 72
+
+
+State 43
+
+  149 moduledefine: MODULE IDENTIFIER '{' '}' .
+
+    $default  reduce using rule 149 (moduledefine)
+
+
+State 44
+
+   26 primary_expression: '(' . assignment_expression_definition ')'
+   92 dict_declare: '(' . dict_statement ')'
+   93             | '(' . ')'
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 90
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    ')'                  shift, and go to state 91
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 92
+    array_declare                     go to state 69
+    dict_expression                   go to state 93
+    dict_statement                    go to state 94
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 45
+
+   87 array_declare: '[' . expression_definition ']'
+   88              | '[' . ']'
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    ']'                  shift, and go to state 95
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 67
+    expression_definition             go to state 96
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 46
+
+   46 prefix_expression: '!' . prefix_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression      go to state 49
+    list_element            go to state 50
+    prefix_expression       go to state 97
+    indentifier_expression  go to state 66
+    array_declare           go to state 69
+    dict_declare            go to state 70
+    built-intype_declare    go to state 72
+
+
+State 47
+
+  152 modulestatement: functiondefinition .
+
+    $default  reduce using rule 152 (modulestatement)
+
+
+State 48
+
+  153 modulestatement: global_initialization .
+
+    $default  reduce using rule 153 (modulestatement)
+
+
+State 49
+
+   29 list_element: primary_expression .
+
+    $default  reduce using rule 29 (list_element)
+
+
+State 50
+
+   30 list_element: list_element . '[' assignment_expression_definition ']'
+   31             | list_element . '[' assignment_expression_definition ARRAYSECTION ']'
+   32             | list_element . '[' ARRAYSECTION assignment_expression_definition ']'
+   33             | list_element . '[' assignment_expression_definition ARRAYSECTION assignment_expression_definition ']'
+   34             | list_element . DICT_OP IDENTIFIER
+   35             | list_element . '.' IDENTIFIER '(' function_arguments ')'
+   36             | list_element . '.' IDENTIFIER '(' ')'
+   37             | list_element . '(' function_arguments ')'
+   38             | list_element . '(' ')'
+   39             | list_element . '.' GLOBALVARIDENTIFIER
+   40             | list_element . '.' IDENTIFIER
+   43 prefix_expression: list_element .
+
+    DICT_OP  shift, and go to state 98
+    '('      shift, and go to state 99
+    '['      shift, and go to state 100
+    '.'      shift, and go to state 101
+
+    $default  reduce using rule 43 (prefix_expression)
+
+
+State 51
+
+   47 power_expression: prefix_expression .
+   84 assignment_expression_definition: prefix_expression . assignment_operator assignment_expression_definition
+
+    ADD_ASSIGN     shift, and go to state 102
+    SUB_ASSIGN     shift, and go to state 103
+    DIV_ASSIGN     shift, and go to state 104
+    MUL_ASSIGN     shift, and go to state 105
+    ASSIGN_ASSIGN  shift, and go to state 106
+    MOD_ASSIGN     shift, and go to state 107
+    AND_ASSIGN     shift, and go to state 108
+    OR_ASSIGN      shift, and go to state 109
+    XOR_ASSIGN     shift, and go to state 110
+
+    $default  reduce using rule 47 (power_expression)
+
+    assignment_operator  go to state 111
+
+
+State 52
+
+   48 power_expression: power_expression . POWER_OP prefix_expression
+   49 multiplicative_expression: power_expression .
+
+    POWER_OP  shift, and go to state 112
+
+    $default  reduce using rule 49 (multiplicative_expression)
+
+
+State 53
+
+   50 multiplicative_expression: multiplicative_expression . '*' power_expression
+   51                          | multiplicative_expression . '/' power_expression
+   52                          | multiplicative_expression . '%' power_expression
+   53 subtraction_expression: multiplicative_expression .
+
+    '*'  shift, and go to state 113
+    '/'  shift, and go to state 114
+    '%'  shift, and go to state 115
+
+    $default  reduce using rule 53 (subtraction_expression)
+
+
+State 54
+
+   54 subtraction_expression: subtraction_expression . '-' multiplicative_expression
+   55 additive_expression: subtraction_expression .
+
+    '-'  shift, and go to state 116
+
+    $default  reduce using rule 55 (additive_expression)
+
+
+State 55
+
+   56 additive_expression: additive_expression . '+' subtraction_expression
+   57 shift_left_expression: additive_expression .
+
+    '+'  shift, and go to state 117
+
+    $default  reduce using rule 57 (shift_left_expression)
+
+
+State 56
+
+   58 shift_left_expression: shift_left_expression . SHIFT_LEFT_OP additive_expression
+   59 shift_expression: shift_left_expression .
+
+    SHIFT_LEFT_OP  shift, and go to state 118
+
+    $default  reduce using rule 59 (shift_expression)
+
+
+State 57
+
+   60 shift_expression: shift_expression . SHIFT_RIGHT_OP shift_left_expression
+   61 relational_expression: shift_expression .
+
+    SHIFT_RIGHT_OP  shift, and go to state 119
+
+    $default  reduce using rule 61 (relational_expression)
+
+
+State 58
+
+   62 relational_expression: relational_expression . '<' shift_expression
+   63                      | relational_expression . '>' shift_expression
+   64                      | relational_expression . LE_OP shift_expression
+   65                      | relational_expression . GE_OP shift_expression
+   66 equality_expression: relational_expression .
+
+    GE_OP  shift, and go to state 120
+    LE_OP  shift, and go to state 121
+    '<'    shift, and go to state 122
+    '>'    shift, and go to state 123
+
+    $default  reduce using rule 66 (equality_expression)
+
+
+State 59
+
+   67 equality_expression: equality_expression . EQ_OP relational_expression
+   68                    | equality_expression . NEQ_OP relational_expression
+   69 and_expression: equality_expression .
+
+    NEQ_OP  shift, and go to state 124
+    EQ_OP   shift, and go to state 125
+
+    $default  reduce using rule 69 (and_expression)
+
+
+State 60
+
+   70 and_expression: and_expression . '&' equality_expression
+   71 exclusive_or_expression: and_expression .
+
+    '&'  shift, and go to state 126
+
+    $default  reduce using rule 71 (exclusive_or_expression)
+
+
+State 61
+
+   72 exclusive_or_expression: exclusive_or_expression . '^' and_expression
+   73 inclusive_or_expression: exclusive_or_expression .
+
+    '^'  shift, and go to state 127
+
+    $default  reduce using rule 73 (inclusive_or_expression)
+
+
+State 62
+
+   74 inclusive_or_expression: inclusive_or_expression . '|' exclusive_or_expression
+   75 logical_and_expression: inclusive_or_expression .
+
+    '|'  shift, and go to state 128
+
+    $default  reduce using rule 75 (logical_and_expression)
+
+
+State 63
+
+   76 logical_and_expression: logical_and_expression . AND_OP inclusive_or_expression
+   77 logical_or_expression: logical_and_expression .
+
+    AND_OP  shift, and go to state 129
+
+    $default  reduce using rule 77 (logical_or_expression)
+
+
+State 64
+
+   78 logical_or_expression: logical_or_expression . OR_OP logical_and_expression
+   79 conditional_expression: logical_or_expression .
+   80                       | logical_or_expression . '?' expression_definition ':' conditional_expression
+
+    OR_OP  shift, and go to state 130
+    '?'    shift, and go to state 131
+
+    $default  reduce using rule 79 (conditional_expression)
+
+
+State 65
+
+   83 assignment_expression_definition: conditional_expression .
+
+    $default  reduce using rule 83 (assignment_expression_definition)
+
+
+State 66
+
+   25 primary_expression: indentifier_expression .
+
+    $default  reduce using rule 25 (primary_expression)
+
+
+State 67
+
+   85 expression_definition: assignment_expression_definition .
+
+    $default  reduce using rule 85 (expression_definition)
+
+
+State 68
+
+   11 global_initialization: expression_definition . ';'
+   86 expression_definition: expression_definition . ',' assignment_expression_definition
+
+    ';'  shift, and go to state 132
+    ','  shift, and go to state 133
+
+
+State 69
+
+   23 primary_expression: array_declare .
+
+    $default  reduce using rule 23 (primary_expression)
+
+
+State 70
+
+   22 primary_expression: dict_declare .
+
+    $default  reduce using rule 22 (primary_expression)
+
+
+State 71
+
+   10 global_initialization: initialization_expression . ';'
+
+    ';'  shift, and go to state 134
+
+
+State 72
+
+   24 primary_expression: built-intype_declare .
+
+    $default  reduce using rule 24 (primary_expression)
+
+
+State 73
+
+  148 moduledefine: MODULE IDENTIFIER '{' modulestatementlist . '}'
+  151 modulestatementlist: modulestatementlist . modulestatement
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    DEF                  shift, and go to state 37
+    VAR                  shift, and go to state 38
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '}'                  shift, and go to state 135
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    functiondefinition                go to state 47
+    global_initialization             go to state 48
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 67
+    expression_definition             go to state 68
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    initialization_expression         go to state 71
+    built-intype_declare              go to state 72
+    modulestatement                   go to state 136
+
+
+State 74
+
+  150 modulestatementlist: modulestatement .
+
+    $default  reduce using rule 150 (modulestatementlist)
+
+
+State 75
+
+  147 use_expression_list: use_expression_list ',' IDENTIFIER .
+
+    $default  reduce using rule 147 (use_expression_list)
+
+
+State 76
+
+   13 function_parameter_list: VARIDENTIFIER ASSIGN_ASSIGN . assignment_expression_definition
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 137
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 77
+
+   14 function_parameter_list: CONST VARIDENTIFIER .
+   15                        | CONST VARIDENTIFIER . ASSIGN_ASSIGN assignment_expression_definition
+
+    ASSIGN_ASSIGN  shift, and go to state 138
+
+    $default  reduce using rule 14 (function_parameter_list)
+
+
+State 78
+
+   17 function_parameter: function_parameter ',' . function_parameter_list
+
+    VARIDENTIFIER  shift, and go to state 23
+    CONST          shift, and go to state 24
+
+    function_parameter_list  go to state 139
+
+
+State 79
+
+   18 funciton_codeblock_statement: '{' . statement_list '}'
+   19                             | '{' . '}'
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    IF                   shift, and go to state 140
+    FOR                  shift, and go to state 141
+    BREAK                shift, and go to state 142
+    TRY                  shift, and go to state 143
+    THROW                shift, and go to state 144
+    CONTINUE             shift, and go to state 145
+    RETURN               shift, and go to state 146
+    WHILE                shift, and go to state 147
+    NULL_KEYWORD         shift, and go to state 36
+    VAR                  shift, and go to state 38
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    ';'                  shift, and go to state 148
+    '{'                  shift, and go to state 79
+    '}'                  shift, and go to state 149
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    funciton_codeblock_statement      go to state 150
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    statement_list                    go to state 151
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 67
+    expression_definition             go to state 152
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    initialization_expression         go to state 153
+    statement                         go to state 154
+    expression_statement              go to state 155
+    selection_statement               go to state 156
+    iteration_statement               go to state 157
+    built-intype_declare              go to state 72
+    if_statement                      go to state 158
+    while_statement                   go to state 159
+    for_statement                     go to state 160
+    jump_statement                    go to state 161
+    try_statement                     go to state 162
+
+
+State 80
+
+    7 wmain_definition: WMAIN ':' function_parameter funciton_codeblock_statement .
+
+    $default  reduce using rule 7 (wmain_definition)
+
+
+State 81
+
+    8 functiondefinition: DEF IDENTIFIER . ':' function_parameter funciton_codeblock_statement
+    9                   | DEF IDENTIFIER . ':' funciton_codeblock_statement
+
+    ':'  shift, and go to state 163
+
+
+State 82
+
+   96 Initialization_Definition: CONST . indentifier_expression
+   97                          | CONST . indentifier_expression ASSIGN_ASSIGN assignment_expression_definition
+
+    VARIDENTIFIER        shift, and go to state 28
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+
+    indentifier_expression  go to state 164
+
+
+State 83
+
+   94 Initialization_Definition: indentifier_expression .
+   95                          | indentifier_expression . ASSIGN_ASSIGN assignment_expression_definition
+
+    ASSIGN_ASSIGN  shift, and go to state 165
+
+    $default  reduce using rule 94 (Initialization_Definition)
+
+
+State 84
+
+   98 initialization_list: Initialization_Definition .
+
+    $default  reduce using rule 98 (initialization_list)
+
+
+State 85
+
+   99 initialization_list: initialization_list . ',' Initialization_Definition
+  100 initialization_expression: VAR initialization_list .
+
+    ','  shift, and go to state 166
+
+    $default  reduce using rule 100 (initialization_expression)
+
+
+State 86
+
+   27 primary_expression: TYPEOF '(' . assignment_expression_definition ')'
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 167
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 87
+
+   28 primary_expression: MMRT '(' . assignment_expression_definition ')'
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 168
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 88
+
+   44 prefix_expression: '-' prefix_expression .
+
+    $default  reduce using rule 44 (prefix_expression)
+
+
+State 89
+
+   45 prefix_expression: '+' prefix_expression .
+
+    $default  reduce using rule 45 (prefix_expression)
+
+
+State 90
+
+   89 dict_expression: IDENTIFIER . DICT_OP assignment_expression_definition
+  119 built-intype_declare: IDENTIFIER .
+
+    DICT_OP  shift, and go to state 169
+
+    DICT_OP   [reduce using rule 119 (built-intype_declare)]
+    $default  reduce using rule 119 (built-intype_declare)
+
+
+State 91
+
+   93 dict_declare: '(' ')' .
+
+    $default  reduce using rule 93 (dict_declare)
+
+
+State 92
+
+   26 primary_expression: '(' assignment_expression_definition . ')'
+
+    ')'  shift, and go to state 170
+
+
+State 93
+
+   90 dict_statement: dict_expression .
+
+    $default  reduce using rule 90 (dict_statement)
+
+
+State 94
+
+   91 dict_statement: dict_statement . ',' dict_expression
+   92 dict_declare: '(' dict_statement . ')'
+
+    ','  shift, and go to state 171
+    ')'  shift, and go to state 172
+
+
+State 95
+
+   88 array_declare: '[' ']' .
+
+    $default  reduce using rule 88 (array_declare)
+
+
+State 96
+
+   86 expression_definition: expression_definition . ',' assignment_expression_definition
+   87 array_declare: '[' expression_definition . ']'
+
+    ','  shift, and go to state 133
+    ']'  shift, and go to state 173
+
+
+State 97
+
+   46 prefix_expression: '!' prefix_expression .
+
+    $default  reduce using rule 46 (prefix_expression)
+
+
+State 98
+
+   34 list_element: list_element DICT_OP . IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 174
+
+
+State 99
+
+   37 list_element: list_element '(' . function_arguments ')'
+   38             | list_element '(' . ')'
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    ')'                  shift, and go to state 175
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    function_arguments                go to state 176
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 177
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 100
+
+   30 list_element: list_element '[' . assignment_expression_definition ']'
+   31             | list_element '[' . assignment_expression_definition ARRAYSECTION ']'
+   32             | list_element '[' . ARRAYSECTION assignment_expression_definition ']'
+   33             | list_element '[' . assignment_expression_definition ARRAYSECTION assignment_expression_definition ']'
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    ARRAYSECTION         shift, and go to state 178
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 179
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 101
+
+   35 list_element: list_element '.' . IDENTIFIER '(' function_arguments ')'
+   36             | list_element '.' . IDENTIFIER '(' ')'
+   39             | list_element '.' . GLOBALVARIDENTIFIER
+   40             | list_element '.' . IDENTIFIER
+
+    IDENTIFIER           shift, and go to state 180
+    GLOBALVARIDENTIFIER  shift, and go to state 181
+
+
+State 102
+
+  124 assignment_operator: ADD_ASSIGN .
+
+    $default  reduce using rule 124 (assignment_operator)
+
+
+State 103
+
+  125 assignment_operator: SUB_ASSIGN .
+
+    $default  reduce using rule 125 (assignment_operator)
+
+
+State 104
+
+  122 assignment_operator: DIV_ASSIGN .
+
+    $default  reduce using rule 122 (assignment_operator)
+
+
+State 105
+
+  121 assignment_operator: MUL_ASSIGN .
+
+    $default  reduce using rule 121 (assignment_operator)
+
+
+State 106
+
+  120 assignment_operator: ASSIGN_ASSIGN .
+
+    $default  reduce using rule 120 (assignment_operator)
+
+
+State 107
+
+  123 assignment_operator: MOD_ASSIGN .
+
+    $default  reduce using rule 123 (assignment_operator)
+
+
+State 108
+
+  126 assignment_operator: AND_ASSIGN .
+
+    $default  reduce using rule 126 (assignment_operator)
+
+
+State 109
+
+  128 assignment_operator: OR_ASSIGN .
+
+    $default  reduce using rule 128 (assignment_operator)
+
+
+State 110
+
+  127 assignment_operator: XOR_ASSIGN .
+
+    $default  reduce using rule 127 (assignment_operator)
+
+
+State 111
+
+   84 assignment_expression_definition: prefix_expression assignment_operator . assignment_expression_definition
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 182
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 112
+
+   48 power_expression: power_expression POWER_OP . prefix_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression      go to state 49
+    list_element            go to state 50
+    prefix_expression       go to state 183
+    indentifier_expression  go to state 66
+    array_declare           go to state 69
+    dict_declare            go to state 70
+    built-intype_declare    go to state 72
+
+
+State 113
+
+   50 multiplicative_expression: multiplicative_expression '*' . power_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression      go to state 49
+    list_element            go to state 50
+    prefix_expression       go to state 184
+    power_expression        go to state 185
+    indentifier_expression  go to state 66
+    array_declare           go to state 69
+    dict_declare            go to state 70
+    built-intype_declare    go to state 72
+
+
+State 114
+
+   51 multiplicative_expression: multiplicative_expression '/' . power_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression      go to state 49
+    list_element            go to state 50
+    prefix_expression       go to state 184
+    power_expression        go to state 186
+    indentifier_expression  go to state 66
+    array_declare           go to state 69
+    dict_declare            go to state 70
+    built-intype_declare    go to state 72
+
+
+State 115
+
+   52 multiplicative_expression: multiplicative_expression '%' . power_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression      go to state 49
+    list_element            go to state 50
+    prefix_expression       go to state 184
+    power_expression        go to state 187
+    indentifier_expression  go to state 66
+    array_declare           go to state 69
+    dict_declare            go to state 70
+    built-intype_declare    go to state 72
+
+
+State 116
+
+   54 subtraction_expression: subtraction_expression '-' . multiplicative_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression         go to state 49
+    list_element               go to state 50
+    prefix_expression          go to state 184
+    power_expression           go to state 52
+    multiplicative_expression  go to state 188
+    indentifier_expression     go to state 66
+    array_declare              go to state 69
+    dict_declare               go to state 70
+    built-intype_declare       go to state 72
+
+
+State 117
+
+   56 additive_expression: additive_expression '+' . subtraction_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression         go to state 49
+    list_element               go to state 50
+    prefix_expression          go to state 184
+    power_expression           go to state 52
+    multiplicative_expression  go to state 53
+    subtraction_expression     go to state 189
+    indentifier_expression     go to state 66
+    array_declare              go to state 69
+    dict_declare               go to state 70
+    built-intype_declare       go to state 72
+
+
+State 118
+
+   58 shift_left_expression: shift_left_expression SHIFT_LEFT_OP . additive_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression         go to state 49
+    list_element               go to state 50
+    prefix_expression          go to state 184
+    power_expression           go to state 52
+    multiplicative_expression  go to state 53
+    subtraction_expression     go to state 54
+    additive_expression        go to state 190
+    indentifier_expression     go to state 66
+    array_declare              go to state 69
+    dict_declare               go to state 70
+    built-intype_declare       go to state 72
+
+
+State 119
+
+   60 shift_expression: shift_expression SHIFT_RIGHT_OP . shift_left_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression         go to state 49
+    list_element               go to state 50
+    prefix_expression          go to state 184
+    power_expression           go to state 52
+    multiplicative_expression  go to state 53
+    subtraction_expression     go to state 54
+    additive_expression        go to state 55
+    shift_left_expression      go to state 191
+    indentifier_expression     go to state 66
+    array_declare              go to state 69
+    dict_declare               go to state 70
+    built-intype_declare       go to state 72
+
+
+State 120
+
+   65 relational_expression: relational_expression GE_OP . shift_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression         go to state 49
+    list_element               go to state 50
+    prefix_expression          go to state 184
+    power_expression           go to state 52
+    multiplicative_expression  go to state 53
+    subtraction_expression     go to state 54
+    additive_expression        go to state 55
+    shift_left_expression      go to state 56
+    shift_expression           go to state 192
+    indentifier_expression     go to state 66
+    array_declare              go to state 69
+    dict_declare               go to state 70
+    built-intype_declare       go to state 72
+
+
+State 121
+
+   64 relational_expression: relational_expression LE_OP . shift_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression         go to state 49
+    list_element               go to state 50
+    prefix_expression          go to state 184
+    power_expression           go to state 52
+    multiplicative_expression  go to state 53
+    subtraction_expression     go to state 54
+    additive_expression        go to state 55
+    shift_left_expression      go to state 56
+    shift_expression           go to state 193
+    indentifier_expression     go to state 66
+    array_declare              go to state 69
+    dict_declare               go to state 70
+    built-intype_declare       go to state 72
+
+
+State 122
+
+   62 relational_expression: relational_expression '<' . shift_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression         go to state 49
+    list_element               go to state 50
+    prefix_expression          go to state 184
+    power_expression           go to state 52
+    multiplicative_expression  go to state 53
+    subtraction_expression     go to state 54
+    additive_expression        go to state 55
+    shift_left_expression      go to state 56
+    shift_expression           go to state 194
+    indentifier_expression     go to state 66
+    array_declare              go to state 69
+    dict_declare               go to state 70
+    built-intype_declare       go to state 72
+
+
+State 123
+
+   63 relational_expression: relational_expression '>' . shift_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression         go to state 49
+    list_element               go to state 50
+    prefix_expression          go to state 184
+    power_expression           go to state 52
+    multiplicative_expression  go to state 53
+    subtraction_expression     go to state 54
+    additive_expression        go to state 55
+    shift_left_expression      go to state 56
+    shift_expression           go to state 195
+    indentifier_expression     go to state 66
+    array_declare              go to state 69
+    dict_declare               go to state 70
+    built-intype_declare       go to state 72
+
+
+State 124
+
+   68 equality_expression: equality_expression NEQ_OP . relational_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression         go to state 49
+    list_element               go to state 50
+    prefix_expression          go to state 184
+    power_expression           go to state 52
+    multiplicative_expression  go to state 53
+    subtraction_expression     go to state 54
+    additive_expression        go to state 55
+    shift_left_expression      go to state 56
+    shift_expression           go to state 57
+    relational_expression      go to state 196
+    indentifier_expression     go to state 66
+    array_declare              go to state 69
+    dict_declare               go to state 70
+    built-intype_declare       go to state 72
+
+
+State 125
+
+   67 equality_expression: equality_expression EQ_OP . relational_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression         go to state 49
+    list_element               go to state 50
+    prefix_expression          go to state 184
+    power_expression           go to state 52
+    multiplicative_expression  go to state 53
+    subtraction_expression     go to state 54
+    additive_expression        go to state 55
+    shift_left_expression      go to state 56
+    shift_expression           go to state 57
+    relational_expression      go to state 197
+    indentifier_expression     go to state 66
+    array_declare              go to state 69
+    dict_declare               go to state 70
+    built-intype_declare       go to state 72
+
+
+State 126
+
+   70 and_expression: and_expression '&' . equality_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression         go to state 49
+    list_element               go to state 50
+    prefix_expression          go to state 184
+    power_expression           go to state 52
+    multiplicative_expression  go to state 53
+    subtraction_expression     go to state 54
+    additive_expression        go to state 55
+    shift_left_expression      go to state 56
+    shift_expression           go to state 57
+    relational_expression      go to state 58
+    equality_expression        go to state 198
+    indentifier_expression     go to state 66
+    array_declare              go to state 69
+    dict_declare               go to state 70
+    built-intype_declare       go to state 72
+
+
+State 127
+
+   72 exclusive_or_expression: exclusive_or_expression '^' . and_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression         go to state 49
+    list_element               go to state 50
+    prefix_expression          go to state 184
+    power_expression           go to state 52
+    multiplicative_expression  go to state 53
+    subtraction_expression     go to state 54
+    additive_expression        go to state 55
+    shift_left_expression      go to state 56
+    shift_expression           go to state 57
+    relational_expression      go to state 58
+    equality_expression        go to state 59
+    and_expression             go to state 199
+    indentifier_expression     go to state 66
+    array_declare              go to state 69
+    dict_declare               go to state 70
+    built-intype_declare       go to state 72
+
+
+State 128
+
+   74 inclusive_or_expression: inclusive_or_expression '|' . exclusive_or_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression         go to state 49
+    list_element               go to state 50
+    prefix_expression          go to state 184
+    power_expression           go to state 52
+    multiplicative_expression  go to state 53
+    subtraction_expression     go to state 54
+    additive_expression        go to state 55
+    shift_left_expression      go to state 56
+    shift_expression           go to state 57
+    relational_expression      go to state 58
+    equality_expression        go to state 59
+    and_expression             go to state 60
+    exclusive_or_expression    go to state 200
+    indentifier_expression     go to state 66
+    array_declare              go to state 69
+    dict_declare               go to state 70
+    built-intype_declare       go to state 72
+
+
+State 129
+
+   76 logical_and_expression: logical_and_expression AND_OP . inclusive_or_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression         go to state 49
+    list_element               go to state 50
+    prefix_expression          go to state 184
+    power_expression           go to state 52
+    multiplicative_expression  go to state 53
+    subtraction_expression     go to state 54
+    additive_expression        go to state 55
+    shift_left_expression      go to state 56
+    shift_expression           go to state 57
+    relational_expression      go to state 58
+    equality_expression        go to state 59
+    and_expression             go to state 60
+    exclusive_or_expression    go to state 61
+    inclusive_or_expression    go to state 201
+    indentifier_expression     go to state 66
+    array_declare              go to state 69
+    dict_declare               go to state 70
+    built-intype_declare       go to state 72
+
+
+State 130
+
+   78 logical_or_expression: logical_or_expression OR_OP . logical_and_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression         go to state 49
+    list_element               go to state 50
+    prefix_expression          go to state 184
+    power_expression           go to state 52
+    multiplicative_expression  go to state 53
+    subtraction_expression     go to state 54
+    additive_expression        go to state 55
+    shift_left_expression      go to state 56
+    shift_expression           go to state 57
+    relational_expression      go to state 58
+    equality_expression        go to state 59
+    and_expression             go to state 60
+    exclusive_or_expression    go to state 61
+    inclusive_or_expression    go to state 62
+    logical_and_expression     go to state 202
+    indentifier_expression     go to state 66
+    array_declare              go to state 69
+    dict_declare               go to state 70
+    built-intype_declare       go to state 72
+
+
+State 131
+
+   80 conditional_expression: logical_or_expression '?' . expression_definition ':' conditional_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 67
+    expression_definition             go to state 203
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 132
+
+   11 global_initialization: expression_definition ';' .
+
+    $default  reduce using rule 11 (global_initialization)
+
+
+State 133
+
+   86 expression_definition: expression_definition ',' . assignment_expression_definition
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 204
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 134
+
+   10 global_initialization: initialization_expression ';' .
+
+    $default  reduce using rule 10 (global_initialization)
+
+
+State 135
+
+  148 moduledefine: MODULE IDENTIFIER '{' modulestatementlist '}' .
+
+    $default  reduce using rule 148 (moduledefine)
+
+
+State 136
+
+  151 modulestatementlist: modulestatementlist modulestatement .
+
+    $default  reduce using rule 151 (modulestatementlist)
+
+
+State 137
+
+   13 function_parameter_list: VARIDENTIFIER ASSIGN_ASSIGN assignment_expression_definition .
+
+    $default  reduce using rule 13 (function_parameter_list)
+
+
+State 138
+
+   15 function_parameter_list: CONST VARIDENTIFIER ASSIGN_ASSIGN . assignment_expression_definition
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 205
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 139
+
+   17 function_parameter: function_parameter ',' function_parameter_list .
+
+    $default  reduce using rule 17 (function_parameter)
+
+
+State 140
+
+  129 if_statement: IF . '(' expression_definition ')' funciton_codeblock_statement
+  130             | IF . '(' expression_definition ')' funciton_codeblock_statement ELSE funciton_codeblock_statement
+
+    '('  shift, and go to state 206
+
+
+State 141
+
+  132 for_statement: FOR . '(' initialization_expression IN assignment_expression_definition ')' funciton_codeblock_statement
+
+    '('  shift, and go to state 207
+
+
+State 142
+
+  134 jump_statement: BREAK . ';'
+
+    ';'  shift, and go to state 208
+
+
+State 143
+
+  142 try_statement: TRY . funciton_codeblock_statement EXCEPT ':' try_parameter funciton_codeblock_statement
+
+    '{'  shift, and go to state 79
+
+    funciton_codeblock_statement  go to state 209
+
+
+State 144
+
+  137 jump_statement: THROW . function_arguments ';'
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    function_arguments                go to state 210
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 177
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 145
+
+  133 jump_statement: CONTINUE . ';'
+
+    ';'  shift, and go to state 211
+
+
+State 146
+
+  135 jump_statement: RETURN . ';'
+  136               | RETURN . expression_definition ';'
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    ';'                  shift, and go to state 212
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 67
+    expression_definition             go to state 213
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 147
+
+  131 while_statement: WHILE . '(' expression_definition ')' funciton_codeblock_statement
+
+    '('  shift, and go to state 214
+
+
+State 148
+
+  107 expression_statement: ';' .
+
+    $default  reduce using rule 107 (expression_statement)
+
+
+State 149
+
+   19 funciton_codeblock_statement: '{' '}' .
+
+    $default  reduce using rule 19 (funciton_codeblock_statement)
+
+
+State 150
+
+  101 statement: funciton_codeblock_statement .
+
+    $default  reduce using rule 101 (statement)
+
+
+State 151
+
+   18 funciton_codeblock_statement: '{' statement_list . '}'
+   42 statement_list: statement_list . statement
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    IF                   shift, and go to state 140
+    FOR                  shift, and go to state 141
+    BREAK                shift, and go to state 142
+    TRY                  shift, and go to state 143
+    THROW                shift, and go to state 144
+    CONTINUE             shift, and go to state 145
+    RETURN               shift, and go to state 146
+    WHILE                shift, and go to state 147
+    NULL_KEYWORD         shift, and go to state 36
+    VAR                  shift, and go to state 38
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    ';'                  shift, and go to state 148
+    '{'                  shift, and go to state 79
+    '}'                  shift, and go to state 215
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    funciton_codeblock_statement      go to state 150
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 67
+    expression_definition             go to state 152
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    initialization_expression         go to state 153
+    statement                         go to state 216
+    expression_statement              go to state 155
+    selection_statement               go to state 156
+    iteration_statement               go to state 157
+    built-intype_declare              go to state 72
+    if_statement                      go to state 158
+    while_statement                   go to state 159
+    for_statement                     go to state 160
+    jump_statement                    go to state 161
+    try_statement                     go to state 162
+
+
+State 152
+
+   86 expression_definition: expression_definition . ',' assignment_expression_definition
+  108 expression_statement: expression_definition . ';'
+
+    ';'  shift, and go to state 217
+    ','  shift, and go to state 133
+
+
+State 153
+
+  106 statement: initialization_expression . ';'
+
+    ';'  shift, and go to state 218
+
+
+State 154
+
+   41 statement_list: statement .
+
+    $default  reduce using rule 41 (statement_list)
+
+
+State 155
+
+  105 statement: expression_statement .
+
+    $default  reduce using rule 105 (statement)
+
+
+State 156
+
+  103 statement: selection_statement .
+
+    $default  reduce using rule 103 (statement)
+
+
+State 157
+
+  104 statement: iteration_statement .
+
+    $default  reduce using rule 104 (statement)
+
+
+State 158
+
+  109 selection_statement: if_statement .
+
+    $default  reduce using rule 109 (selection_statement)
+
+
+State 159
+
+  112 iteration_statement: while_statement .
+
+    $default  reduce using rule 112 (iteration_statement)
+
+
+State 160
+
+  111 iteration_statement: for_statement .
+
+    $default  reduce using rule 111 (iteration_statement)
+
+
+State 161
+
+  102 statement: jump_statement .
+
+    $default  reduce using rule 102 (statement)
+
+
+State 162
+
+  110 selection_statement: try_statement .
+
+    $default  reduce using rule 110 (selection_statement)
+
+
+State 163
+
+    8 functiondefinition: DEF IDENTIFIER ':' . function_parameter funciton_codeblock_statement
+    9                   | DEF IDENTIFIER ':' . funciton_codeblock_statement
+
+    VARIDENTIFIER  shift, and go to state 23
+    CONST          shift, and go to state 24
+    '{'            shift, and go to state 79
+
+    function_parameter_list       go to state 25
+    function_parameter            go to state 219
+    funciton_codeblock_statement  go to state 220
+
+
+State 164
+
+   96 Initialization_Definition: CONST indentifier_expression .
+   97                          | CONST indentifier_expression . ASSIGN_ASSIGN assignment_expression_definition
+
+    ASSIGN_ASSIGN  shift, and go to state 221
+
+    $default  reduce using rule 96 (Initialization_Definition)
+
+
+State 165
+
+   95 Initialization_Definition: indentifier_expression ASSIGN_ASSIGN . assignment_expression_definition
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 222
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 166
+
+   99 initialization_list: initialization_list ',' . Initialization_Definition
+
+    VARIDENTIFIER        shift, and go to state 28
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    CONST                shift, and go to state 82
+
+    indentifier_expression     go to state 83
+    Initialization_Definition  go to state 223
+
+
+State 167
+
+   27 primary_expression: TYPEOF '(' assignment_expression_definition . ')'
+
+    ')'  shift, and go to state 224
+
+
+State 168
+
+   28 primary_expression: MMRT '(' assignment_expression_definition . ')'
+
+    ')'  shift, and go to state 225
+
+
+State 169
+
+   89 dict_expression: IDENTIFIER DICT_OP . assignment_expression_definition
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 226
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 170
+
+   26 primary_expression: '(' assignment_expression_definition ')' .
+
+    $default  reduce using rule 26 (primary_expression)
+
+
+State 171
+
+   91 dict_statement: dict_statement ',' . dict_expression
+
+    IDENTIFIER  shift, and go to state 227
+
+    dict_expression  go to state 228
+
+
+State 172
+
+   92 dict_declare: '(' dict_statement ')' .
+
+    $default  reduce using rule 92 (dict_declare)
+
+
+State 173
+
+   87 array_declare: '[' expression_definition ']' .
+
+    $default  reduce using rule 87 (array_declare)
+
+
+State 174
+
+   34 list_element: list_element DICT_OP IDENTIFIER .
+
+    $default  reduce using rule 34 (list_element)
+
+
+State 175
+
+   38 list_element: list_element '(' ')' .
+
+    $default  reduce using rule 38 (list_element)
+
+
+State 176
+
+   21 function_arguments: function_arguments . ',' assignment_expression_definition
+   37 list_element: list_element '(' function_arguments . ')'
+
+    ','  shift, and go to state 229
+    ')'  shift, and go to state 230
+
+
+State 177
+
+   20 function_arguments: assignment_expression_definition .
+
+    $default  reduce using rule 20 (function_arguments)
+
+
+State 178
+
+   32 list_element: list_element '[' ARRAYSECTION . assignment_expression_definition ']'
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 231
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 179
+
+   30 list_element: list_element '[' assignment_expression_definition . ']'
+   31             | list_element '[' assignment_expression_definition . ARRAYSECTION ']'
+   33             | list_element '[' assignment_expression_definition . ARRAYSECTION assignment_expression_definition ']'
+
+    ARRAYSECTION  shift, and go to state 232
+    ']'           shift, and go to state 233
+
+
+State 180
+
+   35 list_element: list_element '.' IDENTIFIER . '(' function_arguments ')'
+   36             | list_element '.' IDENTIFIER . '(' ')'
+   40             | list_element '.' IDENTIFIER .
+
+    '('  shift, and go to state 234
+
+    '('       [reduce using rule 40 (list_element)]
+    $default  reduce using rule 40 (list_element)
+
+
+State 181
+
+   39 list_element: list_element '.' GLOBALVARIDENTIFIER .
+
+    $default  reduce using rule 39 (list_element)
+
+
+State 182
+
+   84 assignment_expression_definition: prefix_expression assignment_operator assignment_expression_definition .
+
+    $default  reduce using rule 84 (assignment_expression_definition)
+
+
+State 183
+
+   48 power_expression: power_expression POWER_OP prefix_expression .
+
+    $default  reduce using rule 48 (power_expression)
+
+
+State 184
+
+   47 power_expression: prefix_expression .
+
+    $default  reduce using rule 47 (power_expression)
+
+
+State 185
+
+   48 power_expression: power_expression . POWER_OP prefix_expression
+   50 multiplicative_expression: multiplicative_expression '*' power_expression .
+
+    POWER_OP  shift, and go to state 112
+
+    $default  reduce using rule 50 (multiplicative_expression)
+
+
+State 186
+
+   48 power_expression: power_expression . POWER_OP prefix_expression
+   51 multiplicative_expression: multiplicative_expression '/' power_expression .
+
+    POWER_OP  shift, and go to state 112
+
+    $default  reduce using rule 51 (multiplicative_expression)
+
+
+State 187
+
+   48 power_expression: power_expression . POWER_OP prefix_expression
+   52 multiplicative_expression: multiplicative_expression '%' power_expression .
+
+    POWER_OP  shift, and go to state 112
+
+    $default  reduce using rule 52 (multiplicative_expression)
+
+
+State 188
+
+   50 multiplicative_expression: multiplicative_expression . '*' power_expression
+   51                          | multiplicative_expression . '/' power_expression
+   52                          | multiplicative_expression . '%' power_expression
+   54 subtraction_expression: subtraction_expression '-' multiplicative_expression .
+
+    '*'  shift, and go to state 113
+    '/'  shift, and go to state 114
+    '%'  shift, and go to state 115
+
+    $default  reduce using rule 54 (subtraction_expression)
+
+
+State 189
+
+   54 subtraction_expression: subtraction_expression . '-' multiplicative_expression
+   56 additive_expression: additive_expression '+' subtraction_expression .
+
+    '-'  shift, and go to state 116
+
+    $default  reduce using rule 56 (additive_expression)
+
+
+State 190
+
+   56 additive_expression: additive_expression . '+' subtraction_expression
+   58 shift_left_expression: shift_left_expression SHIFT_LEFT_OP additive_expression .
+
+    '+'  shift, and go to state 117
+
+    $default  reduce using rule 58 (shift_left_expression)
+
+
+State 191
+
+   58 shift_left_expression: shift_left_expression . SHIFT_LEFT_OP additive_expression
+   60 shift_expression: shift_expression SHIFT_RIGHT_OP shift_left_expression .
+
+    SHIFT_LEFT_OP  shift, and go to state 118
+
+    $default  reduce using rule 60 (shift_expression)
+
+
+State 192
+
+   60 shift_expression: shift_expression . SHIFT_RIGHT_OP shift_left_expression
+   65 relational_expression: relational_expression GE_OP shift_expression .
+
+    SHIFT_RIGHT_OP  shift, and go to state 119
+
+    $default  reduce using rule 65 (relational_expression)
+
+
+State 193
+
+   60 shift_expression: shift_expression . SHIFT_RIGHT_OP shift_left_expression
+   64 relational_expression: relational_expression LE_OP shift_expression .
+
+    SHIFT_RIGHT_OP  shift, and go to state 119
+
+    $default  reduce using rule 64 (relational_expression)
+
+
+State 194
+
+   60 shift_expression: shift_expression . SHIFT_RIGHT_OP shift_left_expression
+   62 relational_expression: relational_expression '<' shift_expression .
+
+    SHIFT_RIGHT_OP  shift, and go to state 119
+
+    $default  reduce using rule 62 (relational_expression)
+
+
+State 195
+
+   60 shift_expression: shift_expression . SHIFT_RIGHT_OP shift_left_expression
+   63 relational_expression: relational_expression '>' shift_expression .
+
+    SHIFT_RIGHT_OP  shift, and go to state 119
+
+    $default  reduce using rule 63 (relational_expression)
+
+
+State 196
+
+   62 relational_expression: relational_expression . '<' shift_expression
+   63                      | relational_expression . '>' shift_expression
+   64                      | relational_expression . LE_OP shift_expression
+   65                      | relational_expression . GE_OP shift_expression
+   68 equality_expression: equality_expression NEQ_OP relational_expression .
+
+    GE_OP  shift, and go to state 120
+    LE_OP  shift, and go to state 121
+    '<'    shift, and go to state 122
+    '>'    shift, and go to state 123
+
+    $default  reduce using rule 68 (equality_expression)
+
+
+State 197
+
+   62 relational_expression: relational_expression . '<' shift_expression
+   63                      | relational_expression . '>' shift_expression
+   64                      | relational_expression . LE_OP shift_expression
+   65                      | relational_expression . GE_OP shift_expression
+   67 equality_expression: equality_expression EQ_OP relational_expression .
+
+    GE_OP  shift, and go to state 120
+    LE_OP  shift, and go to state 121
+    '<'    shift, and go to state 122
+    '>'    shift, and go to state 123
+
+    $default  reduce using rule 67 (equality_expression)
+
+
+State 198
+
+   67 equality_expression: equality_expression . EQ_OP relational_expression
+   68                    | equality_expression . NEQ_OP relational_expression
+   70 and_expression: and_expression '&' equality_expression .
+
+    NEQ_OP  shift, and go to state 124
+    EQ_OP   shift, and go to state 125
+
+    $default  reduce using rule 70 (and_expression)
+
+
+State 199
+
+   70 and_expression: and_expression . '&' equality_expression
+   72 exclusive_or_expression: exclusive_or_expression '^' and_expression .
+
+    '&'  shift, and go to state 126
+
+    $default  reduce using rule 72 (exclusive_or_expression)
+
+
+State 200
+
+   72 exclusive_or_expression: exclusive_or_expression . '^' and_expression
+   74 inclusive_or_expression: inclusive_or_expression '|' exclusive_or_expression .
+
+    '^'  shift, and go to state 127
+
+    $default  reduce using rule 74 (inclusive_or_expression)
+
+
+State 201
+
+   74 inclusive_or_expression: inclusive_or_expression . '|' exclusive_or_expression
+   76 logical_and_expression: logical_and_expression AND_OP inclusive_or_expression .
+
+    '|'  shift, and go to state 128
+
+    $default  reduce using rule 76 (logical_and_expression)
+
+
+State 202
+
+   76 logical_and_expression: logical_and_expression . AND_OP inclusive_or_expression
+   78 logical_or_expression: logical_or_expression OR_OP logical_and_expression .
+
+    AND_OP  shift, and go to state 129
+
+    $default  reduce using rule 78 (logical_or_expression)
+
+
+State 203
+
+   80 conditional_expression: logical_or_expression '?' expression_definition . ':' conditional_expression
+   86 expression_definition: expression_definition . ',' assignment_expression_definition
+
+    ':'  shift, and go to state 235
+    ','  shift, and go to state 133
+
+
+State 204
+
+   86 expression_definition: expression_definition ',' assignment_expression_definition .
+
+    $default  reduce using rule 86 (expression_definition)
+
+
+State 205
+
+   15 function_parameter_list: CONST VARIDENTIFIER ASSIGN_ASSIGN assignment_expression_definition .
+
+    $default  reduce using rule 15 (function_parameter_list)
+
+
+State 206
+
+  129 if_statement: IF '(' . expression_definition ')' funciton_codeblock_statement
+  130             | IF '(' . expression_definition ')' funciton_codeblock_statement ELSE funciton_codeblock_statement
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 67
+    expression_definition             go to state 236
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 207
+
+  132 for_statement: FOR '(' . initialization_expression IN assignment_expression_definition ')' funciton_codeblock_statement
+
+    VAR  shift, and go to state 38
+
+    initialization_expression  go to state 237
+
+
+State 208
+
+  134 jump_statement: BREAK ';' .
+
+    $default  reduce using rule 134 (jump_statement)
+
+
+State 209
+
+  142 try_statement: TRY funciton_codeblock_statement . EXCEPT ':' try_parameter funciton_codeblock_statement
+
+    EXCEPT  shift, and go to state 238
+
+
+State 210
+
+   21 function_arguments: function_arguments . ',' assignment_expression_definition
+  137 jump_statement: THROW function_arguments . ';'
+
+    ';'  shift, and go to state 239
+    ','  shift, and go to state 229
+
+
+State 211
+
+  133 jump_statement: CONTINUE ';' .
+
+    $default  reduce using rule 133 (jump_statement)
+
+
+State 212
+
+  135 jump_statement: RETURN ';' .
+
+    $default  reduce using rule 135 (jump_statement)
+
+
+State 213
+
+   86 expression_definition: expression_definition . ',' assignment_expression_definition
+  136 jump_statement: RETURN expression_definition . ';'
+
+    ';'  shift, and go to state 240
+    ','  shift, and go to state 133
+
+
+State 214
+
+  131 while_statement: WHILE '(' . expression_definition ')' funciton_codeblock_statement
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 67
+    expression_definition             go to state 241
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 215
+
+   18 funciton_codeblock_statement: '{' statement_list '}' .
+
+    $default  reduce using rule 18 (funciton_codeblock_statement)
+
+
+State 216
+
+   42 statement_list: statement_list statement .
+
+    $default  reduce using rule 42 (statement_list)
+
+
+State 217
+
+  108 expression_statement: expression_definition ';' .
+
+    $default  reduce using rule 108 (expression_statement)
+
+
+State 218
+
+  106 statement: initialization_expression ';' .
+
+    $default  reduce using rule 106 (statement)
+
+
+State 219
+
+    8 functiondefinition: DEF IDENTIFIER ':' function_parameter . funciton_codeblock_statement
+   17 function_parameter: function_parameter . ',' function_parameter_list
+
+    ','  shift, and go to state 78
+    '{'  shift, and go to state 79
+
+    funciton_codeblock_statement  go to state 242
+
+
+State 220
+
+    9 functiondefinition: DEF IDENTIFIER ':' funciton_codeblock_statement .
+
+    $default  reduce using rule 9 (functiondefinition)
+
+
+State 221
+
+   97 Initialization_Definition: CONST indentifier_expression ASSIGN_ASSIGN . assignment_expression_definition
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 243
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 222
+
+   95 Initialization_Definition: indentifier_expression ASSIGN_ASSIGN assignment_expression_definition .
+
+    $default  reduce using rule 95 (Initialization_Definition)
+
+
+State 223
+
+   99 initialization_list: initialization_list ',' Initialization_Definition .
+
+    $default  reduce using rule 99 (initialization_list)
+
+
+State 224
+
+   27 primary_expression: TYPEOF '(' assignment_expression_definition ')' .
+
+    $default  reduce using rule 27 (primary_expression)
+
+
+State 225
+
+   28 primary_expression: MMRT '(' assignment_expression_definition ')' .
+
+    $default  reduce using rule 28 (primary_expression)
+
+
+State 226
+
+   89 dict_expression: IDENTIFIER DICT_OP assignment_expression_definition .
+
+    $default  reduce using rule 89 (dict_expression)
+
+
+State 227
+
+   89 dict_expression: IDENTIFIER . DICT_OP assignment_expression_definition
+
+    DICT_OP  shift, and go to state 169
+
+
+State 228
+
+   91 dict_statement: dict_statement ',' dict_expression .
+
+    $default  reduce using rule 91 (dict_statement)
+
+
+State 229
+
+   21 function_arguments: function_arguments ',' . assignment_expression_definition
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 244
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 230
+
+   37 list_element: list_element '(' function_arguments ')' .
+
+    $default  reduce using rule 37 (list_element)
+
+
+State 231
+
+   32 list_element: list_element '[' ARRAYSECTION assignment_expression_definition . ']'
+
+    ']'  shift, and go to state 245
+
+
+State 232
+
+   31 list_element: list_element '[' assignment_expression_definition ARRAYSECTION . ']'
+   33             | list_element '[' assignment_expression_definition ARRAYSECTION . assignment_expression_definition ']'
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    ']'                  shift, and go to state 246
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 247
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 233
+
+   30 list_element: list_element '[' assignment_expression_definition ']' .
+
+    $default  reduce using rule 30 (list_element)
+
+
+State 234
+
+   35 list_element: list_element '.' IDENTIFIER '(' . function_arguments ')'
+   36             | list_element '.' IDENTIFIER '(' . ')'
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    ')'                  shift, and go to state 248
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    function_arguments                go to state 249
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 177
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 235
+
+   80 conditional_expression: logical_or_expression '?' expression_definition ':' . conditional_expression
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression         go to state 49
+    list_element               go to state 50
+    prefix_expression          go to state 184
+    power_expression           go to state 52
+    multiplicative_expression  go to state 53
+    subtraction_expression     go to state 54
+    additive_expression        go to state 55
+    shift_left_expression      go to state 56
+    shift_expression           go to state 57
+    relational_expression      go to state 58
+    equality_expression        go to state 59
+    and_expression             go to state 60
+    exclusive_or_expression    go to state 61
+    inclusive_or_expression    go to state 62
+    logical_and_expression     go to state 63
+    logical_or_expression      go to state 64
+    conditional_expression     go to state 250
+    indentifier_expression     go to state 66
+    array_declare              go to state 69
+    dict_declare               go to state 70
+    built-intype_declare       go to state 72
+
+
+State 236
+
+   86 expression_definition: expression_definition . ',' assignment_expression_definition
+  129 if_statement: IF '(' expression_definition . ')' funciton_codeblock_statement
+  130             | IF '(' expression_definition . ')' funciton_codeblock_statement ELSE funciton_codeblock_statement
+
+    ','  shift, and go to state 133
+    ')'  shift, and go to state 251
+
+
+State 237
+
+  132 for_statement: FOR '(' initialization_expression . IN assignment_expression_definition ')' funciton_codeblock_statement
+
+    IN  shift, and go to state 252
+
+
+State 238
+
+  142 try_statement: TRY funciton_codeblock_statement EXCEPT . ':' try_parameter funciton_codeblock_statement
+
+    ':'  shift, and go to state 253
+
+
+State 239
+
+  137 jump_statement: THROW function_arguments ';' .
+
+    $default  reduce using rule 137 (jump_statement)
+
+
+State 240
+
+  136 jump_statement: RETURN expression_definition ';' .
+
+    $default  reduce using rule 136 (jump_statement)
+
+
+State 241
+
+   86 expression_definition: expression_definition . ',' assignment_expression_definition
+  131 while_statement: WHILE '(' expression_definition . ')' funciton_codeblock_statement
+
+    ','  shift, and go to state 133
+    ')'  shift, and go to state 254
+
+
+State 242
+
+    8 functiondefinition: DEF IDENTIFIER ':' function_parameter funciton_codeblock_statement .
+
+    $default  reduce using rule 8 (functiondefinition)
+
+
+State 243
+
+   97 Initialization_Definition: CONST indentifier_expression ASSIGN_ASSIGN assignment_expression_definition .
+
+    $default  reduce using rule 97 (Initialization_Definition)
+
+
+State 244
+
+   21 function_arguments: function_arguments ',' assignment_expression_definition .
+
+    $default  reduce using rule 21 (function_arguments)
+
+
+State 245
+
+   32 list_element: list_element '[' ARRAYSECTION assignment_expression_definition ']' .
+
+    $default  reduce using rule 32 (list_element)
+
+
+State 246
+
+   31 list_element: list_element '[' assignment_expression_definition ARRAYSECTION ']' .
+
+    $default  reduce using rule 31 (list_element)
+
+
+State 247
+
+   33 list_element: list_element '[' assignment_expression_definition ARRAYSECTION assignment_expression_definition . ']'
+
+    ']'  shift, and go to state 255
+
+
+State 248
+
+   36 list_element: list_element '.' IDENTIFIER '(' ')' .
+
+    $default  reduce using rule 36 (list_element)
+
+
+State 249
+
+   21 function_arguments: function_arguments . ',' assignment_expression_definition
+   35 list_element: list_element '.' IDENTIFIER '(' function_arguments . ')'
+
+    ','  shift, and go to state 229
+    ')'  shift, and go to state 256
+
+
+State 250
+
+   80 conditional_expression: logical_or_expression '?' expression_definition ':' conditional_expression .
+
+    $default  reduce using rule 80 (conditional_expression)
+
+
+State 251
+
+  129 if_statement: IF '(' expression_definition ')' . funciton_codeblock_statement
+  130             | IF '(' expression_definition ')' . funciton_codeblock_statement ELSE funciton_codeblock_statement
+
+    '{'  shift, and go to state 79
+
+    funciton_codeblock_statement  go to state 257
+
+
+State 252
+
+  132 for_statement: FOR '(' initialization_expression IN . assignment_expression_definition ')' funciton_codeblock_statement
+
+    VARIDENTIFIER        shift, and go to state 28
+    IDENTIFIER           shift, and go to state 29
+    GLOBALVARIDENTIFIER  shift, and go to state 30
+    NUMBER               shift, and go to state 31
+    STRING               shift, and go to state 32
+    DOUBLE               shift, and go to state 33
+    TRUE_KEYWORD         shift, and go to state 34
+    FALSE_KEYWORD        shift, and go to state 35
+    NULL_KEYWORD         shift, and go to state 36
+    TYPEOF               shift, and go to state 39
+    MMRT                 shift, and go to state 40
+    '-'                  shift, and go to state 41
+    '+'                  shift, and go to state 42
+    '('                  shift, and go to state 44
+    '['                  shift, and go to state 45
+    '!'                  shift, and go to state 46
+
+    primary_expression                go to state 49
+    list_element                      go to state 50
+    prefix_expression                 go to state 51
+    power_expression                  go to state 52
+    multiplicative_expression         go to state 53
+    subtraction_expression            go to state 54
+    additive_expression               go to state 55
+    shift_left_expression             go to state 56
+    shift_expression                  go to state 57
+    relational_expression             go to state 58
+    equality_expression               go to state 59
+    and_expression                    go to state 60
+    exclusive_or_expression           go to state 61
+    inclusive_or_expression           go to state 62
+    logical_and_expression            go to state 63
+    logical_or_expression             go to state 64
+    conditional_expression            go to state 65
+    indentifier_expression            go to state 66
+    assignment_expression_definition  go to state 258
+    array_declare                     go to state 69
+    dict_declare                      go to state 70
+    built-intype_declare              go to state 72
+
+
+State 253
+
+  142 try_statement: TRY funciton_codeblock_statement EXCEPT ':' . try_parameter funciton_codeblock_statement
+
+    VARIDENTIFIER  shift, and go to state 259
+    CONST          shift, and go to state 260
+
+    try_parameter_list  go to state 261
+    try_parameter       go to state 262
+
+
+State 254
+
+  131 while_statement: WHILE '(' expression_definition ')' . funciton_codeblock_statement
+
+    '{'  shift, and go to state 79
+
+    funciton_codeblock_statement  go to state 263
+
+
+State 255
+
+   33 list_element: list_element '[' assignment_expression_definition ARRAYSECTION assignment_expression_definition ']' .
+
+    $default  reduce using rule 33 (list_element)
+
+
+State 256
+
+   35 list_element: list_element '.' IDENTIFIER '(' function_arguments ')' .
+
+    $default  reduce using rule 35 (list_element)
+
+
+State 257
+
+  129 if_statement: IF '(' expression_definition ')' funciton_codeblock_statement .
+  130             | IF '(' expression_definition ')' funciton_codeblock_statement . ELSE funciton_codeblock_statement
+
+    ELSE  shift, and go to state 264
+
+    $default  reduce using rule 129 (if_statement)
+
+
+State 258
+
+  132 for_statement: FOR '(' initialization_expression IN assignment_expression_definition . ')' funciton_codeblock_statement
+
+    ')'  shift, and go to state 265
+
+
+State 259
+
+  138 try_parameter_list: VARIDENTIFIER .
+
+    $default  reduce using rule 138 (try_parameter_list)
+
+
+State 260
+
+  139 try_parameter_list: CONST . VARIDENTIFIER
+
+    VARIDENTIFIER  shift, and go to state 266
+
+
+State 261
+
+  140 try_parameter: try_parameter_list .
+
+    $default  reduce using rule 140 (try_parameter)
+
+
+State 262
+
+  141 try_parameter: try_parameter . ',' try_parameter_list
+  142 try_statement: TRY funciton_codeblock_statement EXCEPT ':' try_parameter . funciton_codeblock_statement
+
+    ','  shift, and go to state 267
+    '{'  shift, and go to state 79
+
+    funciton_codeblock_statement  go to state 268
+
+
+State 263
+
+  131 while_statement: WHILE '(' expression_definition ')' funciton_codeblock_statement .
+
+    $default  reduce using rule 131 (while_statement)
+
+
+State 264
+
+  130 if_statement: IF '(' expression_definition ')' funciton_codeblock_statement ELSE . funciton_codeblock_statement
+
+    '{'  shift, and go to state 79
+
+    funciton_codeblock_statement  go to state 269
+
+
+State 265
+
+  132 for_statement: FOR '(' initialization_expression IN assignment_expression_definition ')' . funciton_codeblock_statement
+
+    '{'  shift, and go to state 79
+
+    funciton_codeblock_statement  go to state 270
+
+
+State 266
+
+  139 try_parameter_list: CONST VARIDENTIFIER .
+
+    $default  reduce using rule 139 (try_parameter_list)
+
+
+State 267
+
+  141 try_parameter: try_parameter ',' . try_parameter_list
+
+    VARIDENTIFIER  shift, and go to state 259
+    CONST          shift, and go to state 260
+
+    try_parameter_list  go to state 271
+
+
+State 268
+
+  142 try_statement: TRY funciton_codeblock_statement EXCEPT ':' try_parameter funciton_codeblock_statement .
+
+    $default  reduce using rule 142 (try_statement)
+
+
+State 269
+
+  130 if_statement: IF '(' expression_definition ')' funciton_codeblock_statement ELSE funciton_codeblock_statement .
+
+    $default  reduce using rule 130 (if_statement)
+
+
+State 270
+
+  132 for_statement: FOR '(' initialization_expression IN assignment_expression_definition ')' funciton_codeblock_statement .
+
+    $default  reduce using rule 132 (for_statement)
+
+
+State 271
+
+  141 try_parameter: try_parameter ',' try_parameter_list .
+
+    $default  reduce using rule 141 (try_parameter)

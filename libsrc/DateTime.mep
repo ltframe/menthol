@@ -3,80 +3,82 @@ import string;
 use CDateTime,Regex;
 module DateTime
 {
+	var const @datetimeinst =mmrt(CDateTime);
+	var const @regextimeinst =mmrt(Regex);
 	def CurrentDate:
 	{
-		return CDateTime.CurrentDate();
+		return @datetimeinst.CurrentDate();
 	}
 	def CurrentTime:
 	{
-		return CDateTime.CurrentTime();
+		return @datetimeinst.CurrentTime();
 	}
 	def TimeZone:
 	{
-		return CDateTime.TimeZone();
+		return @datetimeinst.TimeZone();
 	}
 	def AddDays:$datetime,$v
 	{
-		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}$"))
+		if(@regextimeinst.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}$"))
 		{
 			$datetime+=" 0:0:0";
-			return CDateTime.AddSeconds($datetime,$v);
+			return @datetimeinst.AddSeconds($datetime,$v);
 		}
-		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}\s{1,}\d{1,2}:\d{1,2}:\d{1,2}$"))
+		if(@regextimeinst.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}\s{1,}\d{1,2}:\d{1,2}:\d{1,2}$"))
 		{
-			return CDateTime.AddDays($datetime,$v);
+			return @datetimeinst.AddDays($datetime,$v);
 		}
 		return "The first is not datetime type";
 	}
 	def AddHours:$datetime,$v
 	{
-		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}$"))
+		if(@regextimeinst.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}$"))
 		{
 			$datetime+=" 0:0:0";
-			return CDateTime.AddSeconds($datetime,$v);
+			return @datetimeinst.AddSeconds($datetime,$v);
 		}
-		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}\s{1,}\d{1,2}:\d{1,2}:\d{1,2}$"))
+		if(@regextimeinst.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}\s{1,}\d{1,2}:\d{1,2}:\d{1,2}$"))
 		{
-			return CDateTime.AddHours($datetime,$v);
+			return @datetimeinst.AddHours($datetime,$v);
 		}
 		return "The first is not datetime type";
 	}
 	def AddMinutes:$datetime,$v
 	{
-		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}$"))
+		if(@regextimeinst.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}$"))
 		{
 			$datetime+=" 0:0:0";
-			return CDateTime.AddSeconds($datetime,$v);
+			return @datetimeinst.AddSeconds($datetime,$v);
 		}
-		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}\s{1,}\d{1,2}:\d{1,2}:\d{1,2}$"))
+		if(@regextimeinst.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}\s{1,}\d{1,2}:\d{1,2}:\d{1,2}$"))
 		{
-			return CDateTime.AddMinutes($datetime,$v);
+			return @datetimeinst.AddMinutes($datetime,$v);
 		}
 		return "The first is not datetime type";
 	}
 	def AddSeconds:$datetime,$v
 	{
-		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}$"))
+		if(@regextimeinst.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}$"))
 		{
 			$datetime+=" 0:0:0";
-			return CDateTime.AddSeconds($datetime,$v);
+			return @datetimeinst.AddSeconds($datetime,$v);
 		}
-		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}\s{1,}\d{1,2}:\d{1,2}:\d{1,2}$"))
+		if(@regextimeinst.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}\s{1,}\d{1,2}:\d{1,2}:\d{1,2}$"))
 		{
-			return CDateTime.AddSeconds($datetime,$v);
+			return @datetimeinst.AddSeconds($datetime,$v);
 		}
 		return "The first is not datetime type";
 	}
 	def AddYears:$datetime,$v
 	{
-		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}$"))
+		if(@regextimeinst.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}$"))
 		{
 			$datetime+=" 0:0:0";
-			return CDateTime.AddSeconds($datetime,$v);
+			return @datetimeinst.AddSeconds($datetime,$v);
 		}
-		if(Regex.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}\s{1,}\d{1,2}:\d{1,2}:\d{1,2}$"))
+		if(@regextimeinst.Test($datetime,"^\d{4}-\d{1,2}-\d{1,2}\s{1,}\d{1,2}:\d{1,2}:\d{1,2}$"))
 		{
-			return CDateTime.AddYears($datetime,$v);
+			return @datetimeinst.AddYears($datetime,$v);
 		}
 		return "The first is not datetime type";
 	}

@@ -180,7 +180,12 @@ namespace File
 	StackState GetFileList(VmState* vmstate)
 	{
 		StackState arr =Array_CreateArray(vmstate);
-		FileList("E:/BaiduYunDownload",arr,vmstate);
+		//FileList("E:/BaiduYunDownload",arr,vmstate);
 		return arr;
 	}	
+
+	StackState GetExtension(VmState* vmstate)
+	{
+		return StackState();
+	}
 }

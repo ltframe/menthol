@@ -57,16 +57,17 @@ namespace Vm
 	void InitStack(StackState v1,StackState  v2,VmState* vmstate);
 	int GetRunTimeRecored(string name,VmState* vmstate);
 	FunctionAtter GetRunTimeFunctionAtter(hashValue hash,RunTimeState* _currentruntimestate);
-	StackState FindGlobalMemory(hashValue hash,RunTimeState* _curentruntimestate,RunTimeState* _callruntimestate,VmState* vmstate);
+	StackState FindGlobalMemory(hashValue hash, RunTimeState* _curentruntimestate, RunTimeState* _callruntimestate, VmState* vmstate);
 	void EntryPoint(ImportFileAttr pa,char*,VmState* vmstate);
 	void InitCode(Instruction x,int &codep,vector<Instruction>& codealllist);
-	void RestoreGlobalMemory(StackState s,VmState* vmstate);
+	void RestoreGlobalMemory(StackState value, VmState*);
 	//ModuleState* GetPackageAttr(int i);
 	void PintCode(int c,VmState* vmstate);
 	Garbage* CreateArray(VmState* vmstate);
 	Garbage* CreateDict(VmState* vmstate);
 	Garbage* CreateString(char* str,VmState* vmstate);
 	Garbage* CreateDictKeyString(hashValue str,VmState* vmstate);
+	Garbage* CreateModuleInstance(VECOTRSTACKSTATEPOINTER globalvmstate, RunTimeState* ms, VmState* vmstate);
 	const char* GetStringConstantsByHash(hashValue hash,RunTimeState* _runtimestate);
 	const char* GetDictKeyByHash(hashValue hash);
 	void CreateDictKeyString(char* s);
@@ -82,5 +83,6 @@ namespace Vm
 	Instruction* GetCodeListStart(VmState* vmstate);
 	vector<MentholDebug> *GetDebugList(VmState* vmstate);
 	RunTimeState* CreateModuleRunTime(char* modulename,VmState* vmstate);
+	
 };
 #endif

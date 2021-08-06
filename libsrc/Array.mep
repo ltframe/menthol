@@ -2,24 +2,25 @@ import msystem;
 use CArray;
 module Array
 {
+	var const @arrayinst = mmrt(CArray);
 	def Length:$arg1
 	{
 		if(typeof($arg1)!="M_ARRAY"){
 			return -1;
 		}
-		return CArray.Length($arg1);
+		return @arrayinst.Length($arg1);
 	}
 	def Join:$arg1,$arg2
 	{
-		return CArray.Join($arg1,$arg2);
+		return @arrayinst.Join($arg1,$arg2);
 	}
 	def Reverse:$arg1
 	{
-		return CArray.Reverse($arg1);
+		return @arrayinst.Reverse($arg1);
 	}
 	def Push:$arg1,$arg2
 	{
-		return CArray.Push($arg1,$arg2);
+		return @arrayinst.Push($arg1,$arg2);
 	}
 	def Rang:$arg1,$arg2,$arg3=1
 	{

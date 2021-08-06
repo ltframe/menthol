@@ -100,6 +100,11 @@ UserFunctionAtter DateTimelist[] = {
 	{"CurrentDate",DateTime::CurrentDate,0},	
 	{"CurrentTime",DateTime::CurrentTime,0},	
 	{"TimeZone",DateTime::TimeZone,0},
+	{ "AddDays", DateTime::AddDays, 2 },
+	{ "AddHours", DateTime::AddHours, 2 },
+	{ "AddMinutes", DateTime::AddMinutes, 2 },
+	{ "AddSeconds", DateTime::AddSeconds, 2 },
+	{ "AddYears", DateTime::AddYears, 2 },
 	{NULL,NULL,0}
 };
 

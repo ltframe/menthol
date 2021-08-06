@@ -13,15 +13,17 @@ namespace Vm
 {
 	static int runflag = 0; // 0 global init 1 code
 	static Instruction *codeliststart;
-	static vector<RunTimeState*> *runtimestatelist;
+	static vector<RunTimeState*> *runtimestatelist;//程序运行使用的所有模块
 	static char ModulePath[_MAX_PATH];
 	static vector<StringValue> *dictkeys;
+	static VECOTRSTACKSTATEPOINTER inststatelist;
 	static vector<ImportFileAttr> *filetree;
 	static PackAgeType loadextpackagetype;
+	//static vector<ModuleInstState*> *moduleinststatelist;
 	//static vector<string> *loadedlibrarys;
-	char* mtypes[] = {"M_NUMBER","M_LONG","M_DOUBLE","M_STRING","M_STRING","M_FUN","M_PFUN","","M_BOOL","M_ARRAY","M_DICT","M_NULL","","","M_MODULE","M_HASH","M_UNKONWN","M_OBJECT"};
+	char* mtypes[] = {"M_NUMBER","M_LONG","M_DOUBLE","M_STRING","M_STRING","M_FUN","M_PFUN","","M_BOOL","M_ARRAY","M_DICT","M_NULL","","","M_MODULE","M_HASH","M_UNKONWN","M_OBJECT","M_MMRT"};
 
-
+	//创建vmstate
 	VmState* NewVmState()
 	{
 		VmState* vmstate = new VmState();
@@ -30,14 +32,16 @@ namespace Vm
 		
 	}
 
+	//删除vmstate
 	void ClearVmState(VmState* vmstate)
 	{
+		delete [] vmstate->codelist;
 		delete vmstate->gc->garbagecollect;
 		delete vmstate->gc;
 		delete vmstate;
 	}
 
-
+	
 	static void MarkStack(VmState* vmstate)
 	{
 		for(int i=0;i<VMSTATESP(vmstate)-VMSTATESTACKBASE(vmstate);i++)
@@ -60,20 +64,35 @@ namespace Vm
 				_s->str->mark = 1;
 				continue;
 			}
+			if (_s->v == M_MMRT)
+			{
+				MGc::MarkInstList(_s->inst->mis->inst);
+				_s->inst->mark = 1;
+				continue;
+			}
 		}
 	}
 
+
+	//标记目前的垃圾
 	static void MarkGarbages(VmState* vmstate)
 	{
 		if(VMSTATEGARBAGECOUNT(vmstate)>=MAXGARBAGE||MGc::GetGarBageMemorySize(VMSTATEGC(vmstate))>=MAXGARBAGEMEMORYSIZE)
 		{	
 			MGc::MarkAllGarbages(VMSTATEGC(vmstate));
 			MarkStack(vmstate);
-			MGc::MarkGlobalGarBage();	
+			//MGc::MarkGlobalGarBage();	
 			MGc::ClearGarbage(VMSTATEGC(vmstate));
 			VMSTATEGARBAGECOUNT(vmstate)= 0;
 		}
 		VMSTATEGARBAGECOUNT(vmstate)++;	
+	}
+
+	//创建MMRT垃圾，
+	Garbage* CreateModuleInstance(VECOTRSTACKSTATEPOINTER globalvmstate, RunTimeState* rts,VmState* vmstate)
+	{
+			MarkGarbages(vmstate);
+			return MGc::CreateModuleInstance(VMSTATEGC(vmstate), globalvmstate,rts);
 	}
 
 	Garbage* CreateArray(VmState* vmstate)
@@ -153,7 +172,7 @@ namespace Vm
 
 
 
-
+	//初始化 模块列表、文件读取、字典使用的键列表
 	void Init(void)
 	{
 		runtimestatelist = new vector<RunTimeState*>();
@@ -176,60 +195,63 @@ namespace Vm
 		return 0;
 	}
 
-StackState FindGlobalMemory(hashValue hash,RunTimeState* _curentruntimestate,RunTimeState* _callruntimestate,VmState* vmstate)
+StackState FindGlobalMemory(hashValue hash, RunTimeState* _curentruntimestate, RunTimeState* _callruntimestate, VmState* vmstate)
 {
-	if(IsEXTPackage(_curentruntimestate->ptype))
+	//如果是DLL类型的包,不存在全局变量，报错
+	if (IsEXTPackage(_curentruntimestate->ptype))
 	{
 		VMSTATECURRENTRUNTIMESTATE(vmstate) = _callruntimestate;
-		MError::CreateInstance()->PrintRunTimeError(GetStringConstantsByHash(hash,_callruntimestate)+string(" is not defined"),vmstate);
+		MError::CreateInstance()->PrintRunTimeError(GetStringConstantsByHash(hash, _callruntimestate) + string(" is not defined"), vmstate);
 	}
-	VECTORFORSTART(StackState,_curentruntimestate->globalvalues,it)
-		if(hash==(*it).namehash)
+	VECTORFORSTART(StackState, _curentruntimestate->inst->mis->inst, it)
+		if (hash == (*it).namehash)
 		{
 			return	(*it);
 		}
 	VECTORFOREND
 
-    if(IsPackage(_curentruntimestate->ptype)){
-		
-		VMSTATECURRENTRUNTIMESTATE(vmstate) = _callruntimestate;
-		MError::CreateInstance()->PrintRunTimeError(GetStringConstantsByHash(hash,_callruntimestate)+string(" is not defined"),vmstate);
-	}
-	StackState d = {0,0,0,M_NULL};
+		if (IsPackage(_curentruntimestate->ptype)) {
+
+			VMSTATECURRENTRUNTIMESTATE(vmstate) = _callruntimestate;
+			MError::CreateInstance()->PrintRunTimeError(GetStringConstantsByHash(hash, _callruntimestate) + string(" is not defined"), vmstate);
+		}
+	StackState d = { 0,0,0,M_NULL };
 	return d;
 }
 
-void RestoreGlobalMemory(StackState s,VmState* vmstate)
+//存储和修改实例中的全局变量
+void RestoreGlobalMemory(StackState s, VmState* vmstate)
 {
-	//for (std::vector<StackState>::iterator it = currentruntimestate->globalvalues->begin() ; it != currentruntimestate->globalvalues->end(); ++it)
-	//{		
-	VECTORFORSTART(StackState,VMSTATECURRENTRUNTIMESTATE(vmstate)->globalvalues,it)
-		if(s.namehash==(*it).namehash)
+	
+	VECTORFORSTART(StackState, VMSTATECURRENTRUNTIMESTATE(vmstate)->inst->mis->inst, it)
+		if (s.namehash == (*it).namehash)
 		{
-			if((*it).constvalue){
+			if ((*it).constvalue) {
 				VECTORFORSTART(string, VMSTATECURRENTRUNTIMESTATE(vmstate)->strings, its)
-					if ((*it).namehash == MCommon::CreateInstance()->ELFHash(*its)){
+					if ((*it).namehash == MCommon::CreateInstance()->ELFHash(*its)) {
 						MError::CreateInstance()->PrintRunTimeError((*its) + " is a Constant variable, cannot be assigned", vmstate);
 					}
 				VECTORFOREND
-				return;
+					return;
 			}
-			(*it)=s;
+			(*it) = s;
 			return;;
 		}
-	//}
 	VECTORFOREND
 
-	VMSTATECURRENTRUNTIMESTATE(vmstate)->globalvalues->push_back(s);
-	if(s.v==M_STRING){
+	VMSTATECURRENTRUNTIMESTATE(vmstate)->inst->mis->inst->push_back(s);
+	/*if (s.v == M_STRING) {
 		MGc::CopyToGlobalGarBage(s.str);
 	}
-	if(s.v==M_ARRAY){
+	if (s.v == M_ARRAY) {
 		MGc::CopyToGlobalGarBage(s.parray);
 	}
-	if(s.v==M_DICT){
+	if (s.v == M_DICT) {
 		MGc::CopyToGlobalGarBage(s.pdict);
 	}
+	if (s.v == M_MMRT) {
+		MGc::CopyToGlobalGarBage(s.inst);
+	}*/
 }
 
 
@@ -240,14 +262,14 @@ void Release(void)
 	delete  filetree;
 }
 
-
+//非插件使用的初始化站前两个数据
 void InitStack(StackState v1,StackState  v2,VmState* vmstate)
 {
 	*VMSTATESP(vmstate)++= v1;
 	*VMSTATESP(vmstate)++ = v2;
 }
 
-
+//给多线程使用，创建初始化时候的两个
 void NewVm(VmState* vmstate)
 {
 	VMSTATESTACKLIST(vmstate).resize(1024);
@@ -323,7 +345,7 @@ RunTimeState* CreateModuleRunTime(char* modulename,VmState* vmstate)
 	VMSTATECURRENTRUNTIMESTATE(vmstate)->functionlist = new vector <FunctionAtter>();
 	VMSTATECURRENTRUNTIMESTATE(vmstate)->strings = new vector<string>();
 	VMSTATECURRENTRUNTIMESTATE(vmstate)->includemodule = new vector<ModuleState*>();
-	VMSTATECURRENTRUNTIMESTATE(vmstate)->globalvalues =new VECOTRSTACKSTATE();
+	//VMSTATECURRENTRUNTIMESTATE(vmstate)->globalvalues =new VECOTRSTACKSTATE();
 	VMSTATECURRENTRUNTIMESTATE(vmstate)->debuglist =new vector<MentholDebug>();
 		
 	VMSTATECURRENTRUNTIMESTATE(vmstate)->hash = MCommon::CreateInstance()->ELFHash(modulename);
@@ -617,8 +639,9 @@ void EntryPoint(ImportFileAttr pa,char* workdir,VmState* vmstate)
 
 		if(IsPackage(pa.ptype))
 		{
-			wb->ReadBinary(pa,&codealllist,runtimestatelist,dictkeys,AddRunTimeStateList,globallist);			
+			wb->ReadBinary(pa,&codealllist,runtimestatelist,dictkeys,AddRunTimeStateList/*,globallist*/);			
 		}
+		//如果是外部DLL
 		if(IsEXTPackage(pa.ptype))
 		{					
 			loadextpackagetype = pa.ptype;
@@ -627,7 +650,7 @@ void EntryPoint(ImportFileAttr pa,char* workdir,VmState* vmstate)
 			ProcAdd(vmstate);
 		}
 	}
-	VECTORFORSTART(GlobalCodeRuntimeAtter,globallist,it)
+	/*VECTORFORSTART(GlobalCodeRuntimeAtter,globallist,it)
 			VMSTATECURRENTRUNTIMESTATE(vmstate) = (*it).belongtoruntimestate;
 			VMSTATECURRENTRUNTIMESTATE(vmstate)->codeoffset = 0;
 			VMSTATECODELIST(vmstate) =new Instruction[(*it).lenght];
@@ -637,7 +660,7 @@ void EntryPoint(ImportFileAttr pa,char* workdir,VmState* vmstate)
 				VMSTATECODELIST(vmstate)[i]=((*it).globalcodelist->at(i));
 			}
 			Instruction* _codelist = VMSTATECODELIST(vmstate); 
-			if(Execute(vmstate)==1){			
+			if(Execute(vmstate)==1){
 				VMSTATECODELIST(vmstate)  =_codelist;
 				delete[] VMSTATECODELIST(vmstate);
 			}
@@ -650,7 +673,7 @@ void EntryPoint(ImportFileAttr pa,char* workdir,VmState* vmstate)
 			delete (*it).globalcodelist;
 			VMSTATECURRENTRUNTIMESTATE(vmstate)->codeoffset = -1;
 	VECTORFOREND
-	delete globallist;
+	delete globallist;*/
 	codeliststart = 0;
 
 	VMSTATECODELIST(vmstate) = 0;
@@ -670,6 +693,8 @@ void EntryPoint(ImportFileAttr pa,char* workdir,VmState* vmstate)
 		(*it1)->codeoffset=codespostion;
 		if ((*it1)->hash == MAINMODULENAMEHASH){
 			VMSTATECURRENTRUNTIMESTATE(vmstate) = (*it1);
+			VMSTATECURRENTRUNTIMESTATE(vmstate)->inst = CreateModuleInstance(new vector<StackState>(), (*it1), vmstate);
+			VMSTATECURRENTRUNTIMESTATE(vmstate)->inst->mark = 1;
 		}
 		VECTORFORSTART(FunctionAtter,(*it1)->functionlist,it)		
 			if((*it).lenght!=-1){
@@ -678,14 +703,14 @@ void EntryPoint(ImportFileAttr pa,char* workdir,VmState* vmstate)
 			}
 		VECTORFOREND
 	VECTORFOREND
-
+	
 	filetree->clear();
-	//clock_t start = clock();
+	clock_t start = clock();
 	runflag = 1;
-
+	PintCode(codealllist.size(),vmstate);
   	Execute(vmstate);
-	//clock_t end = clock();
-	//printf("the running time is :%f\n", (double)(end -start)); //秒
+	clock_t end = clock();
+	printf("the running time is :%f\n", (double)(end -start)); //秒
 }
 
 
@@ -847,11 +872,11 @@ int Execute(VmState* vmstate)
 					
 					VMSTATECURRENTRUNTIMESTATE(vmstate) = STATICCAST(RunTimeState,func->p);
 
-
-					if(func->v==M_PFUN || func->hash==MMAINHASH)
+					if (func->v == M_PFUN || func->hash == MMAINHASH)
 					{
-						fa= GetRunTimeFunctionAtter(func->hash,VMSTATECURRENTRUNTIMESTATE(vmstate));
-					}else 
+						fa = GetRunTimeFunctionAtter(func->hash, VMSTATECURRENTRUNTIMESTATE(vmstate));
+					}
+					else 
 					{
 						fa = GetRunTimeFunctionAtterByIndex(func->i,vmstate);
 					}
@@ -1025,10 +1050,10 @@ int Execute(VmState* vmstate)
 					//sp++;
 			SWITCHCASEEND
 
-			SWITCHCASESTART(OP_INITM)
+			SWITCHCASESTART(OP_INITM)				
 					STACKSTATEPOINTER value = --VMSTATESP(vmstate);
-					value->namehash = *VMSTATECODELIST(vmstate)++;//函数名称的HASH值
-					value->constvalue = *VMSTATECODELIST(vmstate)++;//是否为const					
+					value->namehash = *VMSTATECODELIST(vmstate)++;//HASH值
+					value->constvalue = *VMSTATECODELIST(vmstate)++;//是否为const
 					RestoreGlobalMemory(*value,vmstate);
 			SWITCHCASEEND
 
@@ -1039,14 +1064,15 @@ int Execute(VmState* vmstate)
 
 		
 		    SWITCHCASESTART(OP_LOADM)
-					StackState value= FindGlobalMemory(*VMSTATECODELIST(vmstate)++,VMSTATECURRENTRUNTIMESTATE(vmstate),VMSTATECURRENTRUNTIMESTATE(vmstate),vmstate);
-					(*VMSTATESP(vmstate)++) =value;
+					//int x = 10;
+				StackState value = FindGlobalMemory(*VMSTATECODELIST(vmstate)++, VMSTATECURRENTRUNTIMESTATE(vmstate), VMSTATECURRENTRUNTIMESTATE(vmstate), vmstate);
+			(*VMSTATESP(vmstate)++) =value;
 		    SWITCHCASEEND
 
 		    SWITCHCASESTART(OP_LOADS)
 					int kkkk = *VMSTATECODELIST(vmstate)++;
 					*VMSTATESP(vmstate)++=*(VMSTATEBP(vmstate)+kkkk);
-;		    SWITCHCASEEND
+		    SWITCHCASEEND
 
 		    SWITCHCASESTART(OP_NOP)
 		    SWITCHCASEEND
@@ -1597,53 +1623,55 @@ int Execute(VmState* vmstate)
 			SWITCHCASEEND
 
 			SWITCHCASESTART(OP_PUSHMODULEFUNC)
-				STACKSTATEPOINTER b = VMSTATESP(vmstate)-1;
-				if (b->v != M_MODULE){
-					MError::CreateInstance()->PrintRunTimeError("expression is not module",vmstate);
+				STACKSTATEPOINTER b = VMSTATESP(vmstate) - 1;
+				if (b->v != M_MMRT) {
+					MError::CreateInstance()->PrintRunTimeError("expression is not mmrt type", vmstate);
 					return 1;
 				}
-				ModuleState* pa =b->ms;
+				RunTimeState* rts = b->inst->mis->rts;
 				b->v = M_PFUN;
-				b->hash = *VMSTATECODELIST(vmstate)++; //function's hash value
-				b->p = pa->rts;
+				b->p = rts;
+				b->hash = *VMSTATECODELIST(vmstate)++;
 
-				if(GetRunTimeFunctionAtter(b->hash,pa->rts).name=="")
+				if (GetRunTimeFunctionAtter(b->hash, rts).name == "")
 				{
-					MError::CreateInstance()->PrintRunTimeError(GetStringConstantsByHash(b->hash,VMSTATECURRENTRUNTIMESTATE(vmstate))+string(" is not defined"),vmstate);
+					MError::CreateInstance()->PrintRunTimeError(GetStringConstantsByHash(b->hash, VMSTATECURRENTRUNTIMESTATE(vmstate)) + string(" is not defined"), vmstate);
 					return 1;
 				}
 			SWITCHCASEEND
 
 			SWITCHCASESTART(OP_GETMODULEATTER)
-					STACKSTATEPOINTER b = VMSTATESP(vmstate)-1;
-					if (b->v != M_MODULE){
-						MError::CreateInstance()->PrintRunTimeError("expression is not module",vmstate);
-						return 1;
-					}
-					ModuleState* pa = b->ms;
-					RunTimeState* _rts = VMSTATECURRENTRUNTIMESTATE(vmstate);
-					VMSTATECURRENTRUNTIMESTATE(vmstate) = pa->rts;
+				STACKSTATEPOINTER b = VMSTATESP(vmstate) - 1;
+				if (b->v != M_MMRT) {
+					MError::CreateInstance()->PrintRunTimeError("expression is not mmrt type", vmstate);
+					return 1;
+				}
 
-					*b = FindGlobalMemory(*VMSTATECODELIST(vmstate)++,VMSTATECURRENTRUNTIMESTATE(vmstate),_rts,vmstate);
-					VMSTATECURRENTRUNTIMESTATE(vmstate) = _rts;
+				RunTimeState* _rts = VMSTATECURRENTRUNTIMESTATE(vmstate);
+				VMSTATECURRENTRUNTIMESTATE(vmstate) = b->inst->mis->rts;
+				VMSTATECURRENTRUNTIMESTATE(vmstate)->inst = b->inst;
+
+				*b = FindGlobalMemory(*VMSTATECODELIST(vmstate)++, VMSTATECURRENTRUNTIMESTATE(vmstate), _rts, vmstate);
+				VMSTATECURRENTRUNTIMESTATE(vmstate) = _rts;
 			SWITCHCASEEND
 
 			SWITCHCASESTART(OP_SETMODULEATTER)
-					STACKSTATEPOINTER attr  = --VMSTATESP(vmstate);
-					if (attr->v != M_MODULE){
-						MError::CreateInstance()->PrintRunTimeError("expression is not module",vmstate);
-						return 1;
-					}
-					STACKSTATEPOINTER value = VMSTATESP(vmstate)-1;
-					ModuleState* pa = attr->ms;
-					RunTimeState* _rts = VMSTATECURRENTRUNTIMESTATE(vmstate);
-					VMSTATECURRENTRUNTIMESTATE(vmstate) = pa->rts;
-					*attr = *value;
-					attr->namehash = *VMSTATECODELIST(vmstate)++;
-					attr->constvalue =  FindGlobalMemory(attr->namehash,VMSTATECURRENTRUNTIMESTATE(vmstate),_rts,vmstate).constvalue;
-			
-					RestoreGlobalMemory(*attr,vmstate);
-					VMSTATECURRENTRUNTIMESTATE(vmstate) = _rts;
+				STACKSTATEPOINTER attr = --VMSTATESP(vmstate);
+				if (attr->v != M_MMRT) {
+					MError::CreateInstance()->PrintRunTimeError("expression is not mmrt type", vmstate);
+					return 1;
+				}
+				STACKSTATEPOINTER value = VMSTATESP(vmstate) - 1;
+
+				RunTimeState* _rts = VMSTATECURRENTRUNTIMESTATE(vmstate);
+				VMSTATECURRENTRUNTIMESTATE(vmstate) = attr->inst->mis->rts;
+				VMSTATECURRENTRUNTIMESTATE(vmstate)->inst = attr->inst;
+				*attr = *value;
+				attr->namehash = *VMSTATECODELIST(vmstate)++;
+				attr->constvalue = FindGlobalMemory(attr->namehash, VMSTATECURRENTRUNTIMESTATE(vmstate), _rts, vmstate).constvalue;
+
+				RestoreGlobalMemory(*attr, vmstate);
+				VMSTATECURRENTRUNTIMESTATE(vmstate) = _rts;
 			SWITCHCASEEND
 
 			SWITCHCASESTART(OP_MINUS)
@@ -1681,6 +1709,40 @@ int Execute(VmState* vmstate)
 					STACKSTATEPOINTER v = VMSTATESP(vmstate)-1;			
 					v->str = CreateString(mtypes[v->v],vmstate);
 					v->v=M_STRING;
+			SWITCHCASEEND
+
+			SWITCHCASESTART(OP_MMRT)
+					STACKSTATEPOINTER module = VMSTATESP(vmstate)-1;
+					RunTimeState *rts = module->ms->rts;
+					inststatelist = new vector<StackState>();
+					module->inst = CreateModuleInstance(inststatelist, rts,vmstate);
+					rts->inst = module->inst;
+					module->inst->mis->gcstatelist = new vector<GcState*>();
+					if(IsPackage(rts->ptype)){
+						for (int i = 0; i < rts->globalcode->size(); i++){
+							VmState* globalvmstate = NewVmState();
+							globalvmstate->codelist = new Instruction[rts->globalcode->at(i)->size()];
+							Instruction *_Instruction = globalvmstate->codelist;
+							globalvmstate->currentruntimestate = rts;
+							Vm::NewVm(globalvmstate);
+							module->inst->mis->gcstatelist->push_back(globalvmstate->gc);
+							for (size_t j = 0; j < rts->globalcode->at(i)->size(); j++)
+							{
+								globalvmstate->codelist[j] = rts->globalcode->at(i)->at(j);
+							}
+							if (Execute(globalvmstate) == 1) {	
+								globalvmstate->codelist = _Instruction;
+								//Vm::ClearVmState(globalvmstate);
+								delete[] globalvmstate->codelist;
+								delete globalvmstate;
+							}
+							else
+							{
+								MError::CreateInstance()->PrintRunTimeError("The instance creation failed", vmstate);
+							}
+						}
+					}
+					module->v = M_MMRT;
 			SWITCHCASEEND
 
 			default:

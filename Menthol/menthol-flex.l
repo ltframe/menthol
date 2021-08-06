@@ -87,6 +87,7 @@ extern int yyerror(char*);
 "module"        {return MODULE;}
 "use"           {return USE;}
 "const"         {return CONST;}
+"mmrt"      {return MMRT;}
 
 "$"[a-zA-Z_][a-zA-Z_0-9]*	{
 							

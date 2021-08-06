@@ -72,10 +72,23 @@ namespace MGc
 		/*for (std::vector<Garbage*>::iterator it = garbagecollect->begin() ; it != garbagecollect->end(); ++it)
 		{*/	
 		VECTORFORSTART(Garbage*,GCSSTATEGARBAGECOLLECT(gc),it)
-			(*it)->mark = 0;
+			if ((*it)->v==M_MMRT && (*it)->mis->rts->hash != 4022255038) {
+				(*it)->mark = 0;
+			}
+			
 		VECTORFOREND
 		/*}	*/
 	}
+
+	/*void ClearRecursionMmrt(vector<StackState>* gclist,GcState* gc)
+	{
+		VECTORFORSTART(StackState, gclist, it)
+			if ((*it).inst->mis->inst2->size() > 0 && (*it).v==M_MMRT)
+			{
+				ClearRecursionMmrt((*it).inst->mis->inst2);
+			}
+		VECTORFOREND
+	}*/
 
 
 	void ClearGarbage(GcState* gc)
@@ -116,6 +129,29 @@ namespace MGc
 					it = GCSSTATEGARBAGECOLLECT(gc)->erase(it);
 					continue;
 				}
+				if ((*it)->v == M_MMRT) {
+					if ((*it)->mis->gcstatelist) 
+					{
+							//如果实例的全局变量是需要删除的其他垃圾，则递归
+							for (std::vector<GcState*>::iterator it2 = (*it)->mis->gcstatelist->begin(); it2 != (*it)->mis->gcstatelist->end();)
+							{
+								if ((*it2)->garbagecollect->size() > 0) {
+										ClearGarbage(*it2);
+								}
+								delete (*it2)->garbagecollect;
+								delete *it2;
+								it2 = (*it)->mis->gcstatelist->erase(it2);
+							}
+					}
+					delete (vector<StackState>*)((*it)->mis->inst);
+					delete (vector<GcState*>*)((*it)->mis->gcstatelist);
+					delete (ModuleInstState*)((*it)->mis);
+					GCSSTATEGARBAGEMEMORYSIZE(gc) -= sizeof(ModuleInstState);
+					delete (*it);
+					GCSSTATEGARBAGEMEMORYSIZE(gc) -= sizeof(Garbage);
+					it = GCSSTATEGARBAGECOLLECT(gc)->erase(it);
+					continue;
+				}
 					
 			}else
 			{			
@@ -140,6 +176,14 @@ namespace MGc
 	{
 		Garbage *g =new Garbage(p);
 		GCSSTATEGARBAGEMEMORYSIZE(gc)+=sizeof(Garbage);
+		GCSSTATEGARBAGECOLLECT(gc)->push_back(g);
+		return g;
+	}
+
+	Garbage* CollectGarbage_ModuleInstance(ModuleInstState* p, GcState* gc)
+	{
+		Garbage *g = new Garbage(p);
+		GCSSTATEGARBAGEMEMORYSIZE(gc) += sizeof(Garbage);
 		GCSSTATEGARBAGECOLLECT(gc)->push_back(g);
 		return g;
 	}
@@ -200,6 +244,32 @@ namespace MGc
 		map<hashValue,StackState>* ma =new map<hashValue,StackState>();
 		GCSSTATEGARBAGEMEMORYSIZE(gc)+=sizeof(map<hashValue,StackState>);
 		return CollectGarbage_Dict(ma,gc);
+	}
+
+	Garbage* CreateModuleInstance(GcState* gc, VECOTRSTACKSTATEPOINTER globalvmstate, RunTimeState* ss)
+	{
+		ModuleInstState* inst = new ModuleInstState();
+		inst->rts = ss;
+		inst->inst = globalvmstate;
+		GCSSTATEGARBAGEMEMORYSIZE(gc) += sizeof(ModuleInstState);
+		return CollectGarbage_ModuleInstance(inst,gc);
+	}
+	void MarkInstList(VECOTRSTACKSTATEPOINTER arr)
+	{
+		VECTORFORSTART(StackState, arr, it)
+		if ((*it).v == M_ARRAY) {
+			MarkGarbage((*it).parray, 1);
+			MarkArray((VECOTRSTACKSTATEPOINTER)(*it).parray->array);
+		}
+		if ((*it).v == M_STRING)
+		{
+			MarkGarbage((*it).str, 1);
+		}
+		if ((*it).v == M_DICT) {
+			MarkGarbage((*it).pdict, 1);
+			MarkDict((map<hashValue, StackState>*)(*it).pdict->dict);
+		}
+		VECTORFOREND
 	}
 
 	void MarkArray(VECOTRSTACKSTATEPOINTER arr){

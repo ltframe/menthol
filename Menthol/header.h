@@ -25,13 +25,21 @@ class Statement;
 #define IsModule(o)(o->v==M_MODULE)
 #define IsFUN(o)(o->v==M_FUN)	
 #define IsPFUN(o)(o->v==M_PFUN)	
+#define IsMMRT(o)(o->v==M_MMRT)	
 
+
+//是不是menthol写成的包
 #define IsPackage(o)(o==MPA_USER_PACKAGE || o==MPA_SYS_PACKAGE)	
+
+//是不是DLL写成的包
 #define IsEXTPackage(o)(o==MPA_USER_EXTPACKAGE || o==MPA_SYS_EXTPACKAGE)	
 
+
+//是不是系统自带的包
 #define IsSYSPackage(o)(o==MPA_SYS_PACKAGE || o==MPA_SYS_EXTPACKAGE)	
 
 
+//通过类型，返回类型名的的字符串
 #define STACKSTATESTRING(o,s)\
 	if(IsNumber(o)){s = "number";}\
 	if(IsString(o)){s = "string";}\
@@ -43,10 +51,10 @@ class Statement;
 	if(IsModule(o)){s = "module";}\
 	if(IsFUN(o)){s = "function";}\
 	if(IsPFUN(o)){s = "module function";}\
+	if(IsMMRT(o)){s = "mmrt";}\
 
+//循环vector的宏，t为vector的泛型类型，v传入的vector,it为循环中的临时变量
 #define VECTORFORSTART(t,v,it) for (std::vector<t>::iterator it = v->begin() ; it != v->end(); ++it){
-
-
 #define VECTORFOREND }
 
 
@@ -102,7 +110,7 @@ struct StringValue
 };
 
 
-
+//mentho node type 
 enum NodeType{
 	MNT_FunctionParameter,
 	MNT_FunctionParameterWithDefault,
@@ -148,7 +156,8 @@ enum NodeType{
 	MNT_TypeOfExpression,
 	MNT_ModuleStatementList,
 	MNT_ModuleDefine,
-	MNT_MainFunction
+	MNT_MainFunction,
+	MNT_InstanceExpression
 };
 
 
@@ -164,7 +173,7 @@ enum OperateCode{
 	OP_NOP,
 	OP_HALT,
 	OP_RET,
-	OP_JMP,
+	OP_JMP, //11
 	OP_UJMPS,
 	OP_UJMP,
 	OP_TEST,
@@ -172,7 +181,7 @@ enum OperateCode{
 	OP_SUB,
 	OP_MUL,
 	OP_DIV,
-	OP_LT,//<
+	OP_LT,//<  19
 	OP_LE,//>
 	OP_CREATEARRAY,
 	OP_SETARRAYELEMENT,
@@ -186,7 +195,7 @@ enum OperateCode{
 	OP_AND,// &&
 	OP_BIT_OR,
 	OP_BIT_AND,
-	OP_LOADS,
+	OP_LOADS, //33
 	OP_STORES,
 	OP_LOADP,
 	OP_SETS,
@@ -223,15 +232,16 @@ enum OperateCode{
 	OP_ADD1,
 	OP_INVERTER,
 	OP_TYPEOF,
-	OP_CONST
+	OP_CONST,
+	OP_MMRT,
 	};
 
 enum PackAgeType{
 	MPA_UNKNOW,
-	MPA_USER_PACKAGE,
-	MPA_SYS_PACKAGE,
-	MPA_USER_EXTPACKAGE,
-	MPA_SYS_EXTPACKAGE
+	MPA_USER_PACKAGE, //用户自定义开发的包，不在lib中的那些
+	MPA_SYS_PACKAGE,//系统自带的包，在lib中的那些
+	MPA_USER_EXTPACKAGE,//用户自定义开发的包，不在lib中的那些,由C/C++写成的dll
+	MPA_SYS_EXTPACKAGE //系统自带的包，在lib中的那些,由C/C++写成的dll
 };
 
 struct ImportFileAttr
@@ -280,7 +290,12 @@ struct FunctionAtter
 	int lenght;
 	vector <int> *defaultvaluelengthlist;
 };
-
+//类实例MMRT
+struct ModuleInstState {
+	VECOTRSTACKSTATEPOINTER inst;
+	RunTimeState* rts;//使用的模块指针
+	vector<GcState*> *gcstatelist;
+};
 
 
 
@@ -314,8 +329,10 @@ struct RunTimeState;
 
 struct ModuleState{
 	hashValue hash;
-	RunTimeState* rts;
+	RunTimeState* rts;//当前使用的模块指针
 };
+
+
 
 struct RunTimeState
 {
@@ -325,17 +342,18 @@ struct RunTimeState
 	vector<double>* doubles;
 	vector<FunctionAtter>* functionlist;
 	vector<ModuleState*>* includemodule;
-	VECOTRSTACKSTATEPOINTER globalvalues;
+	//VECOTRSTACKSTATEPOINTER globalvalues;
 	vector<MentholDebug> *debuglist;
 	PackAgeType ptype;
 	int codeoffset;
-
+	vector<vector<Instruction>*>* globalcode;
+	pInstance inst;//当前使用的实例
 };
 
 struct GlobalCodeRuntimeAtter
 {
 	vector<Instruction> *globalcodelist;
-	RunTimeState* belongtoruntimestate; 
+	RunTimeState* belongtoruntimestate; //属于哪一个RunTimeState
 	int lenght;
 };
 

@@ -2,17 +2,17 @@ import console;
 use Console;
 _mmain:$a,$c
 {	
-	var $i=0;
+	var $i=0,const $inst = mmrt(Console);
 	while($i<100)
 	{
 		if($i<1)
 		{
-			Console.Out("menthol");
+			$inst.Out("menthol");
 			$i+=1;
 			continue;
 		}
 
 		$i = $i+1;
-		Console.Out($i);
+		$inst.Out($i);
 	}
 }

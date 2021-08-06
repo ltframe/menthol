@@ -2,6 +2,9 @@ import console;
 use Console;
 _mmain:$a,$c
 {	
-	Console.Out(typeof(Console.Out));
-	Console.Out(typeof(123));
+	var const $inst =mmrt(Console);
+	$inst.Out(typeof($inst.Out));
+	$inst.Out(typeof(123));
+	$inst.Out(typeof(Console));
+	$inst.Out(typeof($inst));
 }

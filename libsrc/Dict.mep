@@ -2,29 +2,30 @@ import msystem;
 use CDict;
 module Dict
 {
+	var const @dictinst =mmrt(CDict);
 	def Length:$arg1
 	{
-	   return CDict.Length($arg1);
+	   return @dictinst.Length($arg1);
 	}
 
 	def Push:$key,$dict,$value
 	{
-	   return CDict.Push($key,$dict,$value);
+	   return @dictinst.Push($key,$dict,$value);
 	}
 
 	def SetValue:$key,$dict,$value
 	{
-	   return CDict.SetValue($key,$dict,$value);
+	   return @dictinst.SetValue($key,$dict,$value);
 	}
 
 	def GetKey:$arg1,$arg2
 	{
-	   return CDict.GetKey($arg1,$arg2);
+	   return @dictinst.GetKey($arg1,$arg2);
 	}
 
 	def GetValue:$arg1,$arg2
 	{
-	   return CDict.GetValue($arg1,$arg2);
+	   return @dictinst.GetValue($arg1,$arg2);
 	}
 	def Reomve:$dict,$key
 	{

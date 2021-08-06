@@ -2,33 +2,34 @@ import mlibcurl;
 use CCurl_System;
 module CurlSystem
 {
+	var const @inst = mmrt(CCurl_System);
 	def init:
 	{
-		return CCurl_System.init();
+		return @inst.init();
 	}
 
 	def cleanup:$arg1
 	{
-		return CCurl_System.cleanup($arg1);
+		return @inst.cleanup($arg1);
 	}
 
 	def perform:$arg1
 	{
-		return CCurl_System.perform($arg1);
+		return @inst.perform($arg1);
 	}
 
 	def version:
 	{
-		return CCurl_System.version();
+		return @inst.version();
 	}
 
 	def unescape:$arg1,$arg2
 	{
-		return CCurl_System.unescape($arg1,$arg2);
+		return @inst.unescape($arg1,$arg2);
 	}
 
 	def escape:$arg1,$arg2
 	{
-		return CCurl_System.escape($arg1,$arg2);
+		return @inst.escape($arg1,$arg2);
 	}
 }

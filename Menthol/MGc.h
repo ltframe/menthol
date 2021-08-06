@@ -5,7 +5,7 @@
 #include <map>
 #include "MError.h"
 
-#define MAXGARBAGE 10000
+#define MAXGARBAGE 100000
 #define MAXGARBAGEMEMORYSIZE 50971520
 
 
@@ -27,10 +27,13 @@ namespace MGc
 	void SetAllGarbages(int mark);
 	void MarkAllGarbages(GcState* gc);
 	Garbage* CreateDict(GcState* gc);
+	Garbage* CreateModuleInstance(GcState* gc, VECOTRSTACKSTATEPOINTER globalvmstate, RunTimeState* ss);
 	void MarkArray(VECOTRSTACKSTATEPOINTER arr);
+	void MarkInstList(VECOTRSTACKSTATEPOINTER arr);
 	void MarkDict(map<hashValue,StackState>* arr);
 	long GetGarBageMemorySize(GcState* gc);
 	vector<Garbage*> *GetGarbageCollect(GcState* gc);
+	/*void ClearRecursionMmrt(vector<StackState>* gclist, GcState* gc);*/
 };
 #endif
 

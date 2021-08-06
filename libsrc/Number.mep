@@ -3,14 +3,15 @@ use CNumber;
 module Number
 {
 	var const @MaxValue = 1.7976931348623157e+308,const @MinValue = -1.7976931348623157e+308;
+	var const @numberinst = mmrt(CNumber);
 	def ToString:$n
 	{
-		return CNumber.ToString($n);
+		return @numberinst.ToString($n);
 	}
 
 	def ToNumber:$n
 	{
-		return CNumber.ToNumber($n);
+		return @numberinst.ToNumber($n);
 	}
 
 	def Equals:$n,$n2

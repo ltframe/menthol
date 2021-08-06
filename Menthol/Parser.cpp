@@ -470,6 +470,7 @@ void InitializationList::ModfiyMemberScope(Scope _scope)
 	//{
 	VECTORFORSTART(Statement*,Member,it)		
 		InitializationDefinition* initdef = STATICCAST(InitializationDefinition,*it);
+		//如果在模块函数外部，使用本地变量则报错
 		if(!sl->IsGlobalVar(initdef->name)){
 			MError::CreateInstance()->PrintError("Local variables are not allowed to be declared externally "+initdef->name);	
 		}
@@ -610,7 +611,8 @@ void AssignmentDefinition::Release()
 	
 	DELETETHIS
 }
-
+//每一个初始化赋值都会调用
+//_name 是名字，
 InitializationDefinition::InitializationDefinition(Statement * _name,Statement * _e,bool _isconst):btd(0),isconst(_isconst)
 {
 	StatementList* sl = StatementList::GetInstance();
@@ -2140,6 +2142,7 @@ ModuleDefine::ModuleDefine(string _modulename,Statement* _modulestatementlist)
 {
 	wfileaddressline = lineno;
 	modulestatementlist = _modulestatementlist;
+
 	_modulestatementlist->ParentNode = this;
 	modulename = _modulename;
 	NType = MNT_ModuleDefine;
@@ -2158,4 +2161,36 @@ void ModuleDefine::Release()
 void ModuleDefine::CreateCode()
 {
 	modulestatementlist->CreateCode();
+}
+
+
+
+MmrtExpression::MmrtExpression(Statement* _exprssion) :exprssion(0)
+{
+	wfileaddressline = lineno;
+	exprssion = _exprssion;
+	_exprssion->ParentNode = this;
+	NType = MNT_InstanceExpression;
+}
+MmrtExpression::~MmrtExpression()
+{
+	exprssion->Release();
+}
+void MmrtExpression::Release()
+{
+	DELETETHIS
+}
+void MmrtExpression::CreateCode()
+{
+	StatementList* sl = StatementList::GetInstance();
+
+	/*Statement* p = this;
+	PARENTISMODULE(p);
+	
+	if (!strcmp(((ModuleDefine*)p)->modulename.c_str(), "<=")) {
+		
+	}
+	((BuiltinTypeValue*)exprssion)->v == M_MODULE;*/
+	exprssion->CreateCode();
+	sl->AddCode(OP_MMRT, wfileaddressline);
 }

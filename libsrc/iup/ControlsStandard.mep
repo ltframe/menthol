@@ -2,129 +2,130 @@ import miup;
 use CIup;
 module IupControlsStandard
 {
+	var const @ciupinst =mmrt(CIup);
 	def AnimatedLabel:$arg1
 	{
-		return CIup.AnimatedLabel($arg1);
+		return @ciupinst.AnimatedLabel($arg1);
 	}
 
 	def Button:$arg1
 	{
-		return CIup.Button($arg1);
+		return @ciupinst.Button($arg1);
 	}
 
 	def FlatButton:$arg1
 	{
-		return CIup.FlatButton($arg1);
+		return @ciupinst.FlatButton($arg1);
 	}
 
 	def DropButton:$arg1
 	{
-		return CIup.DropButton($arg1);
+		return @ciupinst.DropButton($arg1);
 	}
 
 	def Calendar:
 	{
-		return CIup.Calendar();
+		return @ciupinst.Calendar();
 	}
 
 	def Canvas:$arg1
 	{
-		return CIup.Canvas($arg1);
+		return @ciupinst.Canvas($arg1);
 	}
 
 	def Colorbar:
 	{
-		return CIup.Colorbar();
+		return @ciupinst.Colorbar();
 	}
 
 	def ColorBrowser:
 	{
-		return CIup.ColorBrowser();
+		return @ciupinst.ColorBrowser();
 	}
 
 	def DatePick:
 	{
-		return CIup.DatePick();
+		return @ciupinst.DatePick();
 	}
 
 	def Dial:$arg1
 	{
-		return CIup.Dial($arg1);
+		return @ciupinst.Dial($arg1);
 	}
 
 	def Gauge:
 	{
-		return CIup.Gauge();
+		return @ciupinst.Gauge();
 	}
 
 	def Label:$arg1
 	{
-		return CIup.Label($arg1);
+		return @ciupinst.Label($arg1);
 	}
 
 	def FlatLabel:$arg1
 	{
-		return CIup.FlatLabel($arg1);
+		return @ciupinst.FlatLabel($arg1);
 	}
 
 	def FlatSeparator:
 	{
-		return CIup.FlatSeparator();
+		return @ciupinst.FlatSeparator();
 	}
 
 	def Link:$arg1,$arg2
 	{
-		return CIup.Link($arg1,$arg2);
+		return @ciupinst.Link($arg1,$arg2);
 	}
 
 	def List:
 	{
-		return CIup.List();
+		return @ciupinst.List();
 	}
 
 	def ProgressBar:
 	{
-		return CIup.ProgressBar();
+		return @ciupinst.ProgressBar();
 	}
 
 	def Spin:
 	{
-		return CIup.Spin();
+		return @ciupinst.Spin();
 	}
 
 	def Text:
 	{
-		return CIup.Text();
+		return @ciupinst.Text();
 	}
 
 	def MultiLine:
 	{
-		return CIup.MultiLine();
+		return @ciupinst.MultiLine();
 	}
 
 	def Toggle:$arg1
 	{
-		return CIup.Toggle($arg1);
+		return @ciupinst.Toggle($arg1);
 	}
 
 	def FlatToggle:$arg1
 	{
-		return CIup.FlatToggle($arg1);
+		return @ciupinst.FlatToggle($arg1);
 	}
 
 	def Tree:
 	{
-		return CIup.Tree();
+		return @ciupinst.Tree();
 	}
 
 	def Spinbox:
 	{
-		return CIup.Spinbox();
+		return @ciupinst.Spinbox();
 	}
 	
 	def Val:$arg1
 	{
-		return CIup.Val($arg1);
+		return @ciupinst.Val($arg1);
 	}
 }
 

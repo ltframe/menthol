@@ -4,7 +4,7 @@ module test
 {
 	def callback:$i
 	{	
-		Console.Out($i);
+		mmrt(Console).Out($i);
 	}
 	def func:$fun,$i
 	{
@@ -13,5 +13,6 @@ module test
 }
 _mmain:$a,$c
 {	
-	test.func(test.callback,1000);
+	var $i = mmrt(test);
+	$i.func($i.callback,1000);
 }

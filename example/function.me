@@ -4,12 +4,14 @@ module test
 {
 	def func:$i1,$i2=333
 	{	
-		Console.Out($i1);
-		Console.Out($i2);
+		var $inst =mmrt(Console);
+		$inst.Out($i1);
+		$inst.Out($i2);
 	}
 }
 _mmain:$a,$c
 {	
-	test.func(222,1000,333);
-	test.func(555);
+	var $inst =mmrt(test);
+	$inst.func(222,1000,333);
+	$inst.func(555);
 }

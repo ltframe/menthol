@@ -2,33 +2,34 @@ import miup;
 use CIup;
 module IupCallbacks
 {
+	var const @ciupinst =mmrt(CIup);
 	def MainLoop:
 	{
-		return CIup.MainLoop();
+		return @ciupinst.MainLoop();
 	}
 
 	def MainLoopLevel:
 	{
-		return CIup.MainLoopLevel();
+		return @ciupinst.MainLoopLevel();
 	}
 
 	def LoopStep:
 	{
-		return CIup.LoopStep();
+		return @ciupinst.LoopStep();
 	}
 
 	def ExitLoop:
 	{
-		return CIup.ExitLoop();
+		return @ciupinst.ExitLoop();
 	}
 
 	def Flush:
 	{
-		return CIup.Flush();
+		return @ciupinst.Flush();
 	}
 	def SetCallback:$arg1,$arg2,$arg3
 	{
-		return CIup.SetCallback($arg1,$arg2,$arg3);
+		return @ciupinst.SetCallback($arg1,$arg2,$arg3);
 	}	
 }
 

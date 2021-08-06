@@ -2,9 +2,10 @@ import console;
 use Console;
 _mmain:$a,$c
 {	
-	Console.Out(1|0);
-	Console.Out(1&0);
-	Console.Out(1||0);
-	Console.Out(1&&0);
-	Console.Out(1^0);
+	var $inst =mmrt(Console);
+	$inst.Out(1|0);
+	$inst.Out(1&0);
+	$inst.Out(1||0);
+	$inst.Out(1&&0);
+	$inst.Out(1^0);
 }

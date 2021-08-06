@@ -30,9 +30,19 @@ using namespace std;
 StackState test(VmState* vmstate)
 {
 
+	StackState inst = GetParam(1, vmstate);
+	struct tm *local;
+	time_t t;
+	t = time(NULL);
+	local = localtime(&t);
 	StackState st;
-	st.v = M_STRING;
-	st = String_CreateString("this is a test string", vmstate);
+	st = Dict_CreateDict(vmstate);
+	StackState _y;_y.d = local->tm_year + 1900;_y.v = M_NUMBER;
+	StackState _m;_m.d = local->tm_mon + 1;_m.v = M_NUMBER;
+	StackState _d;_d.d = local->tm_mday;_d.v = M_NUMBER;
+	Dict_Push("y", st.pdict, _y);
+	Dict_Push("m", st.pdict, _m);
+	Dict_Push("d", st.pdict, _d);
 	return st;
 
 }
@@ -99,6 +109,7 @@ StackState Release(VmState* vmstate)
 
 StackState GetStreamInfo(VmState* vmstate)
 {
+
 	StackState inst =GetParam(1,vmstate);
 	ZPlay *player = static_cast<ZPlay*>(inst.p);
 	TStreamInfo info;
@@ -279,7 +290,7 @@ UserFunctionAtter example1list[] = {
 	{ "GetPosition", GetPosition, 1 },
 	{ "GetStatus", GetStatus, 1 },
 	{ "HttpGet", HttpGet, 1 },
-	{ "test", test ,0},
+	{ "test", test ,1},
 	{NULL,NULL,0}
 };
 

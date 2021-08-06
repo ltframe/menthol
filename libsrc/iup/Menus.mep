@@ -2,28 +2,29 @@ import miup;
 use CIup;
 module IupMenus
 {
+	var const @ciupinst =mmrt(CIup);
 	def Item:$arg1,$arg2
 	{
 		if($arg2==null)
 		{
-			return CIup.Item2($arg1);
+			return @ciupinst.Item2($arg1);
 		}
-		return CIup.Item($arg1,$arg2);
+		return @ciupinst.Item($arg1,$arg2);
 	}
 
 	def Menu:
 	{
-		return CIup.Menu();
+		return @ciupinst.Menu();
 	}
 
 	def Separator:
 	{
-		return CIup.Separator();
+		return @ciupinst.Separator();
 	}
 
 	def Submenu:$arg1,$arg2
 	{
-		return CIup.Submenu($arg1,$arg2);
+		return @ciupinst.Submenu($arg1,$arg2);
 	}
 
 }

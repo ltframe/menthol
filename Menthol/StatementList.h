@@ -10,13 +10,17 @@
 #pragma comment(lib, "libfl.a")
 #pragma comment(lib, "liby.a")
 
+//包的源扩展名
 #define MENTHOLPACKAGEEXTENSION ".mep"
+//包编译后的扩展名
 #define MENTHOLPACKAGEDLLEXTENSION ".med"
 
+//可执行文件的源扩展名
 #define MENTHOLEXTENSION ".me"
+//可执行文件编译后的扩展名
 #define MENTHOLEXECUTEEXTENSION ".mee"
 
-//文件头使用
+//用来和编译后的文件中的类型比较使用
 #define MENTHOLPACKAGEDLLEXTENSION2 "MED"
 #define MENTHOLEXECUTEEXTENSION2 "MEE"
 

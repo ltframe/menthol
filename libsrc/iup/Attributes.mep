@@ -2,64 +2,65 @@ import miup;
 use CIup;
 module IupAttributes
 {
+	var const @ciupinst =mmrt(CIup);
 	def SetAttribute:$arg1,$arg2,$arg3
 	{
-		return CIup.SetAttribute($arg1,$arg2,$arg3);
+		return @ciupinst.SetAttribute($arg1,$arg2,$arg3);
 	}
 
 	def SetAttributes:$arg1,$arg2
 	{
-		return CIup.SetAttributes($arg1,$arg2);
+		return @ciupinst.SetAttributes($arg1,$arg2);
 	}
 
 	def SetAttributeHandle:$arg1,$arg2,$arg3
 	{
-		return CIup.SetAttributeHandle($arg1,$arg2,$arg3);
+		return @ciupinst.SetAttributeHandle($arg1,$arg2,$arg3);
 	}
 
 	def ResetAttribute:$arg1,$arg2
 	{
-		return CIup.ResetAttribute($arg1,$arg2);
+		return @ciupinst.ResetAttribute($arg1,$arg2);
 	}
 
 	def GetAttribute:$arg1,$arg2
 	{
-		return CIup.GetAttribute($arg1,$arg2);
+		return @ciupinst.GetAttribute($arg1,$arg2);
 	}
 
 	def GetAttributeData:$arg1,$arg2
 	{
-		return CIup.GetAttributeData($arg1,$arg2);
+		return @ciupinst.GetAttributeData($arg1,$arg2);
 	}
 
 	def GetAllAttributes:
 	{
-		return CIup.GetAllAttributes();
+		return @ciupinst.GetAllAttributes();
 	}
 
 	def GetAttributes:$arg1
 	{
-		return CIup.GetAttributes($arg1);
+		return @ciupinst.GetAttributes($arg1);
 	}
 
 	def CopyAttributes:$arg1,$arg2
 	{
-		return CIup.CopyAttributes($arg1,$arg2);
+		return @ciupinst.CopyAttributes($arg1,$arg2);
 	}
 
 	def GetAttributeHandle:$arg1,$arg2
 	{
-		return CIup.GetAttributeHandle($arg1,$arg2);
+		return @ciupinst.GetAttributeHandle($arg1,$arg2);
 	}
 
 	def SetGlobal:$arg1,$arg2
 	{
-		return CIup.SetGlobal($arg1,$arg2);
+		return @ciupinst.SetGlobal($arg1,$arg2);
 	}
 
 	def GetGlobal:$arg1
 	{
-		return CIup.GetGlobal($arg1);
+		return @ciupinst.GetGlobal($arg1);
 	}
 	
 }

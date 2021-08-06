@@ -2,133 +2,136 @@ import mio;
 use CDirectory,CFile,CDrives;
 module File
 {
+	var const @fileinst = mmrt(CFile);
 	def Open:$arg1,$arg2
 	{
-		return CFile.Open($arg1,$arg2);	
+		return @fileinst.Open($arg1,$arg2);	
 	}
 	def Readfile:$arg1
 	{
-		return CFile.Readfile($arg1);	
+		return @fileinst.Readfile($arg1);	
 	}
 	def Close:$arg1
 	{
-		return CFile.Close($arg1);	
+		return @fileinst.Close($arg1);	
 	}
 
 	def Writefile:$arg1,$arg2
 	{
-	   return CFile.Writefile($arg1,$arg2);
+	   return @fileinst.Writefile($arg1,$arg2);
 
 	}
 
 	def Copy:$arg1,$arg2
 	{
-	   return CFile.Copy($arg1,$arg2);
+	   return @fileinst.Copy($arg1,$arg2);
 	}
 
 	def Create:$arg1
 	{
-	   return CFile.Create($arg1);
+	   return @fileinst.Create($arg1);
 	}
 
 	def Delete:$arg1
 	{
-	   return CFile.Delete($arg1);
+	   return @fileinst.Delete($arg1);
 	}
 
 	def Exists:$arg1
 	{
-	   return CFile.Exists($arg1);
+	   return @fileinst.Exists($arg1);
 	}
 
 	def Move:$arg1,$arg2
 	{
-	   return CFile.Move($arg1,$arg2);
+	   return @fileinst.Move($arg1,$arg2);
 	}
 
 	def GetCreationTime:$arg1
 	{
-	   return CFile.GetCreationTime($arg1);
+	   return @fileinst.GetCreationTime($arg1);
 	}
 
 	def GetLastAccessTime:$arg1
 	{
-	   return CFile.GetLastAccessTime($arg1);
+	   return @fileinst.GetLastAccessTime($arg1);
 	}
 
 	def GetLastWriteTime:$arg1
 	{
-	   return CFile.GetLastWriteTime($arg1);
+	   return @fileinst.GetLastWriteTime($arg1);
 	}
 }
 
 module Directory
 {
+	var const @directoryinst = mmrt(CDirectory);
 	def Getcwd:
 	{
-		return CDirectory.Getcwd();
+		return @directoryinst.Getcwd();
 	}
 
 	def Chdir:$arg1
 	{
-		return CDirectory.Chdir($arg1);
+		return @directoryinst.Chdir($arg1);
 	}
 
 	def Getenv:$arg1
 	{
-		return CDirectory.Getenv($arg1);
+		return @directoryinst.Getenv($arg1);
 	}
 
 	def Remove:$arg1
 	{
-		return CDirectory.Remove($arg1);
+		return @directoryinst.Remove($arg1);
 	}
 
 	def Rmdir:$arg1
 	{
-		return CDirectory.Rmdir($arg1);
+		return @directoryinst.Rmdir($arg1);
 	}
 
 	def Mkdir:$arg1
 	{
-		return CDirectory.Mkdir($arg1);
+		return @directoryinst.Mkdir($arg1);
 	}
 
 	def Rename:$arg1,$arg2
 	{
-		return CDirectory.Rename($arg1,$arg2);
+		return @directoryinst.Rename($arg1,$arg2);
 	}
 
 	def Exists:$arg1
 	{
-		return CDirectory.Exists($arg1);
+		return @directoryinst.Exists($arg1);
 	}
 }
 
 module Drive
 {
+	var @driveinst =mmrt(CDrives);
 	def GetDrives:
 	{
-		return CDrives.GetDrives();
+		return @driveinst.GetDrives();
 	}
 
 	def AvailableFreeSpace:$arg1
 	{
-		return CDrives.AvailableFreeSpace($arg1);
+		return @driveinst.AvailableFreeSpace($arg1);
 	}
 
 	def DriveType:$arg1
 	{
-		return CDrives.DriveType($arg1);
+		return @driveinst.DriveType($arg1);
 	}
 
 	def TotalFreeSpace:$arg1
 	{
-		return CDrives.TotalFreeSpace($arg1);
+		return @driveinst.TotalFreeSpace($arg1);
 	}
 
 	def TotalSize:$arg1
 	{
-		return CDrives.TotalSize($arg1);
+		return @driveinst.TotalSize($arg1);
 	}
 }

@@ -42,6 +42,10 @@ namespace Console
 			cout<<"{Function Object}"<<endl;
 			return st;
 		}
+		if (value.v == M_MMRT) {
+			cout << "{M_MMRT Object}" << endl;
+			return st;
+		}
 		cout<<"{Object}"<<endl;
 		return st;
 	}

@@ -31,6 +31,7 @@ StackState ConvertToNumber(STACKSTATEPOINTER value)
 }
 inline bool Add(STACKSTATEPOINTER value1,STACKSTATEPOINTER value2,VmState * vmstate)
 {
+
 	StackState ctn1 = ConvertToNumber(value1);
 	StackState ctn2 = ConvertToNumber(value2);
 	if(ctn1.v!=M_UNKONWN && ctn2.v!=M_UNKONWN){	

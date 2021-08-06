@@ -28,7 +28,7 @@ public:
 	bool IsInArray(ValueType* _array,ValueType str,int c);
 private:
 	static MCommon* _inst;
-	string runpath;
+	string runpath;//获取当前程序运行的路径
 };
 #endif
 

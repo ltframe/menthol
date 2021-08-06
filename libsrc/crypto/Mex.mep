@@ -4,24 +4,25 @@ use CMDX;
 use File;
 module Mdx
 {
+	var const @cmdxinst = mmrt(CMDX),const @fileinst = mmrt(File); 
 	def  MD5:$arg1
 	{
-		return CMDX::MD5($arg1);
+		return @cmdxinst::MD5($arg1);
 	}
 	def  MD4:$arg1
 	{
-		return CMDX::MD4($arg1);
+		return @cmdxinst::MD4($arg1);
 	}
 	def  MD2:$arg1
 	{
-		return CMDX::MD2($arg1);
+		return @cmdxinst::MD2($arg1);
 	}
 
 	def MD5File:$arg1
 	{
-		var file = File.Open($arg1);
-		var str = File.Readfile(file);
-		File.Close();
+		var file = @fileinst.Open($arg1);
+		var str = @fileinst.Readfile(file);
+		@fileinst.Close();
 		return str;
 	}
 

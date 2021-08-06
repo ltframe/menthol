@@ -2,22 +2,23 @@ import MCryptography;
 use CBASE;
 module Basex
 {
+	var const @cbaseinst = mmrt(CBASE); 
 	def  Base64Encoder:$arg1
 	{
-		return CBASE.Base64Encoder($arg1);
+		return @cbaseinst.Base64Encoder($arg1);
 	}
 	def  Base64Decoder:$arg1
 	{
-		return CBASE.Base64Decoder($arg1);
+		return @cbaseinst.Base64Decoder($arg1);
 	}
 
 	def  Base32Encoder:$arg1
 	{
-		return CBASE.Base32Encoder($arg1);
+		return @cbaseinst.Base32Encoder($arg1);
 	}
 	def  Base32Decoder:$arg1
 	{
-		return CBASE.Base32Decoder($arg1);
+		return @cbaseinst.Base32Decoder($arg1);
 	}
 }
 

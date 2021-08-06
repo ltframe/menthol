@@ -4,205 +4,206 @@ import iup.Layout;
 use CIup,Array,IupLayout;
 module IupControlsContainers
 {
+	var const @ciupinst =mmrt(CIup),const @arrayinst =mmrt(Array),const @layoutinst =mmrt(IupLayout);
 	def Fill:
 	{
-		return CIup.Fill();
+		return @ciupinst.Fill();
 	}
 
 	def Space:
 	{
-		return CIup.Space();
+		return @ciupinst.Space();
 	}
 
 	def Cbox:$arg1
 	{
 		if(typeof($arg1)=="M_ARRAY")
 		{
-			var $size = Array.Length($arg1);
+			var $size = @arrayinst.Length($arg1);
 			var $i=0;
-			var $cbox = CIup.Cbox();
+			var $cbox = @ciupinst.Cbox();
 			while($i<$size)
 			{
-				IupLayout.Append($cbox,$arg1[$i]);
+				@layoutinst.Append($cbox,$arg1[$i]);
 				$i+=1;
 			}
 			return $cbox;
 		}
-		return CIup.Cbox($arg1);
+		return @ciupinst.Cbox($arg1);
 	}
 
 	def GridBox:$arg1
 	{
 		if(typeof($arg1)=="M_ARRAY")
 		{
-			var $size = Array.Length($arg1);
+			var $size = @arrayinst.Length($arg1);
 			var $i=0;
-			var $gridbox = CIup.GridBox();
+			var $gridbox = @ciupinst.GridBox();
 			while($i<$size)
 			{
-				IupLayout.Append($gridbox,$arg1[$i]);
+				@layoutinst.Append($gridbox,$arg1[$i]);
 				$i+=1;
 			}
 			return $gridbox;
 		}
-		return CIup.GridBox($arg1);
+		return @ciupinst.GridBox($arg1);
 	}
 
 	def MultiBox:$arg1
 	{
 		if(typeof($arg1)=="M_ARRAY")
 		{
-			var $size = Array.Length($arg1);
+			var $size = @arrayinst.Length($arg1);
 			var $i=0;
-			var $multibox = CIup.MultiBox();
+			var $multibox = @ciupinst.MultiBox();
 			while($i<$size)
 			{
-				IupLayout.Append($multibox,$arg1[$i]);
+				@layoutinst.Append($multibox,$arg1[$i]);
 				$i+=1;
 			}
 			return $multibox;
 		}		
-		return CIup.MultiBox($arg1);
+		return @ciupinst.MultiBox($arg1);
 	}
 
 	def Hbox:$arg1
 	{
 		if(typeof($arg1)=="M_ARRAY")
 		{
-			var $size = Array.Length($arg1);
+			var $size = @arrayinst.Length($arg1);
 			var $i=0;
-			var $hbox = CIup.Hbox();
+			var $hbox = @ciupinst.Hbox();
 			while($i<$size)
 			{
-				IupLayout.Append($hbox,$arg1[$i]);
+				@layoutinst.Append($hbox,$arg1[$i]);
 				$i+=1;
 			}
 			return $hbox;
 		}
-		return CIup.Hbox($arg1);
+		return @ciupinst.Hbox($arg1);
 	}
 
 	def Vbox:$arg1
 	{
 		if(typeof($arg1)=="M_ARRAY")
 		{
-			var $size = Array.Length($arg1);
+			var $size = @arrayinst.Length($arg1);
 			var $i=0;
-			var $vbox = CIup.Vbox();
+			var $vbox = @ciupinst.Vbox();
 			while($i<$size)
 			{
-				IupLayout.Append($vbox,$arg1[$i]);
+				@layoutinst.Append($vbox,$arg1[$i]);
 				$i+=1;
 			}
 			return $vbox;
 		}
-		return CIup.Vbox($arg1);
+		return @ciupinst.Vbox($arg1);
 	}
 
 	def Zbox:$arg1
 	{
 		if(typeof($arg1)=="M_ARRAY")
 		{
-			var $size = Array.Length($arg1);
+			var $size = @arrayinst.Length($arg1);
 			var $i=0;
-			var $zbox = CIup.Zbox();
+			var $zbox = @ciupinst.Zbox();
 			while($i<$size)
 			{
-				IupLayout.Append($zbox,$arg1[$i]);
+				@layoutinst.Append($zbox,$arg1[$i]);
 				$i+=1;
 			}
 			return $zbox;
 		}
-		return CIup.Zbox($arg1);
+		return @ciupinst.Zbox($arg1);
 	}
 
 	def Radio:$arg1
 	{
-		return CIup.Radio($arg1);
+		return @ciupinst.Radio($arg1);
 	}
 
 	def Normalizer:
 	{
-		return CIup.Normalizer();
+		return @ciupinst.Normalizer();
 	}
 
 	def Frame:$arg1
 	{
-		return CIup.Frame($arg1);
+		return @ciupinst.Frame($arg1);
 	}
 
 	def FlatFrame:
 	{
-		return CIup.FlatFrame();
+		return @ciupinst.FlatFrame();
 	}
 
 	def Tabs:$arg1
 	{
 		if(typeof($arg1)=="M_ARRAY")
 		{
-			var $size = Array.Length($arg1);
+			var $size = @arrayinst.Length($arg1);
 			var $i=0;
-			var $tabs = CIup.Tabs();
+			var $tabs = @ciupinst.Tabs();
 			while($i<$size)
 			{
-				IupLayout.Append($tabs,$arg1[$i]);
+				@layoutinst.Append($tabs,$arg1[$i]);
 				$i+=1;
 			}
 			return $tabs;
 		}
-		return CIup.Tabs($arg1);
+		return @ciupinst.Tabs($arg1);
 	}
 
 	def FlatTabs:$arg1
 	{
 		if(typeof($arg1)=="M_ARRAY")
 		{
-			var $size = Array.Length($arg1);
+			var $size = @arrayinst.Length($arg1);
 			var $i=0;
-			var $flattabs = CIup.FlatTabs();
+			var $flattabs = @ciupinst.FlatTabs();
 			while($i<$size)
 			{
-				IupLayout.Append($flattabs,$arg1[$i]);
+				@layoutinst.Append($flattabs,$arg1[$i]);
 				$i+=1;
 			}
 			return $flattabs;
 		}
-		return CIup.FlatTabs($arg1);
+		return @ciupinst.FlatTabs($arg1);
 	}
 
 	def BackgroundBox:
 	{
-		return CIup.BackgroundBox();
+		return @ciupinst.BackgroundBox();
 	}
 
 	def ScrollBox:$arg1
 	{
-		return CIup.ScrollBox($arg1);
+		return @ciupinst.ScrollBox($arg1);
 	}
 
 	def FlatScrollBox:$arg1
 	{
-		return CIup.FlatScrollBox($arg1);
+		return @ciupinst.FlatScrollBox($arg1);
 	}
 
 	def DetachBox:$arg1
 	{
-		return CIup.DetachBox($arg1);
+		return @ciupinst.DetachBox($arg1);
 	}
 
 	def Expander:$arg1
 	{
-		return CIup.Expander($arg1);
+		return @ciupinst.Expander($arg1);
 	}
 
 	def Sbox:
 	{
-		return CIup.Sbox();
+		return @ciupinst.Sbox();
 	}
 
 	def Split:$arg1,$arg2
 	{
-		return CIup.Split($arg1,$arg2);
+		return @ciupinst.Split($arg1,$arg2);
 	}
 
 }

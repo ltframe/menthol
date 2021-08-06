@@ -3,13 +3,13 @@ import string;
 use Console,Json;
 _mmain:$a,$c
 {	
-		
+		var $inst =mmrt(Console),$jsoninst = mmrt(Json);
 		var $s ="{\"name\":\"fengxin\",\"passwd\":\"123\",\"num\":[{\"rrr\":\"ffffffffff\"}]}";
-		var $j = Json.JsonParse($s);
-		Console.Out(Json.GetObjectItem($j,"name"));Console.Out(Json.GetObjectItem($j,"passwd"));
-		var $m = Json.GetObjectItem($j,"num");
-		var $count = Json.GetArraySize($m);
-		var $ar = Json.GetArrayItem($m,0);	
-		Console.Out(Json.Type($m));
-		Console.Out(Json.GetObjectItem($ar,"rrr"));
+		var $j = $jsoninst.JsonParse($s);
+		$inst.Out($jsoninst.GetObjectItem($j,"name"));$inst.Out($jsoninst.GetObjectItem($j,"passwd"));
+		var $m = $jsoninst.GetObjectItem($j,"num");
+		var $count = $jsoninst.GetArraySize($m);
+		var $ar = $jsoninst.GetArrayItem($m,0);	
+		$inst.Out($jsoninst.Type($m));
+		$inst.Out($jsoninst.GetObjectItem($ar,"rrr"));
 }

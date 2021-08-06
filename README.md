@@ -21,7 +21,7 @@ Menthol是一个简单、易用、易学的脚本语言,语法简单,开发简�
 ```html
 if else for break true false const
 try except throw continue return while
-null import _mmain def var in typeof module use
+null import _mmain def var in typeof module use mmrt
 ```
 
 ###### 操作符
@@ -80,13 +80,14 @@ module test
 
 _mmain:$a,$c
 {    
+	var $m = mmrt(Console);
 	try{
-		test.test();
+		mmrt(test).test();
 	}
 	except:$a,$b
 	{
-		Console.Out($a);
-		Console.Out($b);
+		$m.Out($a);
+		$m.Out($b);
 	}
 }
 
@@ -99,13 +100,14 @@ Import console;
 use Console;
 _mmain:$a,$c
 {    
+	var $m = mmrt(Console);
 	var $arr = [1,2,3,4,5,6];
-	Console.Out($arr[1]);
-	Console.Out($arr[1..][7]);
-	Console.Out($arr[..3][8]);
-	Console.Out($arr[2..5][9]);
+	$m.Out($arr[1]);
+	$m.Out($arr[1..][3]);
+	$m.Out($arr[..3][4]);
+	$m.Out($arr[2..5][5]);
 	$arr = "abcdefghi";
-	Console.Out($arr[1]);
+	$m.Out($arr[1]);
 }
 
 
@@ -121,20 +123,22 @@ Import console;
 use Console;
 _mmain:$a,$c
 {    
+	var $m = mmrt(Console);
     var $arr = [1,2,3,4,6,7];
 	for(var $i in $arr)
 	{
-		Console.Out($i);
+		$m.Out($i);
 	}
 	$arr ="abcdefghi";
+	
 	for(var $i in $arr)
 	{
-		Console.Out($i);
+		$m.Out($i);
 	}
 	$arr =(key1::"value1",key2::"value2");
 	for(var $key,$value in $arr)
 	{
-		Console.Out($key+":"+$value);
+		$m.Out($key+":"+$value);
 	}
 }
 
@@ -148,17 +152,20 @@ Import console;
 use Console;
 module test
 {
+	var @m = mmrt(Console);
 	def func:$i1,$i2=333
 	{	
-		Console.Out($i1);
-		Console.Out($i2);
+		@m.Out($i1);
+		@m.Out($i2);
 	}
 }
 _mmain:$a,$c
 {	
-	test.func(222,1000,333);
-	test.func(555);
+	var $t = mmrt(test);
+	$t.func(222,1000,333);
+	$t.func(555);
 }
+
 
 ```
 
@@ -172,26 +179,28 @@ use Console,Thread;
 
 module test
 {
+	var @m = mmrt(Console);
 	def thread2:
 	{
 		while(true){
-			Console.Out("thread2");
+			@m.Out("thread2");
 		}
 	}
 
 	def thread1:
 	{
 		while(true){
-			Console.Out("thread1");
+			@m.Out("thread1");
 		}
 	}
 }
 _mmain:$a,$c
 {	
-	var $k1 = Thread.NewThread(test.thread1);
-	Thread.Join($k1);
-	var $k2 = Thread.NewThread(test.thread2);	
-	Thread.Join($k2);
+	var $t = mmrt(Thread),$e = mmrt(test);
+	var $k1 = $t.NewThread($e.thread1);
+	$t.Join($k1);
+	var $k2 = $t.NewThread($e.thread2);	
+	$t.Join($k2);
 }
 
 ```

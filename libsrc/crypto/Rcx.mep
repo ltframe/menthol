@@ -3,39 +3,40 @@ import String;
 use CRC,String;
 module Rcx
 {
+	var const @crcinst = mmrt(CRC),const @stringinst = mmrt(String); 
 	def RC4Encryp:$arg1,$arg2
 	{
-		if(String.Length($arg2)!=16)
+		if(@stringinst.Length($arg2)!=16)
 		{
 			return -1;
 		}
-		return CRC.RC4Encryp($arg1,$arg2);
+		return @crcinst.RC4Encryp($arg1,$arg2);
 	}
 
 	def  RC4Decryp:$arg1,$arg2
 	{
-		if(String.Length($arg2)!=16)
+		if(@stringinst.Length($arg2)!=16)
 		{
 			return -1;
 		}
-		return CRC.RC4Decryp($arg1,$arg2);
+		return @crcinst.RC4Decryp($arg1,$arg2);
 	}
 
 	def  RC2Encryp:$arg1,$arg2
 	{
-		if(String.Length($arg2)!=16)
+		if(@stringinst.Length($arg2)!=16)
 		{
 			return -1;
 		}
-		return CRC.RC2Encryp($arg1,$arg2);
+		return @crcinst.RC2Encryp($arg1,$arg2);
 	}
 	def  RC2Decryp:$arg1,$arg2
 	{
-		if(String.Length($arg2)!=16)
+		if(@stringinst.Length($arg2)!=16)
 		{
 			return -1;
 		}
-		return CRC.RC2Decryp($arg1,$arg2);
+		return @crcinst.RC2Decryp($arg1,$arg2);
 	}	
 }
 

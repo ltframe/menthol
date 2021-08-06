@@ -1,27 +1,33 @@
 import console;
 import Thread;
-use Console,Thread;
+import Environment;
+use Console,Thread,Environment;
 
 module test
 {
+	var @e = mmrt(Environment);
+	var const @inst = mmrt(Console);
 	def thread2:
 	{
 		while(true){
-			Console.Out("thread2");
+			@inst.Out("thread2");
+			@e.Sleep(1);
 		}
 	}
 
 	def thread1:
-	{
+	{	
 		while(true){
-			Console.Out("thread1");
+			@inst.Out("thread1");
+			@e.Sleep(1);
 		}
 	}
 }
 _mmain:$a,$c
 {	
-	var $k1 = Thread.NewThread(test.thread1);
-	Thread.Join($k1);
-	var $k2 = Thread.NewThread(test.thread2);	
-	Thread.Join($k2);
+	var const $inst = mmrt(Thread),const $testinst = mmrt(test);
+	var $k1 = $inst.NewThread($testinst.thread1);
+	var $k2 = $inst.NewThread($testinst.thread2);
+	$inst.Join($k1);	
+	$inst.Join($k2);
 }

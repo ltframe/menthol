@@ -1,0 +1,26 @@
+import packagetest;
+use packagetest;
+import console;
+use Console;
+
+module test
+{
+	var @p = packagetest;
+
+	def func:$i
+	{	
+		mmrt(Console).Out("index-"+$i);
+	}
+}
+_mmain:$a,$c
+{	
+	var $i = mmrt(test),$b=mmrt(packagetest);
+	mmrt($i.@p).@g = "package caller";
+	mmrt($i.@p).func();
+	$b.func1("ok");
+	$b.callback($b.func1);
+	$b.callback($i.func);
+	var $d = $b.func;
+	$i.func(22);
+	$d();
+}

@@ -2,16 +2,17 @@ import mlibcurl;
 use CCurl_Callback;
 module CurlCallback
 {
+	var const @inst = mmrt(CCurl_Callback);
 	def writefunction:$arg1,$arg2
 	{
-		return CCurl_Callback.writefunction($arg1,$arg2);
+		return @inst.writefunction($arg1,$arg2);
 	}
 	def readfunction:$arg1,$arg2
 	{
-		return CCurl_Callback.readfunction($arg1,$arg2);
+		return @inst.readfunction($arg1,$arg2);
 	}
 	def headerfunction:$arg1,$arg2
 	{
-		return CCurl_Callback.headerfunction($arg1,$arg2);
+		return @inst.headerfunction($arg1,$arg2);
 	}
 }

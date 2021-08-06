@@ -3,34 +3,35 @@ use CString,CRegex,CJson;
 
 module String{
 
+	var const @stringinst =mmrt(CString);
 	def StoN:$arg1
 	{
-		return CString.StoN($arg1);
+		return @stringinst.StoN($arg1);
 	}
 
 	def Length:$arg1
 	{
-		return CString.Length($arg1);
+		return @stringinst.Length($arg1);
 	}
 
 	def IndexOf:$arg1,$arg2
 	{
-		return CString.IndexOf($arg1,$arg2);
+		return @stringinst.IndexOf($arg1,$arg2);
 	}
 
 	def Replace:$arg1,$arg2,$arg3
 	{
-		return CString.Replace($arg1,$arg2,$arg3);
+		return @stringinst.Replace($arg1,$arg2,$arg3);
 	}
 
 	def Toupper:$arg1
 	{
-		return CString.Toupper($arg1);
+		return @stringinst.Toupper($arg1);
 	}
 
 	def Tolower:$arg1
 	{
-		return CString.Tolower($arg1);
+		return @stringinst.Tolower($arg1);
 	}
 
 	def Isdigit:$arg1
@@ -41,7 +42,7 @@ module String{
 		if(typeof("$arg1")=="M_STRING"){
 			return false;
 		}
-		return CString.Isdigit($arg1);
+		return @stringinst.Isdigit($arg1);
 	}
 
 	def Isalpha:$arg1
@@ -52,14 +53,14 @@ module String{
 		if(typeof("$arg1")!="M_STRING"){
 			return false;
 		}
-		return CString.Isalpha($arg1);
+		return @stringinst.Isalpha($arg1);
 	}
 	def Chr:$i
 	{
 		if(typeof($i)!="M_NUMBER"){
 			return null;
 		}
-		return CString.Toascii($i);
+		return @stringinst.Toascii($i);
 	}
 	def SubString:$str,$pos1,$pos2
 	{
@@ -96,12 +97,12 @@ module String{
 
 	def UTF8ToGBK:$arg1
 	{
-		return CString.UTF8ToGBK($arg1);
+		return @stringinst.UTF8ToGBK($arg1);
 	}
 
 	def GBKToUTF8:$arg1
 	{
-		return CString.GBKToUTF8($arg1);
+		return @stringinst.GBKToUTF8($arg1);
 	}
 	def ToArray:$arr
 	{
@@ -162,13 +163,14 @@ module String{
 
 module Regex
 {
+	var @regexinst =mmrt(CRegex);
 	def Exec:$arg1,$arg2,$arg3
 	{
 		if(typeof("$arg3")!="M_NUMBER")
 		{
 			$arg3 = 0;
 		}
-		return CRegex.Exec($arg1,$arg2,$arg3);
+		return @regexinst.Exec($arg1,$arg2,$arg3);
 	}
 
 	def Test:$arg1,$arg2,$arg3
@@ -177,7 +179,7 @@ module Regex
 		{
 			$arg3 = 0;
 		}
-		return CRegex.Test($arg1,$arg2,$arg3);
+		return @regexinst.Test($arg1,$arg2,$arg3);
 	}
 
 	def Replace:$arg1,$arg2,$arg3,$arg4
@@ -186,39 +188,40 @@ module Regex
 		{
 			$arg4 = 0;
 		}
-		return CRegex.Replace($arg1,$arg2,$arg3,$arg4);
+		return @regexinst.Replace($arg1,$arg2,$arg3,$arg4);
 	}
 }
 
 module Json
 {
+	var @jsoninst =mmrt(CJson);
 	def JsonParse:$arg1
 	{
-	   return CJson.JsonParse($arg1);
+	   return @jsoninst.JsonParse($arg1);
 	}
 
 	def GetObjectItem:$arg1,$arg2
 	{
-	   return CJson.GetObjectItem($arg1,$arg2);
+	   return @jsoninst.GetObjectItem($arg1,$arg2);
 	}
 
 	def GetArrayItem:$arg1,$arg2
 	{
-	   return CJson.GetArrayItem($arg1,$arg2);
+	   return @jsoninst.GetArrayItem($arg1,$arg2);
 	}
 
 	def GetArraySize:$arg1
 	{
-	   return CJson.GetArraySize($arg1);
+	   return @jsoninst.GetArraySize($arg1);
 	}
 
 	def Delete:$arg1
 	{
-	   return CJson.Delete($arg1);
+	   return @jsoninst.Delete($arg1);
 	}
 
 	def Type:$arg1
 	{
-	   return CJson.Type($arg1);
+	   return @jsoninst.Type($arg1);
 	}
 }

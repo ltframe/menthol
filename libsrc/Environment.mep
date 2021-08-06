@@ -1,67 +1,68 @@
 import msystem;
 use CEnvironment;
 module Environment{
+	var const @envinst =mmrt(CEnvironment);
 	def Version:
 	{
-	   return CEnvironment.Version();
+	   return @envinst.Version();
 	}
 
 	def Sleep:$arg1
 	{
-	  return CEnvironment.Sleep($arg1);
+	  return @envinst.Sleep($arg1);
 	}
 
 	def SystemInfo:
 	{
-	   return CEnvironment.SystemInfo();
+	   return @envinst.SystemInfo();
 	}
 
 	def CpuInfo:
 	{
-		return CEnvironment.CpuInfo();
+		return @envinst.CpuInfo();
 	}
 	def SystemMemory:
 	{
-	   return CEnvironment.SystemMemory();
+	   return @envinst.SystemMemory();
 	}
 
 	def OsInfo:
 	{
-	   return CEnvironment.OsInfo();
+	   return @envinst.OsInfo();
 	}
 
 	def Getpid:
 	{
-	 return CEnvironment.Getpid(); 
+	 return @envinst.Getpid(); 
 	}
 
 	def Exit:$arg1
 	{
-	   return CEnvironment.Exit($arg1);
+	   return @envinst.Exit($arg1);
 	}
 
 	def System:$arg1
 	{
-	   return CEnvironment.System($arg1);
+	   return @envinst.System($arg1);
 	}
 
 	def MachineName:
 	{
-	   return CEnvironment.MachineName();
+	   return @envinst.MachineName();
 	}
 	def UserName:
 	{
-	   return CEnvironment.UserName();
+	   return @envinst.UserName();
 	}
 
 	def TickCount:
 	{
-	   return CEnvironment.TickCount();
+	   return @envinst.TickCount();
 	}
 
 	def NewGuid:
 	{
-	  return CEnvironment.NewGuid();
+	  return @envinst.NewGuid();
 	}
 }
 

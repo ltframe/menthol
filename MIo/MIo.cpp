@@ -33,7 +33,7 @@ UserFunctionAtter Directorylist[] = {
 	{"Mkdir",Directory::Mkdir,1},
 	{"Rename",Directory::Rename,2},
 	{"Exists",Directory::Exists,1},
-	{"Rename",Directory::IsDirectory,1},
+	{"IsDirectory",Directory::IsDirectory,1},
 	{"Exists",Directory::GetDirectoryList,1},
 	{NULL,NULL,0}
 }; 

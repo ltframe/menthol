@@ -6,14 +6,15 @@ module test
 {
 	def test:$i
 	{	
-		Console.Out($i[0]);
+		mmrt(Console).Out($i[0]);
 	}
 }
 _mmain:$a,$c
 {	
 	var $i=0;
+	var $inst =mmrt(example1),$inst2 =mmrt(test);
 	while($i<100){
-		example1.CallBack(test.test);
+		$inst.CallBack($inst2.test);
 		$i+=1;
 	}
 }

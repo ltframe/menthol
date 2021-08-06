@@ -2,20 +2,21 @@ import mthread;
 use CThread;
 module Thread
 {
+	var const @cthread = mmrt(CThread);
 	def NewThread:$arg1
 	{
-		return CThread.NewThread($arg1);
+		return @cthread.NewThread($arg1);
 	}
 	def Join:$arg1
 	{
-		return CThread.Join($arg1);
+		return @cthread.Join($arg1);
 	}
 	def Lock:
 	{
-		return CThread.Lock();
+		return @cthread.Lock();
 	}
 	def UnLock:
 	{
-		return CThread.UnLock();
+		return @cthread.UnLock();
 	}
 }

@@ -1,0 +1,24 @@
+import console;
+use Console;
+
+module packagetest
+{
+	var @g,const @c = mmrt(Console);
+	def func:
+	{	
+		@c.Out("package function called");
+	}
+
+	def func1:$i
+	{
+		func();
+		@c.Out($i);
+	}
+
+	def callback:$func
+	{
+		@c.Out(@g);
+		func();
+		$func();
+	}
+}

@@ -5,23 +5,27 @@
 #include "Vm.h"
 #include <Windows.h>
 #include <intrin.h>
+
+//正在编译的文件名，给menthol-flex.l使用
 char* currentyyfile;
-// 这是导出函数的一个示例。
 
 static PrintErrorFunc _PrintCompileErrorFunc = 0;
 static PrintErrorFunc _PrintRunTimerrorFunc = 0;
 static bool iscompile = false;
 
+//设置编译错误提示全局静态变量
 void SetPrintCompileErrorFunc(PrintErrorFunc _pef)
 {
 	_PrintCompileErrorFunc = _pef;
 }
+//设置运行错误提示全局静态变量
 void SetPrintRunTimeErrorFunc(PrintErrorFunc _pef)
 {
 	_PrintRunTimerrorFunc = _pef;
 }
 
-
+//编译源文件
+//char* cfile：文件路径
 int Compile(char* cfile)
 {
 
@@ -50,6 +54,7 @@ int Compile(char* cfile)
 	yyparse(als);
 	PathInfo pinfo = MCommon::CreateInstance()->StringPathSplit(cfile);
 
+	//如果被编译的文件不是可执行文件，也不是包文件
 	if(!MCommon::CreateInstance()->StrCmpNoCase(pinfo.extension,MENTHOLEXTENSION) && !MCommon::CreateInstance()->StrCmpNoCase(pinfo.extension,MENTHOLPACKAGEEXTENSION))
 	{
 		delete als;
@@ -64,6 +69,7 @@ int Compile(char* cfile)
 		return 1;
 	}
 	als->CreateCode(als->CompileStructTable,pinfo.extension);
+	//如果编译中、生成代码中都没有错误产生，则输出编译后的文件
 	if(!yyerrorcount){
 		MFile::CreateInstance()->GenerateFileData(als->CodeList,0,0,0,pinfo.extension,pinfo.name);
 	}
@@ -127,6 +133,7 @@ int Run(char* files,char* arg1,char* arg2)
 
 	string flag = MBinary::CreateInstance()->ReadPackageFormat(files);
 
+	//检查被调用文件是不是含有mmain的启动文件
 	if(flag != MENTHOLEXECUTEEXTENSION2){
 		MError::CreateInstance()->PrintRunTimeError(files+string(" is not menthol executable program"),vmstate);
 		return 0;
@@ -140,6 +147,7 @@ int Run(char* files,char* arg1,char* arg2)
 
 RunTimeState* CreateModuleRunTime(char* modulename,VmState *vmstate)
 {
+	//如果是编译的话，则加入编译使用的modulelist列表，否则加入运行时的modulelist
 	if(iscompile)
 	{
 		StatementList::GetInstance()->AddExternalModuleList(modulename);

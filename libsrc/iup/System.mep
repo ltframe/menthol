@@ -2,63 +2,64 @@ import miup;
 use CIup;
 module IupSystem
 {
+	var const @ciupinst =mmrt(CIup);
 	def Init:
 	{
-		return CIup.Init();
+		return @ciupinst.Init();
 	}
 
 	def Close:
 	{
-		return CIup.Close();
+		return @ciupinst.Close();
 	}
 
 	def Version:
 	{
-		return CIup.Version();
+		return @ciupinst.Version();
 	}
 
 	def Clipboard:
 	{
-		return CIup.Clipboard();
+		return @ciupinst.Clipboard();
 	}
 
 	def Timer:
 	{
-		return CIup.Timer();
+		return @ciupinst.Timer();
 	}
 
 	def User:
 	{
-		return CIup.User();
+		return @ciupinst.User();
 	}
 
 	def Config:
 	{
-		return CIup.Config();
+		return @ciupinst.Config();
 	}
 	def Destroy:$arg1
 	{
-		return CIup.Destroy($arg1);
+		return @ciupinst.Destroy($arg1);
 	}
 
 	def Create:$arg1
 	{
-		return CIup.Destroy($arg1);
+		return @ciupinst.Destroy($arg1);
 	}
 
 	def ClassName:$arg1
 	{
-		return CIup.Destroy($arg1);
+		return @ciupinst.Destroy($arg1);
 	}
 	
 	def Update:$arg1
 	{
-		return CIup.Destroy($arg1);
+		return @ciupinst.Destroy($arg1);
 	}
 	
 	def Redraw:$arg1,$arg2
 	{
-		return CIup.Destroy($arg1,$arg2);
+		return @ciupinst.Destroy($arg1,$arg2);
 	}
 }
 

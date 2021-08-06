@@ -2,10 +2,10 @@ import msqlite;
 use CSqlite;
 module Sqlite{
 
-
+	var const @inst = mmrt(CSqlite);
 	def Connect:$arg1
 	{
-		var $obj = CSqlite.Connect($arg1);
+		var $obj = @inst.Connect($arg1);
 		if(typeof($obj) =="M_NUMBER")
 		{
 			return 0;
@@ -15,90 +15,90 @@ module Sqlite{
 
 	def Close:$arg1
 	{
-		CSqlite.Close($arg1);
+		@inst.Close($arg1);
 	}
 
 	def Execute:$arg1
 	{
-		return CSqlite.Execute($arg1);
+		return @inst.Execute($arg1);
 	}
 
 	def ExecuteNonQuery:$arg1,$arg2
 	{
-		return CSqlite.ExecuteNonQuery($arg1,$arg2);
+		return @inst.ExecuteNonQuery($arg1,$arg2);
 	}
 
 	def Busytimeout:$arg1,$arg2
 	{
-		return CSqlite.Busytimeout($arg1,$arg2);
+		return @inst.Busytimeout($arg1,$arg2);
 	}
 
 	def Changes:$arg1
 	{
-		return CSqlite.Changes($arg1);
+		return @inst.Changes($arg1);
 	}
 
 	def Errcode:$arg1
 	{
-		return CSqlite.Errcode($arg1);
+		return @inst.Errcode($arg1);
 	}
 
 	def Errmsg:$arg1
 	{
-		return CSqlite.Errmsg($arg1);
+		return @inst.Errmsg($arg1);
 	}
 
 	def Lastinsertrowid:$arg1
 	{
-		return CSqlite.Lastinsertrowid($arg1);
+		return @inst.Lastinsertrowid($arg1);
 	}	
 
 	def Version:
 	{
-		return CSqlite.Version();
+		return @inst.Version();
 	}
 
 	def Columnname:$arg1,$arg2
 	{
-		return CSqlite.Columnname($arg1,$arg2);
+		return @inst.Columnname($arg1,$arg2);
 	}
 
 	def Bindtext:$arg1,$arg2,$arg3
 	{
-		CSqlite.Bindtext($arg1,$arg2,$arg3);
+		@inst.Bindtext($arg1,$arg2,$arg3);
 	}
 
 	def Bindnumber:$arg1,$arg2,$arg3
 	{
-		CSqlite.Bindnumber($arg1,$arg2,$arg3);
+		@inst.Bindnumber($arg1,$arg2,$arg3);
 	}
 
 	def Bindnull:$arg1,$arg2,$arg3
 	{
-		CSqlite.Bindnull($arg1,$arg2,$arg3);
+		@inst.Bindnull($arg1,$arg2,$arg3);
 	}
 
 	def Prepare:$arg1,$arg2
 	{
-		return CSqlite.Prepare($arg1,$arg2);
+		return @inst.Prepare($arg1,$arg2);
 	}
 
 	def Columncount:$arg1
 	{
-		return CSqlite.Columncount($arg1);
+		return @inst.Columncount($arg1);
 	}	
 
 	def Columntype:$arg1,$arg2
 	{
-		return CSqlite.Columntype($arg1,$arg2);
+		return @inst.Columntype($arg1,$arg2);
 	}	
 
 	def Finalize:$arg1
 	{
-		return CSqlite.Finalize($arg1);
+		return @inst.Finalize($arg1);
 	}	
 	def Reset:$arg1
 	{
-		return CSqlite.Reset($arg1);
+		return @inst.Reset($arg1);
 	}	
 }

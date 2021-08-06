@@ -1,3 +1,5 @@
+/*系统错误提示类*/
+
 #include "stdafx.h"
 #include "MError.h"
 #include "Vm.h"
@@ -25,12 +27,16 @@ void MError::SetRunTimePrintErrorFunc(PrintErrorFunc func)
 	_PrintRunTimeErrorFunc = func;
 }
 
+
+//用于输出编译过程中出现的错误
+//s:错误提示文字
+//_linno:如果有一些无法提示到确定的行，则使用函数默认值-1
 void MError::PrintError(string s,int _lineno)
 {
 	if(_lineno!=-1)
 		lineno = _lineno;
 
-	yyerrorcount++;
+	yyerrorcount++; //yyparse 时候产生的错误
 
 	if(_PrintCompileErrorFunc)
 	_PrintCompileErrorFunc(CONSTCAST(char)(s.c_str()),currentyyfile,lineno);

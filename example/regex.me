@@ -11,19 +11,20 @@ module test
 {
 	def getsource:$str
 	{
-		var $a = Regex.Exec($str,"<img.*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>");	
+		var const $inst =mmrt(Console),const $instreg =mmrt(Regex);
+		var $a = $instreg.Exec($str,"<img.*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>");	
 		for(var $s in $a){		
-			Console.Out($s[1]);		
+			$inst.Out($s[1]);		
 		}	
 	}
 }
 
 _mmain:$a,$c
 {	
-
-	var $curl = CurlSystem.init();
-	 CurlSetOpt.url($curl, "http://www.ltplayer.com/");
-	 CurlCallback.writefunction($curl,test.getsource);
-	 var $res = CurlSystem.perform($curl);
-	 CurlSystem.cleanup($curl);	
+	var const $CurlSystem =mmrt(CurlSystem),const $test =mmrt(test);
+	var $curl = $CurlSystem.init();;
+	 mmrt(CurlSetOpt).url($curl, "http://www.baidu.com/");
+	 mmrt(CurlCallback).writefunction($curl,$test.getsource);
+	 var $res = $CurlSystem.perform($curl);
+	 $CurlSystem.cleanup($curl);	
 }

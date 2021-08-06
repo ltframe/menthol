@@ -2,74 +2,75 @@ import miup;
 use CIup;
 module IupLayout
 {
+	var const @ciupinst =mmrt(CIup);
 	def Append:$arg1,$arg2
 	{
-		return CIup.Append($arg1,$arg2);
+		return @ciupinst.Append($arg1,$arg2);
 	}
 
 	def Detach:$arg1
 	{
-		return CIup.Detach($arg1);
+		return @ciupinst.Detach($arg1);
 	}
 
 	def Insert:$arg1,$arg2,$arg3
 	{
-		return CIup.Insert($arg1,$arg2,$arg3);
+		return @ciupinst.Insert($arg1,$arg2,$arg3);
 	}
 
 	def Reparent:$arg1,$arg2,$arg3
 	{
-		return CIup.Reparent($arg1,$arg2,$arg3);
+		return @ciupinst.Reparent($arg1,$arg2,$arg3);
 	}
 
 	def GetParent:$arg1
 	{
-		return CIup.GetParent($arg1);
+		return @ciupinst.GetParent($arg1);
 	}
 
 	def GetChild:$arg1,$arg2
 	{
-		return CIup.GetChild($arg1,$arg2);
+		return @ciupinst.GetChild($arg1,$arg2);
 	}
 
 	def GetChildPos:$arg1,$arg2
 	{
-		return CIup.GetChildPos($arg1,$arg2);
+		return @ciupinst.GetChildPos($arg1,$arg2);
 	}
 
 	def GetChildCount:$arg
 	{
-		return CIup.GetChildCount($arg);
+		return @ciupinst.GetChildCount($arg);
 	}
 
 	def GetNextChild:$arg1,$arg2
 	{
-		return CIup.GetNextChild($arg1,$arg2);
+		return @ciupinst.GetNextChild($arg1,$arg2);
 	}
 
 	def GetBrother:$arg
 	{
-		return CIup.GetBrother($arg);
+		return @ciupinst.GetBrother($arg);
 	}
 
 	def GetDialog:$arg
 	{
-		return CIup.GetDialog($arg);
+		return @ciupinst.GetDialog($arg);
 	}
 
 	def GetDialogChild:$arg1,$arg2
 	{
-		return CIup.GetDialogChild($arg1,$arg2);
+		return @ciupinst.GetDialogChild($arg1,$arg2);
 	}
 
 	def Refresh:$arg
 	{
-		return CIup.Refresh($arg);
+		return @ciupinst.Refresh($arg);
 	}
 
 	def RefreshChildren:$arg
 	{
-		return CIup.RefreshChildren($arg);
+		return @ciupinst.RefreshChildren($arg);
 	}
 }
 

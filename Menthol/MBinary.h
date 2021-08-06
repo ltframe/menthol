@@ -35,7 +35,7 @@ public:
 	void ReadCode(string filename);	
 	void ReadBinary(ImportFileAttr fileattr, vector<Instruction> *codelist,
 	vector<RunTimeState*> *vrts, vector<StringValue>* dictkeyconstants, void(*_AddRunTimeStateList)(RunTimeState*)
-	,vector<GlobalCodeRuntimeAtter>* globallist);
+	/*,vector<GlobalCodeRuntimeAtter>* globallist*/);
 	void MReadImportFiles(const char* fp,vector<ImportFileAttr> *filetree,char* modidr,char* workdir);
 	void ReadMEPPackage(string filename,vector<string>* list);
 	static MBinary* CreateInstance();

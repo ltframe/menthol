@@ -7,31 +7,33 @@ use Console,example1,Environment;
 
 module scriptmodule
 {
+	var const @Console =mmrt(Console);
+	var const @Environment =mmrt(Environment);
 	def banner:
 	{
-		Console.Out(" __  __                  _     _               _ ");
-		Environment.Sleep(200); 
-		Console.Out("|  \/  |   ___   _ __   | |_  | |__     ___   | |");
-		Environment.Sleep(200); 
-		Console.Out("| |\/| |  / _ \ | '_ \  | __| | '_ \   / _ \  | |"); 
-		Environment.Sleep(200);
-		Console.Out("| |  | | |  __/ | | | | | |_  | | | | | (_) | | |"); 
-		Environment.Sleep(200);
-		Console.Out("|_|  |_|  \___| |_| |_|  \__| |_| |_|  \___/  |_|"); 
+		@Console.Out(" __  __                  _     _               _ ");
+		@Environment.Sleep(200); 
+		@Console.Out("|  \/  |   ___   _ __   | |_  | |__     ___   | |");
+		@Environment.Sleep(200); 
+		@Console.Out("| |\/| |  / _ \ | '_ \  | __| | '_ \   / _ \  | |"); 
+		@Environment.Sleep(200);
+		@Console.Out("| |  | | |  __/ | | | | | |_  | | | | | (_) | | |"); 
+		@Environment.Sleep(200);
+		@Console.Out("|_|  |_|  \___| |_| |_|  \__| |_| |_|  \___/  |_|");    
 	}
 
 	def processbar:
 	{
-		Console.Oute("\r\n");
+		@Console.Oute("\r\n");
 		var $i = 0;
 		while($i<100){
-			Console.Oute("*");
+			@Console.Oute("*");
 			$i = $i+1;
 		}
-		Console.Out("");
+		@Console.Out("");
 		$i = 0;
 		while($i<100){
-			Console.Oute("\b");
+			@Console.Oute("\b");
 			$i = $i+1;
 		}
 	}
@@ -39,47 +41,53 @@ module scriptmodule
 
 	def openfilecallback:$msg
 	{
-		Console.Out($msg);
+		@Console.Out($msg);
 	}
 }
 module player
 {
-	var @p;
+	var const @example1 =mmrt(example1);
+	var const @Console =mmrt(Console);
+	var const @Environment =mmrt(Environment);
+	var @p = 0;
 	def playercallback:
 	{
 	
 		while(true){
-			if(example1.GetStatus(@p)==0){			
+			if(@example1.GetStatus(@p)==0){			
 				break;
 			}
-			var $info = example1.GetPosition(@p);
-			Console.Oute($info::Hour + ":" + $info::Minute + ":" + $info::Second + "\r");
-			Environment.Sleep(1000);
+			var $info = @example1.GetPosition(@p);
+			@Console.Oute($info::Hour + ":" + $info::Minute + ":" + $info::Second + "\r");
+			@Environment.Sleep(1000);
 		}
-		example1.Release(@p);
-		Console.Out("play end");
-		scriptmodule.processbar();
+		@example1.Release(@p);
+		@Console.Out("play end");
+		mmrt(scriptmodule).processbar();
 	}
 }
 _mmain:$a,$c
 {	
-	
-	scriptmodule.banner();
-	Console.Oute("文件地址:");
-	$a = Console.In();
-	example1.HideCursor();
+	var const $scriptmodule =mmrt(scriptmodule);
+	var const $Console =mmrt(Console);
+	var const $example1 =mmrt(example1);
+	var const $player =mmrt(player);
+	$scriptmodule.banner();
+	$Console.Oute("文件地址:");
+	$a = $Console.In();
+	$example1.HideCursor();
 	while(true){
-		scriptmodule.processbar();
-		player.@p = example1.CreatePlay();
-		if(!example1.OpenFile(player.@p,$a,scriptmodule.openfilecallback))
+		$scriptmodule.processbar();
+		$player.@p = $example1.CreatePlay();
+		if(!$example1.OpenFile($player.@p,$a,$scriptmodule.openfilecallback))
 		{
 			return;
 		}
-		Console.Out("正在播放:"+$a);
-		var $info = example1.GetStreamInfo(player.@p);
-		Console.Out("总时长:"+$info::Hour + ":" + $info::Minute + ":" + $info::Second);
-		example1.Play2(player.@p);
-		player.playercallback();
+		$Console.Out("正在播放:"+$a);
+		var $info = $example1.GetStreamInfo($player.@p);
+		"总时长:"+$info::Hour + ":" + $info::Minute + ":" + $info::Second;
+		$example1.Play2($player.@p);
+		$player.playercallback();
 	}
 	return;
 }

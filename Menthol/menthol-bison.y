@@ -38,7 +38,7 @@ struct StackState;
 %token POWER_OP NEQ_OP OR_OP AND_OP GE_OP LE_OP EQ_OP
 %token ADD_ASSIGN SUB_ASSIGN DIV_ASSIGN MUL_ASSIGN ASSIGN_ASSIGN
 %token MOD_ASSIGN AND_ASSIGN OR_ASSIGN XOR_ASSIGN 
-%token SHIFT_LEFT_OP SHIFT_RIGHT_OP WMAIN  DEF  VAR  IN ARRAYSECTION DICT_OP TYPEOF CONST
+%token SHIFT_LEFT_OP SHIFT_RIGHT_OP WMAIN  DEF  VAR  IN ARRAYSECTION DICT_OP TYPEOF CONST MMRT
  
 
 
@@ -107,7 +107,7 @@ start:run_statement
 	  |start run_statement
 	  ;
 	  
-
+/*能被处理的语法只有一下四种：导入表达式、使用模块表达式，main入口函数，定义模块*/
 run_statement:import_expresson
 			 |moduledefine
 			 |USE use_expression_list ';'	
@@ -127,7 +127,7 @@ wmain_definition:WMAIN ':'function_parameter funciton_codeblock_statement
 				} 			
 			    ;
 
-
+/*一种函数带参数，一种没参数*/
 functiondefinition:DEF IDENTIFIER ':' function_parameter funciton_codeblock_statement
 				  {
 						StatementList *ls = (StatementList*)parm;		
@@ -149,9 +149,10 @@ functiondefinition:DEF IDENTIFIER ':' function_parameter funciton_codeblock_stat
 				  ;
 
 
-
+/*模块中的全局变量可以是声明表达式，也是可以赋值表达式*/
 global_initialization:initialization_expression ';'
 					 { 
+						/*在程序内把变量作用域改为GLOBAL*/
 						InitializationList* list = static_cast<InitializationList*>($1);
 						list->ModfiyMemberScope(GLOBAL);
 				     }
@@ -227,6 +228,9 @@ primary_expression:dict_declare{
 				   |'(' assignment_expression_definition ')'{$$ = $2;}
 				   | TYPEOF '(' assignment_expression_definition ')'{
 						$$ = new TypeOfExpression($3);
+				   }
+				   |MMRT '(' assignment_expression_definition ')'{
+						$$ = new MmrtExpression($3);
 				   }
 				   ;
 
@@ -325,7 +329,7 @@ statement_list:statement
 			   }					
 			   ;
 			   
-			   
+/*负数、类似+234的正数、非!*/			   
 prefix_expression:list_element {$$ =$1;}
 				  |'-' prefix_expression
 				  {
@@ -467,7 +471,7 @@ conditional_expression:logical_or_expression{
 					  ;
 
 
-
+/*只提供变量声明 $a,@b*/
 indentifier_expression:VARIDENTIFIER{
 							$$ =new VarIdentIfier($1);
 					  }
@@ -514,7 +518,7 @@ assignment_expression_definition:conditional_expression{$$ = $1;}
 								}
 								
 								;
-
+/*赋值表达式可以一行写多个，用逗号隔开*/
 expression_definition:assignment_expression_definition {
 							$$ =new ExpressionList();
 							$$->AddChilder($1);
@@ -563,7 +567,7 @@ dict_declare:'(' dict_statement ')'{ $$ = $2;};
 			}
 			;
 		    
-
+/*比如 abc=123*/
 Initialization_Definition:indentifier_expression {
 								 InitializationDefinition* ad = new InitializationDefinition($1,0,false);
 								 ad->ModfiyScope(LOCAL);
@@ -595,7 +599,7 @@ initialization_list:Initialization_Definition{
 						$1->AddChilder($3);
 					}
 					;
-
+/*生命局部变量必须使用关键字var*/
 initialization_expression:VAR initialization_list{						  
 							$$ = $2;						  
 						  }
@@ -754,7 +758,7 @@ try_statement:TRY funciton_codeblock_statement EXCEPT ':' try_parameter  funcito
 			  }
 			  ;
 
-
+/*导入文件*/
 import_expresson:IMPORT import_expression_list ';'
 				 {
 						StatementList *ls = (StatementList*)parm;	
@@ -815,6 +819,7 @@ modulestatementlist:modulestatement
 					}
 					;
 
+/*模块中只能包含函数定义和全局变量*/
 modulestatement:functiondefinition {$$ = $1;}
 				|global_initialization{$$ = $1;}
 				;

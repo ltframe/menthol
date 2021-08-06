@@ -47,6 +47,23 @@ Statement* BreakExpression::FindParent(Statement* p)
 						}\
 					 }
 
+
+#define PARENTISMODULE(p) while(true){\
+						if(p==0)\
+						{\
+							break;\
+						}\
+						if(p->NType!=MNT_ModuleDefine)\
+						{\
+							p = p->ParentNode;\
+							continue;\
+						}else\
+						{\
+							break;\
+						}\
+					 }
+
+
 #define ISTOPLEVLE(p) while(true){\
 						if(p==0)\
 						{\
@@ -641,4 +658,15 @@ public:
 	string modulename;
 	Statement* modulestatementlist;
 };
+
+class MmrtExpression :public Statement{
+public:
+	MmrtExpression(Statement* _exprssion);
+	~MmrtExpression();
+	void Release();
+	void CreateCode();
+private:
+	Statement* exprssion;
+};
+
 #endif

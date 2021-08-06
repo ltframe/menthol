@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <windows.h>
 #include <Objbase.h>
+//定义个实例的变量，在构造函数将其设置为this 以后使用CreateInstance。获取到当前类的实例
 MCommon* MCommon::_inst = 0;
 MCommon::MCommon(void)
 {
@@ -10,11 +11,11 @@ MCommon::MCommon(void)
 		_inst =this;
 		char szFilePath[MAX_PATH + 1]={0};  
 		GetModuleFileNameA(NULL, szFilePath, MAX_PATH);  
-		(strrchr(szFilePath, '\\'))[0] = 0; // 删除文件名，只获得路径字串  
+		(strrchr(szFilePath, '\\'))[0] = 0; 
 		runpath = szFilePath;  
 
 		SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
-		AddDllDirectory(AnsiToWideChar((runpath+"\\dll").c_str()));
+		AddDllDirectory(AnsiToWideChar((runpath+"\\dll").c_str()));//把当前目录下的dll目录下的组件，作为默认加载的DLL路径.
 
 		char szFilePath_coef[MAX_PATH];
 		getcwd(szFilePath_coef, MAX_PATH);
@@ -27,7 +28,7 @@ MCommon::~MCommon(void)
 	_inst=0;
 }
 
-
+//char* 转为wchar_t*
 wchar_t * MCommon::AnsiToWideChar(const char* str)
 {
 	WCHAR *wstr =new WCHAR[MAX_PATH+1];
@@ -40,6 +41,8 @@ MCommon* MCommon::CreateInstance()
 {
 	return _inst;
 }
+
+//把完整路径拆分为驱动器、目录，文件名，扩展名
 PathInfo MCommon::StringPathSplit(string _path)
 {
 	char drive[_MAX_DRIVE];    
@@ -51,6 +54,7 @@ PathInfo MCommon::StringPathSplit(string _path)
 	return info;
 }
 
+//生成字符串hash
 M_UInt MCommon::ELFHash(string ss)
 {
 	char* str = CONSTCAST(char)(ss.c_str());
@@ -63,11 +67,13 @@ M_UInt MCommon::ELFHash(string ss)
 
 }
 
+//获取程序运行路径，在构造函数中赋值
 string MCommon::GetRunPath()  
 {    
     return runpath;  
 }  
 
+//不区分大小比较两个两个字符串，无论大小写，在程序内部转为小写
 bool MCommon::StrCmpNoCase(string str1,string str2)
 {
 	transform(str1.begin(), str1.end(), str1.begin(),::tolower);
@@ -76,9 +82,10 @@ bool MCommon::StrCmpNoCase(string str1,string str2)
 	else return false;
 }
 
+//查找枚举数组，是否包含一个制定的枚举，
 bool MCommon::IsInArray(ValueType* _array,ValueType str,int c)
 {
-	int t = sizeof(_array);
+	//int t = sizeof(_array);
 	for (int i = 0; i < c; i++)
 	{
 		if(_array[i]==str)
@@ -89,7 +96,7 @@ bool MCommon::IsInArray(ValueType* _array,ValueType str,int c)
 	return false;
 }
 
-
+//创建guid
 string MCommon::CreateGuid()
 {
 	char buffer[64] = { 0 };  

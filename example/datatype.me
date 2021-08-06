@@ -2,6 +2,7 @@ import console;
 use Console;
 _mmain:$a,$c
 {	
+	var const $inst =mmrt(Console);
 	var $str = "this is a string";
 	var $str1 = "";
 	var $intvalue = 111;
@@ -9,12 +10,12 @@ _mmain:$a,$c
 	var $hexvalue = 0xFF;
 	var $arr = [$str,"","22"];
 	var $dict = (key1::-111,key2::$str);
-	Console.Out($str);
-	Console.Out($str1);
-	Console.Out($intvalue);
-	Console.Out($octvalue);
-	Console.Out($hexvalue);
-	Console.Out($arr[2]);
-	Console.Out($dict::key2);
-	Console.Out($dict::key1);
+	$inst.Out($str);
+	$inst.Out($str1);
+	$inst.Out($intvalue);
+	$inst.Out($octvalue);
+	$inst.Out($hexvalue);
+	$inst.Out($arr[2]);
+	$inst.Out($dict::key2);
+	$inst.Out($dict::key1);
 }

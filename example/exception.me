@@ -9,13 +9,14 @@ module test
 }
 _mmain:$a,$c
 {	
+	var $cinst =mmrt(Console),$tinst =mmrt(test);
 	try{
-		test.test();
+		$tinst.test();
 	}
 	except:$g,$b
 	{
-		Console.Out($g);
-		Console.Out($b);
+		$cinst.Out($g);
+		$cinst.Out($b);
 	}
-	test.test();
+	$tinst.test();
 }

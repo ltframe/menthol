@@ -37,13 +37,15 @@ enum ValueType{
 	M_MODULE,
 	M_HASH,
 	M_UNKONWN,
-	M_OBJECT
+	M_OBJECT,
+	M_MMRT
 };
 
 struct StackState;
 struct StackMark;
 struct ModuleState;
 struct RunTimeState;
+struct ModuleInstState;
 typedef unsigned int hashValue,Instruction,M_UInt;
 struct Garbage{
 	Garbage(vector<StackState> * _c){
@@ -61,16 +63,23 @@ struct Garbage{
 		v = _v;
 		mark = 0;
 	}
+	Garbage(ModuleInstState * _c) {
+		mis = _c;
+		v = M_MMRT;
+		mark = 0;
+	}
+
 	union {
 		vector<StackState> *array;
 		map<hashValue,StackState>* dict;	
 		char * string;
+		ModuleInstState * mis;
 	};
 	ValueType v;
 	int mark;
 };
-
-typedef Garbage* pArray,*pDict,*pString;
+//需要回收的垃圾类型
+typedef Garbage* pArray,*pDict,*pString,*pInstance;
 typedef void* pInst;
 struct StackState;
 #define STACKSTATEPOINTER StackState*
@@ -85,6 +94,8 @@ typedef struct StackMark
 
 }TryMark;
 
+
+
 struct StackState
 {
 
@@ -97,7 +108,8 @@ struct StackState
 		pString str;
 		StackMark m;
 		bool b;
-		ModuleState* ms;
+		ModuleState* ms; //模块指针,如果要创建实例，首先要压入一个模块
+		pInstance inst;
 	};
 	pInst p;
 	char* name;
@@ -133,10 +145,20 @@ struct UserFunctionAtter
 	funcallback postion; 
 	int paramcount;
 };
+
+//编译错误或运行错误时，使用的回掉函数
+//char* str:错误提示文字
+//char* cf:错误所在文件
+//int line:错误所在行
 typedef int (*PrintErrorFunc)(char* str,char* cf,int line);
 //global:
+
+//设置编译错误时出现错误后的回掉函数
 MentholModuleMethod void SetPrintCompileErrorFunc(PrintErrorFunc _pef);
+//设置程序运行时出现错误后的回掉函数
 MentholModuleMethod void SetPrintRunTimeErrorFunc(PrintErrorFunc _pef);
+//编译源文件
+//char* cfile：文件路径
 MentholModuleMethod int Compile(char* cfile);
 MentholModuleMethod int Run(char* files,char* arg1,char* arg2);
 MentholModuleMethod void RegisterModuleFunciton(RunTimeState* moduleinst,UserFunctionAtter* functionlist);			  
