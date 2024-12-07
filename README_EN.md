@@ -1,5 +1,3 @@
-<div align=center>
-	<img src="http://www.ltplayer.com/images/gitlogo.png"/></div>
 
 
 [Englist][1] | [简体中文][2]
