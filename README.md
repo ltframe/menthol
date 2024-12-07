@@ -4,7 +4,7 @@
 
 [Englist][1] | [简体中文][2]
 
-###### 重要提示：因无法上传超100M文件，如果您要Debug编译，请解压MCryptography文件夹下的cryptlibD.7z至当前目录
+
 
 
 # Menthol
@@ -250,12 +250,12 @@ MentholPackMethod void example1_Init(VmState* vmstate)
 
   [1]: https://github.com/ltframe/menthol/blob/master/README_EN.md
   [2]: https://github.com/ltframe/menthol
-  [3]: http://www.ltplayer.com/doc/menthol/index.html
-  [4]: http://www.ltplayer.com/doc/menthol/index.html
-  [5]: http://www.ltplayer.com/doc/menthol/index.html
-  [6]: http://www.ltplayer.com/doc/menthol/index.html
-  [7]: http://www.ltplayer.com/doc/menthol/index.html
-  [8]: http://www.ltplayer.com/doc/menthol/index.html
-  [9]: http://www.ltplayer.com/doc/menthol/index.html
-  [10]: http://www.ltplayer.com/doc/menthol/index.html
+  [3]: http://www.ltplayer.com/doc/menthol14/index.html
+  [4]: http://www.ltplayer.com/doc/menthol14/index.html
+  [5]: http://www.ltplayer.com/doc/menthol14/index.html
+  [6]: http://www.ltplayer.com/doc/menthol14/index.html
+  [7]: http://www.ltplayer.com/doc/menthol14/index.html
+  [8]: http://www.ltplayer.com/doc/menthol14/index.html
+  [9]: http://www.ltplayer.com/doc/menthol14/index.html
+  [10]: http://www.ltplayer.com/doc/menthol14/index.html
   [11]: http://www.ltplayer.com/

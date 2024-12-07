@@ -4,7 +4,6 @@
 
 [Englist][1] | [简体中文][2]
 
-###### note: Because you  upload more than 100M files, if you want to debug compilation, please unzip the cryptlibD.7z under the MCryptography folder to the current directory
 
 
 # Menthol
@@ -255,8 +254,8 @@ For more information on menthol, please visit [menthol document][6]
 
   [1]: https://github.com/ltframe/menthol/blob/master/README_EN.md
   [2]: https://github.com/ltframe/menthol
-  [3]: http://www.ltplayer.com/doc/menthol/index.html
-  [4]: http://www.ltplayer.com/doc/menthol/index.html
-  [5]: http://www.ltplayer.com/doc/menthol/index.html
-  [6]: http://www.ltplayer.com/doc/menthol/index.html
+  [3]: http://www.ltplayer.com/doc/menthol14/index.html
+  [4]: http://www.ltplayer.com/doc/menthol14/index.html
+  [5]: http://www.ltplayer.com/doc/menthol14/index.html
+  [6]: http://www.ltplayer.com/doc/menthol14/index.html
   [7]: http://www.ltplayer.com/
