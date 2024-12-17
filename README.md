@@ -207,7 +207,7 @@ _mmain:$a,$c
 
 ```
 <div align=left>
-<img src="http://www.ltplayer.com/images/mentholhtmlimg/thread.png"/></div>
+<img src="http://www.ltplayer.com/doc/menthol14/images/thread.png"/></div>
 
 
 
@@ -215,7 +215,7 @@ _mmain:$a,$c
 Menthol使用iup作为实现界面的类库
 
 <div align=left>
-<img src="http://www.ltplayer.com/images/mentholhtmlimg/iup2.png"/></div>
+<img src="http://www.ltplayer.com/doc/menthol14/images/iup2.png"/></div>
 
 
 ###### 开发外部扩展库(c/c++)

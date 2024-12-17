@@ -209,7 +209,7 @@ _mmain:$a,$c
 
 ```
 <div align=left>
-<img src="http://www.ltplayer.com/images/mentholhtmlimg/thread.png"/></div>
+<img src="http://www.ltplayer.com/doc/menthol14/images/thread.png"/></div>
 
 
 
@@ -217,7 +217,7 @@ _mmain:$a,$c
 Menthol uses iup as a class library for implementing interfaces
 
 <div align=left>
-<img src="http://www.ltplayer.com/images/mentholhtmlimg/iup2.png"/></div>
+<img src="http://www.ltplayer.com/doc/menthol14/images/iup2.png"/></div>
 
 
 
