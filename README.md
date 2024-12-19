@@ -1,10 +1,6 @@
 
 
 
-[Englist][1] | [简体中文][2]
-
-
-
 
 # Menthol
 Menthol是一个简单、易用、易学的脚本语言,语法简单,开发简便,使用C/C++可以快速为它开发扩展.关于更多信息请访问官方网站:[www.ltplayer.com][11]
@@ -247,7 +243,6 @@ MentholPackMethod void example1_Init(VmState* vmstate)
 关于更多的menthol的相关文档，请浏览[menthol文档][10]
 
 
-  [1]: https://github.com/ltframe/menthol/blob/master/README_EN.md
   [2]: https://github.com/ltframe/menthol
   [3]: http://www.ltplayer.com/doc/menthol14/index.html
   [4]: http://www.ltplayer.com/doc/menthol14/index.html
