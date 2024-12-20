@@ -206,14 +206,6 @@ _mmain:$a,$c
 <img src="http://www.ltplayer.com/doc/menthol14/images/thread.png"/></div>
 
 
-
-###### Gui
-Menthol使用iup作为实现界面的类库
-
-<div align=left>
-<img src="http://www.ltplayer.com/doc/menthol14/images/iup2.png"/></div>
-
-
 ###### 开发外部扩展库(c/c++)
 example1.dll
 
