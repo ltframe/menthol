@@ -6,4 +6,5 @@ namespace Console
 	StackState Oute(VmState* vmstate);
 	StackState In(VmState* vmstate);
 	StackState Clear(VmState* vmstate);
+	StackState OutFormat(VmState* vmstate);
 }

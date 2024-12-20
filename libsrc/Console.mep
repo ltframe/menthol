@@ -22,4 +22,8 @@ module Console{
 	{
 		return @consoleinst.Clear();
 	}
+	def OutFormat:$arg1,$arg2
+	{
+		return @consoleinst.OutFormat($arg1,$arg2);
+	}
 }

@@ -27,6 +27,7 @@
 #include "Dict.h"
 #include "Regex.h"
 #include "Json.h"
+#include "../requirements/cJSON/cJSON.c"
 using namespace std;
 
 
@@ -59,6 +60,7 @@ UserFunctionAtter Stringlist[] = {
 		{"Length",String::Length,1},	
 		{"IndexOf",String::IndexOf,2},
 		{"Replace",String::Replace,3},
+		{"ReplaceFormat",String::ReplaceFormat,2 },
 		{"Toupper",String::Toupper,1},
 		{"Tolower",String::Tolower,1},
 		{"Isdigit", String::Isdigit, 1},

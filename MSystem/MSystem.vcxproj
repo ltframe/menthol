@@ -95,7 +95,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Array.cpp" />
-    <ClCompile Include="cJSON\cJSON.c" />
     <ClCompile Include="DateTime.cpp" />
     <ClCompile Include="Dict.cpp" />
     <ClCompile Include="dllmain.cpp">
@@ -122,7 +121,6 @@
     <ClInclude Include="Array.h" />
     <ClInclude Include="cJSON\cJSON.h" />
     <ClInclude Include="DateTime.h" />
-    <ClInclude Include="Deelx\deelx.h" />
     <ClInclude Include="Dict.h" />
     <ClInclude Include="Environment.h" />
     <ClInclude Include="Json.h" />
@@ -132,9 +130,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="String.h" />
     <ClInclude Include="targetver.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="ReadMe.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

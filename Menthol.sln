@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Menthol", "Menthol\Menthol.vcxproj", "{3F14CCA9-94AE-4632-BE93-30D500186088}"
 EndProject
@@ -20,27 +20,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MSystem", "MSystem\MSystem.
 		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example1", "example1\example1.vcxproj", "{608F9210-D7A2-46F6-8DD1-E20BAD1625D3}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Run", "Run\Run.vcxproj", "{436294B4-2077-4684-9988-5DF400D8CACF}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MCryptography", "MCryptography\MCryptography.vcxproj", "{676144AF-6FE7-402A-80A7-8267FDEE72C9}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MSqlite", "MSqlite\MSqlite.vcxproj", "{F89E653B-D48E-4973-B8AE-051681DC457E}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MIup", "MIup\MIup.vcxproj", "{3F309664-CBEA-4AAD-9A33-56B1880F1EA3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{3F14CCA9-94AE-4632-BE93-30D500186088} = {3F14CCA9-94AE-4632-BE93-30D500186088}
 	EndProjectSection
@@ -82,26 +62,10 @@ Global
 		{83D057BA-B1A9-4234-BB98-E13D4F42C427}.Debug|Win32.Build.0 = Debug|Win32
 		{83D057BA-B1A9-4234-BB98-E13D4F42C427}.Release|Win32.ActiveCfg = Release|Win32
 		{83D057BA-B1A9-4234-BB98-E13D4F42C427}.Release|Win32.Build.0 = Release|Win32
-		{608F9210-D7A2-46F6-8DD1-E20BAD1625D3}.Debug|Win32.ActiveCfg = Debug|Win32
-		{608F9210-D7A2-46F6-8DD1-E20BAD1625D3}.Debug|Win32.Build.0 = Debug|Win32
-		{608F9210-D7A2-46F6-8DD1-E20BAD1625D3}.Release|Win32.ActiveCfg = Release|Win32
-		{608F9210-D7A2-46F6-8DD1-E20BAD1625D3}.Release|Win32.Build.0 = Release|Win32
 		{436294B4-2077-4684-9988-5DF400D8CACF}.Debug|Win32.ActiveCfg = Debug|Win32
 		{436294B4-2077-4684-9988-5DF400D8CACF}.Debug|Win32.Build.0 = Debug|Win32
 		{436294B4-2077-4684-9988-5DF400D8CACF}.Release|Win32.ActiveCfg = Release|Win32
 		{436294B4-2077-4684-9988-5DF400D8CACF}.Release|Win32.Build.0 = Release|Win32
-		{676144AF-6FE7-402A-80A7-8267FDEE72C9}.Debug|Win32.ActiveCfg = Debug|Win32
-		{676144AF-6FE7-402A-80A7-8267FDEE72C9}.Debug|Win32.Build.0 = Debug|Win32
-		{676144AF-6FE7-402A-80A7-8267FDEE72C9}.Release|Win32.ActiveCfg = Release|Win32
-		{676144AF-6FE7-402A-80A7-8267FDEE72C9}.Release|Win32.Build.0 = Release|Win32
-		{F89E653B-D48E-4973-B8AE-051681DC457E}.Debug|Win32.ActiveCfg = Debug|Win32
-		{F89E653B-D48E-4973-B8AE-051681DC457E}.Debug|Win32.Build.0 = Debug|Win32
-		{F89E653B-D48E-4973-B8AE-051681DC457E}.Release|Win32.ActiveCfg = Release|Win32
-		{F89E653B-D48E-4973-B8AE-051681DC457E}.Release|Win32.Build.0 = Release|Win32
-		{3F309664-CBEA-4AAD-9A33-56B1880F1EA3}.Debug|Win32.ActiveCfg = Debug|Win32
-		{3F309664-CBEA-4AAD-9A33-56B1880F1EA3}.Debug|Win32.Build.0 = Debug|Win32
-		{3F309664-CBEA-4AAD-9A33-56B1880F1EA3}.Release|Win32.ActiveCfg = Release|Win32
-		{3F309664-CBEA-4AAD-9A33-56B1880F1EA3}.Release|Win32.Build.0 = Release|Win32
 		{366DA9C2-8511-44F2-93A0-20F66971E8F8}.Debug|Win32.ActiveCfg = Debug|Win32
 		{366DA9C2-8511-44F2-93A0-20F66971E8F8}.Debug|Win32.Build.0 = Debug|Win32
 		{366DA9C2-8511-44F2-93A0-20F66971E8F8}.Release|Win32.ActiveCfg = Release|Win32

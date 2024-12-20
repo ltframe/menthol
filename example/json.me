@@ -4,7 +4,7 @@ use Console,Json;
 _mmain:$a,$c
 {	
 		var $inst =mmrt(Console),$jsoninst = mmrt(Json);
-		var $s ="{\"name\":\"fengxin\",\"passwd\":\"123\",\"num\":[{\"rrr\":\"ffffffffff\"}]}";
+		var $s ="{\"name\":\"myname\",\"passwd\":\"123\",\"num\":[{\"rrr\":\"ffffffffff\"}]}";
 		var $j = $jsoninst.JsonParse($s);
 		$inst.Out($jsoninst.GetObjectItem($j,"name"));$inst.Out($jsoninst.GetObjectItem($j,"passwd"));
 		var $m = $jsoninst.GetObjectItem($j,"num");

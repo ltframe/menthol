@@ -2,8 +2,8 @@
 //
 
 #include "stdafx.h"
-#pragma comment(lib,"pthreadVC2.lib")
-#include "pthread.h"
+#pragma comment(lib,"../requirements/pthread/pthreadVC2.lib")
+#include "../requirements/pthread/pthread.h"
 #include "../Menthol/MentholHeader.h"
 
 struct threadinfo

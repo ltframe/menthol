@@ -14,4 +14,5 @@ namespace String
 	StackState Toascii(VmState* vmstate);
 	StackState UTF8ToGBK(VmState* vmstate);
 	StackState GBKToUTF8(VmState* vmstate);
+	StackState ReplaceFormat(VmState* vmstate);
 }

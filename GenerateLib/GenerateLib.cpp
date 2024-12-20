@@ -128,6 +128,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	char _currentdir[260]={0};   
 	_getcwd(_currentdir,sizeof(_currentdir));  
 	TraverseFiles((string(_currentdir)+"\\generatefile.txt").c_str());
+	printf("Éú³ÉÍê±Ï\n");
+	system("pause");
 	return 0;
 }
 

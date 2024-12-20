@@ -3,17 +3,18 @@
 #include <stdlib.h>  
 
 
-int error(char* str, char* cf, int line)
+int error(char* str,char* cf,int line)
 {
 	printf("\r\n");
-	printf("compile error: %s, in %s,at line %d", str, cf, line);
+	printf("compile error: %s, in %s,at line %d",str,cf,line);
 	printf("\r\n");
 	return 1;
 }
 int main(int argc, char * argv[])
 {
 	SetPrintCompileErrorFunc(error);
-	int c = Compile(argv[1]);
+	string cpath = string(argv[1]);
+	int c = Compile(const_cast<char*>(cpath.c_str()));
 	if (!c) {
 		printf("%s,compile done\r\n", argv[1]);
 	}

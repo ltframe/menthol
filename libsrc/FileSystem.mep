@@ -1,115 +1,122 @@
 import mio;
 use CDirectory,CFile,CDrives;
+//文件操作
 module File
 {
 	var const @fileinst = mmrt(CFile);
+	//打开一个文件
 	def Open:$arg1,$arg2
 	{
 		return @fileinst.Open($arg1,$arg2);	
 	}
+	//读取一个文件
 	def Readfile:$arg1
 	{
 		return @fileinst.Readfile($arg1);	
 	}
+	//关闭一个文件
 	def Close:$arg1
 	{
 		return @fileinst.Close($arg1);	
 	}
-
+	//写入一个文件
 	def Writefile:$arg1,$arg2
 	{
 	   return @fileinst.Writefile($arg1,$arg2);
 
 	}
-
+	//复制文件
 	def Copy:$arg1,$arg2
 	{
 	   return @fileinst.Copy($arg1,$arg2);
 	}
-
+	//创建文件
 	def Create:$arg1
 	{
 	   return @fileinst.Create($arg1);
 	}
-
+	//删除文件
 	def Delete:$arg1
 	{
 	   return @fileinst.Delete($arg1);
 	}
-
+	//判断是否存在文件
 	def Exists:$arg1
 	{
 	   return @fileinst.Exists($arg1);
 	}
-
+	//移动文件
 	def Move:$arg1,$arg2
 	{
 	   return @fileinst.Move($arg1,$arg2);
 	}
-
+	//获取创建文件的时间
 	def GetCreationTime:$arg1
 	{
 	   return @fileinst.GetCreationTime($arg1);
 	}
-
+	//最后访问时间
 	def GetLastAccessTime:$arg1
 	{
 	   return @fileinst.GetLastAccessTime($arg1);
 	}
-
+	//最后写入时间
 	def GetLastWriteTime:$arg1
 	{
 	   return @fileinst.GetLastWriteTime($arg1);
 	}
 }
 
+//目录操作
 module Directory
 {
 	var const @directoryinst = mmrt(CDirectory);
+	//获取当前程序运行的目录
 	def Getcwd:
 	{
 		return @directoryinst.Getcwd();
 	}
-
+	//改变当前工作目录
 	def Chdir:$arg1
 	{
 		return @directoryinst.Chdir($arg1);
 	}
-
+	//获取系统环境变量
 	def Getenv:$arg1
 	{
 		return @directoryinst.Getenv($arg1);
 	}
-
+	//删除一个目录
 	def Remove:$arg1
 	{
 		return @directoryinst.Remove($arg1);
 	}
-
+	//删除一个目录
 	def Rmdir:$arg1
 	{
 		return @directoryinst.Rmdir($arg1);
 	}
-
+	//创建一个目录
 	def Mkdir:$arg1
 	{
 		return @directoryinst.Mkdir($arg1);
 	}
-
+	//重命名一个目录
 	def Rename:$arg1,$arg2
 	{
 		return @directoryinst.Rename($arg1,$arg2);
 	}
-
+	//判断是否存在目录
 	def Exists:$arg1
 	{
 		return @directoryinst.Exists($arg1);
 	}
 }
-
+//驱动器操作
 module Drive
 {
 	var @driveinst =mmrt(CDrives);
+	//获取驱动器
 	def GetDrives:
 	{
 		return @driveinst.GetDrives();
@@ -119,7 +126,7 @@ module Drive
 	{
 		return @driveinst.AvailableFreeSpace($arg1);
 	}
-
+	//获取驱动器类型
 	def DriveType:$arg1
 	{
 		return @driveinst.DriveType($arg1);

@@ -43,6 +43,7 @@ UserFunctionAtter Consolelist[] = {
 	{"Out",Console::Out,1},	
 	{"In",Console::In,0},
 	{"Clear",Console::Clear ,0},
+	{ "OutFormat",Console::OutFormat ,-1},
 	{NULL,NULL,0}
 }; 
 

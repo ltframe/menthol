@@ -18,38 +18,18 @@ namespace Regex
 			f = flag.d;
 		}
 
-		static CRegexpT<char> regexp(filed.str->string, f);
-
-		CContext * pContext = regexp.PrepareMatch(pText.str->string);
-
-		MatchResult result = regexp.Match(pContext);
-		while (result.IsMatched())
+		string str = pText.str->string;
+		smatch result;
+		regex pattern(filed.str->string);
+		string::const_iterator iterStart = str.begin();
+		string::const_iterator iterEnd = str.end();
+		string temp;
+		while (regex_search(iterStart, iterEnd, result, pattern))
 		{
-			StackState arr1 = Array_CreateArray(vmstate);
-			int start = result.GetStart();
-			int end = result.GetEnd();
-
-			char* s0 = (char*)malloc(end - start + 1);
-			memset(s0, 0, end - start + 1);
-			s0[end - start] = 0;
-			strncpy(s0, pText.str->string + start, (pText.str->string + end) - (pText.str->string + start));
-			Array_Push(arr1.parray, String_CreateString(s0,vmstate));
-			free(s0);
-
-			for (int i = 1; i <= result.MaxGroupNumber(); i++){
-				int _start = result.GetGroupStart(i);
-				int _end = result.GetGroupEnd(i);
-				char* s = (char*)malloc(_end - _start + 1);
-				memset(s, 0, _end - _start + 1);
-				s[_end - _start] = 0;
-				strncpy(s, pText.str->string + _start, (pText.str->string + _end) - (pText.str->string + _start));
-				Array_Push(arr1.parray, String_CreateString(s,vmstate));
-				free(s);
-			}
-			Array_Push(arr.parray, arr1);
-			result = regexp.Match(pContext);
+			temp = result[0];
+			Array_Push(arr.parray, String_CreateString(const_cast<char*>(temp.c_str()), vmstate));
+			iterStart = result[0].second; 
 		}
-		regexp.ReleaseContext(pContext);
 		return arr;
 	}
 
@@ -57,16 +37,14 @@ namespace Regex
 	{
 		StackState ret;
 		ret.v = M_BOOL;
-		StackState pText = GetParam(1,vmstate);
-		StackState filed = GetParam(2,vmstate);
-		StackState flag = GetParam(3,vmstate);
-		static CRegexpT<char> regexp(filed.str->string, flag.d);
-		MatchResult result = regexp.Match(pText.str->string);
-		while (result.IsMatched())
-		{
+		StackState filed = GetParam(2, vmstate);
+		StackState pText = GetParam(1, vmstate);
+		regex r(filed.str->string);
+		string str= pText.str->string;
+		if (regex_match(str, r)) {
 			ret.b = true;
 			return ret;
-		}
+		}	
 		ret.b = false;
 		return ret;
 	}
@@ -78,11 +56,17 @@ namespace Regex
 		StackState pText = GetParam(1,vmstate);
 		StackState repText = GetParam(2,vmstate);
 		StackState filed = GetParam(3,vmstate);
-		StackState flag = GetParam(4,vmstate);
+		/*StackState flag = GetParam(4,vmstate);
 		static CRegexpT<char> regexp(filed.str->string, flag.d);
 		char* s = regexp.Replace(pText.str->string, repText.str->string);
 		StackState ret = String_CreateString(s,vmstate);
 		regexp.ReleaseString(s);
+		return ret;*/
+
+
+		regex pattern(filed.str->string);
+		string s = regex_replace((pText.str->string), pattern,repText.str->string);
+		StackState ret = String_CreateString((char*)s.c_str(), vmstate);
 		return ret;
 	}
 

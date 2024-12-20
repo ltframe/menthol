@@ -67,6 +67,31 @@ namespace String{
 		return str;
 	}
 
+
+	std::string replaceformat(std::string str, VmState* vmstate)
+	{
+		size_t start_pos = 0;
+		string from = "%";
+		int i = 2;
+		while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+			StackState value = GetParam(i, vmstate);
+			string to = string(value.str->string);
+			str.replace(start_pos, from.length(), to);
+			start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+			i++;
+		}
+		return str;
+	}
+
+	StackState ReplaceFormat(VmState* vmstate)
+	{
+		StackState st;
+		StackState value1 = GetParam(1, vmstate);
+		st = String_CreateString(const_cast<char*>(replaceformat(string(value1.str->string),vmstate).c_str()), vmstate);
+		return st;
+	}
+
+
 	StackState Replace(VmState* vmstate)
 	{
 		StackState st;

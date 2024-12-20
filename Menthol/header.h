@@ -358,7 +358,7 @@ struct GlobalCodeRuntimeAtter
 };
 
 
-
+//关于路径驱动器、目录，文件名，扩展名
 typedef struct _PathStruct{
 	string drive;
 	string dir;

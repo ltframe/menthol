@@ -12,19 +12,15 @@ module test
 	def getsource:$str
 	{
 		var const $inst =mmrt(Console),const $instreg =mmrt(Regex);
-		var $a = $instreg.Exec($str,"<img.*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>");	
+		var $a = $instreg.Exec($str,"\d");	
 		for(var $s in $a){		
-			$inst.Out($s[1]);		
+			$inst.Out($s[0]);		
 		}	
 	}
 }
 
 _mmain:$a,$c
 {	
-	var const $CurlSystem =mmrt(CurlSystem),const $test =mmrt(test);
-	var $curl = $CurlSystem.init();;
-	 mmrt(CurlSetOpt).url($curl, "http://www.baidu.com/");
-	 mmrt(CurlCallback).writefunction($curl,$test.getsource);
-	 var $res = $CurlSystem.perform($curl);
-	 $CurlSystem.cleanup($curl);	
+	var const $test =mmrt(test);
+	 $test.getsource("a1b2");
 }

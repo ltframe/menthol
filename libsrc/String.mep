@@ -23,6 +23,10 @@ module String{
 	{
 		return @stringinst.Replace($arg1,$arg2,$arg3);
 	}
+	def ReplaceFormat:$arg1,$arg2
+	{
+		return @stringinst.ReplaceFormat($arg1,$arg2);
+	}
 
 	def Toupper:$arg1
 	{

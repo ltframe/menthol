@@ -1,6 +1,6 @@
 #pragma once
 #include "../Menthol/MentholHeader.h"
-#include "deelx/deelx.h"
+#include <regex>
 namespace Regex
 {
 	StackState Exec(VmState* vmstate);

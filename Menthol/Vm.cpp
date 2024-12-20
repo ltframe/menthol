@@ -536,7 +536,6 @@ StackState CallFunction(StackState fun,VmState* vmstate)
 
 
 
-
 inline void MainFuncitonCode(int &codespostion,vector<Instruction>& codealllist,VmState* vmstate)
 {
 	//InitCode(OP_ADJUSTBP,codespostion,codealllist);
@@ -707,10 +706,10 @@ void EntryPoint(ImportFileAttr pa,char* workdir,VmState* vmstate)
 	filetree->clear();
 	clock_t start = clock();
 	runflag = 1;
-	PintCode(codealllist.size(),vmstate);
+	//PintCode(codealllist.size(),vmstate);
   	Execute(vmstate);
-	clock_t end = clock();
-	printf("the running time is :%f\n", (double)(end -start)); //秒
+	//clock_t end = clock();
+	//printf("the running time is :%f\n", (double)(end -start)); //秒
 }
 
 
@@ -720,11 +719,13 @@ int Execute(VmState* vmstate)
 
 		switch (*VMSTATECODELIST(vmstate)++)
 		{	 
+			//往栈内压入数字类型
 			SWITCHCASESTART(OP_PUSHNUMBER)
 					(*VMSTATESP(vmstate)).v = M_NUMBER;
 					(*VMSTATESP(vmstate)++).d = *VMSTATECODELIST(vmstate)++;
 			SWITCHCASEEND
 				
+			//往栈内压入double类型,从源代码资源处读取
 			SWITCHCASESTART(OP_PUSHDOUBLE)
 					(*VMSTATESP(vmstate)).v = M_NUMBER;
 					(*VMSTATESP(vmstate)++).d =VMSTATECURRENTRUNTIMESTATE(vmstate)->doubles->at(*VMSTATECODELIST(vmstate)++);
@@ -903,7 +904,6 @@ int Execute(VmState* vmstate)
 						stackargcount = fa.paramcount;
 					}
 					
-				
 					if(fa.lenght==-1)//外部扩展的函数
 					{
 						if(stackargcount<fa.paramcount)
@@ -1762,7 +1762,7 @@ StackState GetParam(int x,VmState* vmstate)
 	//注释掉，原代码意思不明
 	/*StackState _v;
 	_v.v = M_UNKONWN;
-	StackState v =  *(bp);
+	StackState v =  *VMSTATEBP(vmstate)->m.bp;
 	if(x>v.m.paramercount){
 		return _v;
 	}*/

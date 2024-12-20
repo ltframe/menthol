@@ -44,7 +44,7 @@ namespace File
 		StackState value1 =GetParam(1,vmstate);
 		StackState value2 =GetParam(2,vmstate);
 		ofstream OutFile(value1.str->string);
-		OutFile << value2.str << endl;
+		OutFile << value2.str->string << endl;
 		OutFile.close();
 		StackState st;
 		st.b=true;

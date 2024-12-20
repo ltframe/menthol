@@ -101,6 +101,91 @@ module Array
 		}
 		return -1;
 	}
+	//连接两个数组
+	def Concat:$arg1,$arg2
+	{
+		var $newarr = [];
+		for(var $i in $arg1)
+		{
+			@arrayinst.Push($newarr,$i);
+		}
+		for(var $i in $arg2)
+		{
+			@arrayinst.Push($newarr,$i);
+		}
+		return $newarr;
+	}
+	//取出两个数组不同的部分
+	def Diff:$arg1,$arg2
+	{
+		var $arr3 = [];
+		for(var $i in $arg1)
+		{
+			var $b = true;
+			for(var $j in $arg2)
+			{
+				if($j==$i)
+				{
+					$b = false;
+					break;
+				}
+			}
+			if($b)
+			{
+				Push($arr3,$i);
+			}
+		}
+		for(var $i in $arg2)
+		{
+			var $b = true;
+			for(var $j in $arg1)
+			{
+				if($j==$i)
+				{
+					$b = false;
+					break;
+				}
+			}
+			if($b)
+			{
+				Push($arr3,$i);
+			}
+		}
+		return Unique($arr3);
+	}
+	//去重
+	def Unique:$arg1
+	{
+		var $newarray = [];
+		for(var $i in $arg1)
+		{
+			if(indexOf($newarray,$i)==-1)
+			{
+				Push($newarray,$i);
+			}
+		}
+		return $newarray;
+	}
+	//取出两个数组并集
+	def Union:$arg1,$arg2
+	{
+		var $newarray = Concat($arg1,$arg2);
+		return Unique($newarray);
+	}
+
+	//取出两个数组交集
+	def Intersect:$arg1,$arg2
+	{
+		var $newarray = [];
+		for(var $i in $arg1)
+		{
+			if(indexOf($arg2,$i)!=-1)
+			{
+				Push($newarray,$i);
+			}
+		}
+		return Unique($newarray);
+	}
 }
 
 

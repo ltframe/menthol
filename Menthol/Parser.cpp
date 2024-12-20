@@ -1898,10 +1898,10 @@ void ImportPackagePath::Release()
 ImportPackageExpression::ImportPackageExpression(string _s)
 {
 	StatementList* sl = StatementList::GetInstance();
-	NType = MNT_ImportPackageExpression;
-	wfileaddressline = lineno;
-	filename = _s;
-	sl->AddToIncludeFile(filename);
+	NType = MNT_ImportPackageExpression;//这个表达式的类型
+	wfileaddressline = lineno;//这句话在文件中的行数
+	filename = _s;//包的路径
+	sl->AddToIncludeFile(filename);//加入到整个程序需要包含的包列表中
 }
 
 void ImportPackageExpression::Release()
