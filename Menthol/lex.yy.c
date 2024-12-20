@@ -569,8 +569,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "../requirements/flexbison/menthol-Flex.l"
-#line 2 "../requirements/flexbison/menthol-Flex.l"
+#line 1 "../support/flexbison/menthol-Flex.l"
+#line 2 "../support/flexbison/menthol-Flex.l"
 #include "header.h"
 #include "menthol-bison.tab.h"
 extern int lineno = 1;
@@ -755,7 +755,7 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 14 "../requirements/flexbison/menthol-Flex.l"
+#line 14 "../support/flexbison/menthol-Flex.l"
 
 #line 761 "lex.yy.c"
 
@@ -842,372 +842,372 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 15 "../requirements/flexbison/menthol-Flex.l"
+#line 15 "../support/flexbison/menthol-Flex.l"
 { comment_block(); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 16 "../requirements/flexbison/menthol-Flex.l"
+#line 16 "../support/flexbison/menthol-Flex.l"
 { comment_line(); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 17 "../requirements/flexbison/menthol-Flex.l"
+#line 17 "../support/flexbison/menthol-Flex.l"
 {yylval.vINTEGER =(strtol(yytext, NULL, 8));  return NUMBER; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 18 "../requirements/flexbison/menthol-Flex.l"
+#line 18 "../support/flexbison/menthol-Flex.l"
 {yylval.vINTEGER =atoi(yytext);  return NUMBER; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 19 "../requirements/flexbison/menthol-Flex.l"
+#line 19 "../support/flexbison/menthol-Flex.l"
 {yylval.vINTEGER =atoi(yytext);  return NUMBER; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 20 "../requirements/flexbison/menthol-Flex.l"
+#line 20 "../support/flexbison/menthol-Flex.l"
 {yylval.vDOUBLE =atof(yytext); return DOUBLE; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 21 "../requirements/flexbison/menthol-Flex.l"
+#line 21 "../support/flexbison/menthol-Flex.l"
 {yylval.vDOUBLE =atof(yytext); return DOUBLE; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 23 "../requirements/flexbison/menthol-Flex.l"
+#line 23 "../support/flexbison/menthol-Flex.l"
 {yylval.vINTEGER =(strtol(yytext, NULL, 16));  return NUMBER; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 25 "../requirements/flexbison/menthol-Flex.l"
+#line 25 "../support/flexbison/menthol-Flex.l"
 {return IF;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 26 "../requirements/flexbison/menthol-Flex.l"
+#line 26 "../support/flexbison/menthol-Flex.l"
 {return ELSE;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 27 "../requirements/flexbison/menthol-Flex.l"
+#line 27 "../support/flexbison/menthol-Flex.l"
 {return FOR;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 28 "../requirements/flexbison/menthol-Flex.l"
+#line 28 "../support/flexbison/menthol-Flex.l"
 {return BREAK;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 29 "../requirements/flexbison/menthol-Flex.l"
+#line 29 "../support/flexbison/menthol-Flex.l"
 {return TRUE_KEYWORD;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 30 "../requirements/flexbison/menthol-Flex.l"
+#line 30 "../support/flexbison/menthol-Flex.l"
 {return FALSE_KEYWORD;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 31 "../requirements/flexbison/menthol-Flex.l"
+#line 31 "../support/flexbison/menthol-Flex.l"
 {return TRY;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 32 "../requirements/flexbison/menthol-Flex.l"
+#line 32 "../support/flexbison/menthol-Flex.l"
 {return EXCEPT;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 33 "../requirements/flexbison/menthol-Flex.l"
+#line 33 "../support/flexbison/menthol-Flex.l"
 {return THROW;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 34 "../requirements/flexbison/menthol-Flex.l"
+#line 34 "../support/flexbison/menthol-Flex.l"
 {return CONTINUE;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 35 "../requirements/flexbison/menthol-Flex.l"
+#line 35 "../support/flexbison/menthol-Flex.l"
 {return RETURN;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 36 "../requirements/flexbison/menthol-Flex.l"
+#line 36 "../support/flexbison/menthol-Flex.l"
 {return WHILE;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 37 "../requirements/flexbison/menthol-Flex.l"
+#line 37 "../support/flexbison/menthol-Flex.l"
 {return NULL_KEYWORD;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 38 "../requirements/flexbison/menthol-Flex.l"
+#line 38 "../support/flexbison/menthol-Flex.l"
 {return IMPORT;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 39 "../requirements/flexbison/menthol-Flex.l"
+#line 39 "../support/flexbison/menthol-Flex.l"
 {return WMAIN;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 40 "../requirements/flexbison/menthol-Flex.l"
+#line 40 "../support/flexbison/menthol-Flex.l"
 {return DEF;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 41 "../requirements/flexbison/menthol-Flex.l"
+#line 41 "../support/flexbison/menthol-Flex.l"
 {return VAR;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 42 "../requirements/flexbison/menthol-Flex.l"
+#line 42 "../support/flexbison/menthol-Flex.l"
 {return IN;} 
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 43 "../requirements/flexbison/menthol-Flex.l"
+#line 43 "../support/flexbison/menthol-Flex.l"
 {return TYPEOF;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 44 "../requirements/flexbison/menthol-Flex.l"
+#line 44 "../support/flexbison/menthol-Flex.l"
 {return('+');}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 46 "../requirements/flexbison/menthol-Flex.l"
+#line 46 "../support/flexbison/menthol-Flex.l"
 {return('-');}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 47 "../requirements/flexbison/menthol-Flex.l"
+#line 47 "../support/flexbison/menthol-Flex.l"
 {return('*');}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 48 "../requirements/flexbison/menthol-Flex.l"
+#line 48 "../support/flexbison/menthol-Flex.l"
 {return('/');}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 49 "../requirements/flexbison/menthol-Flex.l"
+#line 49 "../support/flexbison/menthol-Flex.l"
 {return('{');}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 50 "../requirements/flexbison/menthol-Flex.l"
+#line 50 "../support/flexbison/menthol-Flex.l"
 {return '}';}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 51 "../requirements/flexbison/menthol-Flex.l"
+#line 51 "../support/flexbison/menthol-Flex.l"
 {return '(';}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 52 "../requirements/flexbison/menthol-Flex.l"
+#line 52 "../support/flexbison/menthol-Flex.l"
 {return ')';}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 53 "../requirements/flexbison/menthol-Flex.l"
+#line 53 "../support/flexbison/menthol-Flex.l"
 {return(';');}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 54 "../requirements/flexbison/menthol-Flex.l"
+#line 54 "../support/flexbison/menthol-Flex.l"
 {return('|');}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 55 "../requirements/flexbison/menthol-Flex.l"
+#line 55 "../support/flexbison/menthol-Flex.l"
 {return('&');}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 56 "../requirements/flexbison/menthol-Flex.l"
+#line 56 "../support/flexbison/menthol-Flex.l"
 {return(',');}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 57 "../requirements/flexbison/menthol-Flex.l"
+#line 57 "../support/flexbison/menthol-Flex.l"
 {return('?');}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 58 "../requirements/flexbison/menthol-Flex.l"
+#line 58 "../support/flexbison/menthol-Flex.l"
 {return('.');}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 59 "../requirements/flexbison/menthol-Flex.l"
+#line 59 "../support/flexbison/menthol-Flex.l"
 {return('[');}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 60 "../requirements/flexbison/menthol-Flex.l"
+#line 60 "../support/flexbison/menthol-Flex.l"
 {return(']');}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 61 "../requirements/flexbison/menthol-Flex.l"
+#line 61 "../support/flexbison/menthol-Flex.l"
 {return('!');}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 62 "../requirements/flexbison/menthol-Flex.l"
+#line 62 "../support/flexbison/menthol-Flex.l"
 {return('%');}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 63 "../requirements/flexbison/menthol-Flex.l"
+#line 63 "../support/flexbison/menthol-Flex.l"
 {return('^');}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 64 "../requirements/flexbison/menthol-Flex.l"
+#line 64 "../support/flexbison/menthol-Flex.l"
 {return(':');}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 65 "../requirements/flexbison/menthol-Flex.l"
+#line 65 "../support/flexbison/menthol-Flex.l"
 {return DICT_OP;}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 66 "../requirements/flexbison/menthol-Flex.l"
+#line 66 "../support/flexbison/menthol-Flex.l"
 {return ARRAYSECTION;}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 67 "../requirements/flexbison/menthol-Flex.l"
+#line 67 "../support/flexbison/menthol-Flex.l"
 {yylval.vSTRING=string(yytext);return ASSIGN_ASSIGN;}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 68 "../requirements/flexbison/menthol-Flex.l"
+#line 68 "../support/flexbison/menthol-Flex.l"
 {return('<'); }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 69 "../requirements/flexbison/menthol-Flex.l"
+#line 69 "../support/flexbison/menthol-Flex.l"
 {return('>'); }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 70 "../requirements/flexbison/menthol-Flex.l"
+#line 70 "../support/flexbison/menthol-Flex.l"
 {return NEQ_OP;}
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 71 "../requirements/flexbison/menthol-Flex.l"
+#line 71 "../support/flexbison/menthol-Flex.l"
 {return OR_OP;}
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 72 "../requirements/flexbison/menthol-Flex.l"
+#line 72 "../support/flexbison/menthol-Flex.l"
 {return AND_OP;}
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 73 "../requirements/flexbison/menthol-Flex.l"
+#line 73 "../support/flexbison/menthol-Flex.l"
 {return GE_OP;}
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 74 "../requirements/flexbison/menthol-Flex.l"
+#line 74 "../support/flexbison/menthol-Flex.l"
 {return LE_OP;}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 75 "../requirements/flexbison/menthol-Flex.l"
+#line 75 "../support/flexbison/menthol-Flex.l"
 {return EQ_OP;}
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 76 "../requirements/flexbison/menthol-Flex.l"
+#line 76 "../support/flexbison/menthol-Flex.l"
 {yylval.vSTRING=string(yytext);return ADD_ASSIGN;}
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 77 "../requirements/flexbison/menthol-Flex.l"
+#line 77 "../support/flexbison/menthol-Flex.l"
 {yylval.vSTRING=string(yytext);return SUB_ASSIGN;}
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 78 "../requirements/flexbison/menthol-Flex.l"
+#line 78 "../support/flexbison/menthol-Flex.l"
 {yylval.vSTRING=string(yytext);return DIV_ASSIGN;}
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 79 "../requirements/flexbison/menthol-Flex.l"
+#line 79 "../support/flexbison/menthol-Flex.l"
 {yylval.vSTRING=string(yytext);return MUL_ASSIGN;}
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 80 "../requirements/flexbison/menthol-Flex.l"
+#line 80 "../support/flexbison/menthol-Flex.l"
 {yylval.vSTRING=string(yytext);return MOD_ASSIGN;}
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 81 "../requirements/flexbison/menthol-Flex.l"
+#line 81 "../support/flexbison/menthol-Flex.l"
 {yylval.vSTRING=string(yytext);return AND_ASSIGN;}
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 82 "../requirements/flexbison/menthol-Flex.l"
+#line 82 "../support/flexbison/menthol-Flex.l"
 {yylval.vSTRING=string(yytext);return OR_ASSIGN;}
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 83 "../requirements/flexbison/menthol-Flex.l"
+#line 83 "../support/flexbison/menthol-Flex.l"
 {yylval.vSTRING=string(yytext);return XOR_ASSIGN;}
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 84 "../requirements/flexbison/menthol-Flex.l"
+#line 84 "../support/flexbison/menthol-Flex.l"
 {return SHIFT_LEFT_OP;}
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 85 "../requirements/flexbison/menthol-Flex.l"
+#line 85 "../support/flexbison/menthol-Flex.l"
 {return SHIFT_RIGHT_OP;}
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 86 "../requirements/flexbison/menthol-Flex.l"
+#line 86 "../support/flexbison/menthol-Flex.l"
 {return POWER_OP;}
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 87 "../requirements/flexbison/menthol-Flex.l"
+#line 87 "../support/flexbison/menthol-Flex.l"
 {return MODULE;}
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 88 "../requirements/flexbison/menthol-Flex.l"
+#line 88 "../support/flexbison/menthol-Flex.l"
 {return USE;}
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 89 "../requirements/flexbison/menthol-Flex.l"
+#line 89 "../support/flexbison/menthol-Flex.l"
 {return CONST;}
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 90 "../requirements/flexbison/menthol-Flex.l"
+#line 90 "../support/flexbison/menthol-Flex.l"
 {return MMRT;}
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 92 "../requirements/flexbison/menthol-Flex.l"
+#line 92 "../support/flexbison/menthol-Flex.l"
 {
 							
 							yylval.vSTRING=string(yytext);return VARIDENTIFIER;
@@ -1216,38 +1216,38 @@ YY_RULE_SETUP
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 98 "../requirements/flexbison/menthol-Flex.l"
+#line 98 "../support/flexbison/menthol-Flex.l"
 {
 							yylval.vSTRING=string(yytext);return GLOBALVARIDENTIFIER;
 						}
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 102 "../requirements/flexbison/menthol-Flex.l"
+#line 102 "../support/flexbison/menthol-Flex.l"
 {
 							yylval.vSTRING=string(yytext);return IDENTIFIER;
 						}
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 106 "../requirements/flexbison/menthol-Flex.l"
+#line 106 "../support/flexbison/menthol-Flex.l"
 /* ignore white space */
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 107 "../requirements/flexbison/menthol-Flex.l"
+#line 107 "../support/flexbison/menthol-Flex.l"
 return yytext[0];
 	YY_BREAK
 case 79:
 /* rule 79 can match eol */
 YY_RULE_SETUP
-#line 109 "../requirements/flexbison/menthol-Flex.l"
+#line 109 "../support/flexbison/menthol-Flex.l"
 { lineno++; }
 	YY_BREAK
 case 80:
 /* rule 80 can match eol */
 YY_RULE_SETUP
-#line 111 "../requirements/flexbison/menthol-Flex.l"
+#line 111 "../support/flexbison/menthol-Flex.l"
 { 
 								
 								convert(yytext);
@@ -1260,7 +1260,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 120 "../requirements/flexbison/menthol-Flex.l"
+#line 120 "../support/flexbison/menthol-Flex.l"
 ECHO;
 	YY_BREAK
 #line 1267 "lex.yy.c"
@@ -2257,7 +2257,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 119 "../requirements/flexbison/menthol-Flex.l"
+#line 119 "../support/flexbison/menthol-Flex.l"
 
 
 

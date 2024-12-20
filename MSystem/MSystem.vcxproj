@@ -106,7 +106,6 @@
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</CompileAsManaged>
     </ClCompile>
     <ClCompile Include="Environment.cpp" />
-    <ClCompile Include="Json.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="MSystem.cpp" />
     <ClCompile Include="Number.cpp" />
@@ -119,11 +118,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Array.h" />
-    <ClInclude Include="cJSON\cJSON.h" />
     <ClInclude Include="DateTime.h" />
     <ClInclude Include="Dict.h" />
     <ClInclude Include="Environment.h" />
-    <ClInclude Include="Json.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Number.h" />
     <ClInclude Include="Regex.h" />

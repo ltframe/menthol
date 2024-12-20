@@ -131,11 +131,5 @@ namespace Directory
 
 		FindClose(hFind);
 	}
-	StackState GetDirectoryList(VmState* vmstate)
-	{
-		StackState arr =Array_CreateArray(vmstate);
-		DirectoryList("E:/BaiduYunDownload",arr,vmstate);
-		return arr;
-	}	
 
 }

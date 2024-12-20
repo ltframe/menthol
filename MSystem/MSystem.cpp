@@ -26,8 +26,6 @@
 #include "Array.h"
 #include "Dict.h"
 #include "Regex.h"
-#include "Json.h"
-#include "../requirements/cJSON/cJSON.c"
 using namespace std;
 
 
@@ -135,15 +133,6 @@ UserFunctionAtter RegexList[]= {
 };
 
 
-UserFunctionAtter JsonList[] = {
-	{ "JsonParse", Json::JsonParse, 1 },
-	{ "GetObjectItem", Json::GetObjectItem, 2 },
-	{ "GetArrayItem", Json::GetArrayItem, 2 },
-	{ "GetArraySize", Json::GetArraySize, 1 },
-	{ "Delete", Json::Delete, 1 },
-	{ "Type", Json::Type, 1 },
-	{NULL,NULL,0}
-};
 
 MentholModuleMethod void MP_Init(VmState* vmstate)
 {
@@ -170,7 +159,4 @@ MentholModuleMethod void MP_Init(VmState* vmstate)
 
 	RunTimeState* Regexprt = CreateModuleRunTime("CRegex",vmstate);
 	RegisterModuleFunciton(Regexprt, RegexList);
-
-	RunTimeState* Jsonprt = CreateModuleRunTime("CJson",vmstate);
-	RegisterModuleFunciton(Jsonprt, JsonList);
 }

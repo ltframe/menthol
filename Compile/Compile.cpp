@@ -13,8 +13,7 @@ int error(char* str,char* cf,int line)
 int main(int argc, char * argv[])
 {
 	SetPrintCompileErrorFunc(error);
-	string cpath = string(argv[1]);
-	int c = Compile(const_cast<char*>(cpath.c_str()));
+	int c = Compile(argv[1]);
 	if (!c) {
 		printf("%s,compile done\r\n", argv[1]);
 	}

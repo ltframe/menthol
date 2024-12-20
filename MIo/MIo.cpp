@@ -34,7 +34,6 @@ UserFunctionAtter Directorylist[] = {
 	{"Rename",Directory::Rename,2},
 	{"Exists",Directory::Exists,1},
 	{"IsDirectory",Directory::IsDirectory,1},
-	{"Exists",Directory::GetDirectoryList,1},
 	{NULL,NULL,0}
 }; 
 

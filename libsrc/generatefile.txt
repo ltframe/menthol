@@ -9,9 +9,3 @@ Array
 FileSystem
 Const
 Type
-Thread
-network/curl/System
-network/curl/SetOpt
-network/curl/GetInfo
-network/curl/Callback
-network/curl/Code

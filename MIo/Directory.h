@@ -11,5 +11,4 @@ namespace Directory
 	StackState Rename(VmState* vmstate);
 	StackState Exists(VmState* vmstate);
 	StackState IsDirectory(VmState* vmstate);
-	StackState GetDirectoryList(VmState* vmstate);
 }

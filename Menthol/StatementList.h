@@ -7,8 +7,6 @@
 #include "MCommon.h"
 
 
-#pragma comment(lib, "../requirements/flexbison/libfl.a")
-#pragma comment(lib, "../requirements/flexbison/liby.a")
 
 //包的源扩展名
 #define MENTHOLPACKAGEEXTENSION ".mep"

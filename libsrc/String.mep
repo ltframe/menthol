@@ -1,5 +1,5 @@
 import msystem;
-use CString,CRegex,CJson;
+use CString,CRegex;
 
 module String{
 
@@ -193,39 +193,5 @@ module Regex
 			$arg4 = 0;
 		}
 		return @regexinst.Replace($arg1,$arg2,$arg3,$arg4);
-	}
-}
-
-module Json
-{
-	var @jsoninst =mmrt(CJson);
-	def JsonParse:$arg1
-	{
-	   return @jsoninst.JsonParse($arg1);
-	}
-
-	def GetObjectItem:$arg1,$arg2
-	{
-	   return @jsoninst.GetObjectItem($arg1,$arg2);
-	}
-
-	def GetArrayItem:$arg1,$arg2
-	{
-	   return @jsoninst.GetArrayItem($arg1,$arg2);
-	}
-
-	def GetArraySize:$arg1
-	{
-	   return @jsoninst.GetArraySize($arg1);
-	}
-
-	def Delete:$arg1
-	{
-	   return @jsoninst.Delete($arg1);
-	}
-
-	def Type:$arg1
-	{
-	   return @jsoninst.Type($arg1);
 	}
 }

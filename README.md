@@ -3,7 +3,7 @@
 
 
 # Menthol
-Menthol是一个简单、易用、易学的脚本语言,语法简单,开发简便,使用C/C++可以快速为它开发扩展.关于更多信息请访问官方网站:[www.ltplayer.com][11]
+Menthol是一个简单、易用、易学的脚本语言,语法简单,开发简便,使用C/C++可以快速为它开发扩展
 
 ## 特性
 * 无类型
@@ -11,6 +11,7 @@ Menthol是一个简单、易用、易学的脚本语言,语法简单,开发简�
 * 面向函数编程
 * 方便的函数封装
 * 简便的方法扩展
+
 
 
 ## 教程说明
@@ -168,44 +169,6 @@ _mmain:$a,$c
 ```
 
 
-###### 多线程
-
-```html
-import console;
-import Thread;
-use Console,Thread;
-
-module test
-{
-	var @m = mmrt(Console);
-	def thread2:
-	{
-		while(true){
-			@m.Out("thread2");
-		}
-	}
-
-	def thread1:
-	{
-		while(true){
-			@m.Out("thread1");
-		}
-	}
-}
-_mmain:$a,$c
-{	
-	var $t = mmrt(Thread),$e = mmrt(test);
-	var $k1 = $t.NewThread($e.thread1);
-	$t.Join($k1);
-	var $k2 = $t.NewThread($e.thread2);	
-	$t.Join($k2);
-}
-
-```
-<div align=left>
-<img src="http://www.ltplayer.com/doc/menthol14/images/thread.png"/></div>
-
-
 ###### 开发外部扩展库(c/c++)
 example1.dll
 
@@ -232,16 +195,6 @@ MentholPackMethod void example1_Init(VmState* vmstate)
 }
 
 ```
-关于更多的menthol的相关文档，请浏览[menthol文档][10]
+关于更多的menthol的相关文档，请浏览[menthol文档][1]
 
-
-  [2]: https://github.com/ltframe/menthol
-  [3]: http://www.ltplayer.com/doc/menthol14/index.html
-  [4]: http://www.ltplayer.com/doc/menthol14/index.html
-  [5]: http://www.ltplayer.com/doc/menthol14/index.html
-  [6]: http://www.ltplayer.com/doc/menthol14/index.html
-  [7]: http://www.ltplayer.com/doc/menthol14/index.html
-  [8]: http://www.ltplayer.com/doc/menthol14/index.html
-  [9]: http://www.ltplayer.com/doc/menthol14/index.html
-  [10]: http://www.ltplayer.com/doc/menthol14/index.html
-  [11]: http://www.ltplayer.com/
+  [1]: http://www.ltplayer.com/doc/menthol/index.html
